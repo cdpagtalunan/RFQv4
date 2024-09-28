@@ -1,10 +1,11 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import Dashboard from '../pages/Dashboard.vue';
+import AdminLayout from '../layout/AdminLayout/AdminLayout.vue'
 
 const routes = [
     {
         path: "/RFQv4/",
-        // component: AdminLayout,
+        component: AdminLayout,
         children: [
             {
                 path: '',

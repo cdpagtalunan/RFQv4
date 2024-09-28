@@ -4,6 +4,24 @@ import AppTemplate from './layout/index.vue';
 
 import router from './router/router.js'
 
+/**
+    * Using of jquery is not an option unless it is the only solution.
+    * on this instance, adminLTE burger menu cant be click unless I install the jQuery.
+    * DONT USE jQuery on other functionalities. use only VUE.
+*/ 
+import $ from 'jquery';
+window.jQuery = $;
+
+// * Fontawesome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+
+library.add(far, fas, fab);
+
 createApp(AppTemplate)
 .use(router)
+.component('icons', FontAwesomeIcon)
 .mount('#app');
