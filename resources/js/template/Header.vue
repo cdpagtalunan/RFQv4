@@ -13,7 +13,7 @@
                 </a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="" class="nav-link">ARRS</a>
+                <a href="" class="nav-link">RFQv4</a>
             </li>
         </ul>
         <!-- Right navbar links -->

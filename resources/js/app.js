@@ -1,7 +1,7 @@
 require('./bootstrap');
 import { createApp } from 'vue'
 import AppTemplate from './layout/index.vue';
-
+import { pinia,useSessionStore } from './store/index';
 import router from './router/router.js'
 
 /**
@@ -21,7 +21,25 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 
 library.add(far, fas, fab);
 
+// * Components
+import Breadcrumbs from './pages/components/Breadcrumbs.vue'
+import Card from './pages/components/Card.vue'
+import Modal from './pages/components/Modal.vue'
+
+import VueMultiselect from 'vue-multiselect'
+
+import Swal from 'sweetalert2';
+
 createApp(AppTemplate)
+.use(pinia)
 .use(router)
 .component('icons', FontAwesomeIcon)
+.component('Breadcrumbs', Breadcrumbs)
+.component('Card', Card)
+.component('Modal', Modal)
+.component('VueMultiselect', VueMultiselect)
+.provide('Swal',Swal)
 .mount('#app');
+
+const store = useSessionStore();
+store.checkSession();

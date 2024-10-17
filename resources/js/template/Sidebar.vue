@@ -4,7 +4,7 @@
         <!-- Brand Logo -->
         <a href="" class="brand-link text-center text-decoration-none">
             <!-- <img src="../assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
-            <span class="brand-text font-weight-light">ARRS</span>
+            <span class="brand-text font-weight-light">RFQv4</span>
         </a>
 
         <!-- Sidebar -->
@@ -23,7 +23,13 @@
                             <p>Go to Rapidx</p>
                         </a>
                     </li>
-
+                    <li class="nav-header font-weight-bold">Admin</li>
+                    <li class="nav-item has-treeview">
+                        <router-link :to="{ name: 'UserManagement' }" class="nav-link">
+                            <icons icon="fas fa-user" class="nav-icon"></icons>
+                            <p>User Management</p>
+                        </router-link>
+                    </li>
                     <!-- <li class="nav-item has-treeview">
                         <router-link :to="{ name: 'Dashboard' }" class="nav-link">
                             <icons icon="fas fa-gauge" class="nav-icon"></icons>

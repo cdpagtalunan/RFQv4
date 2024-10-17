@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c61ff82cbf0142a401a48a8161e1595a",
+    "content-hash": "6c5e64548f0b70bc97a032f5f43c18ef",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2617,6 +2617,67 @@
             "time": "2021-09-25T23:10:38+00:00"
         },
         {
+            "name": "spatie/laravel-query-builder",
+            "version": "4.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-query-builder.git",
+                "reference": "fa289437588dfce89c72a16515113f3bade0590b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-query-builder/zipball/fa289437588dfce89c72a16515113f3bade0590b",
+                "reference": "fa289437588dfce89c72a16515113f3bade0590b",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^6.20.13|^7.30.4|^8.22.2",
+                "illuminate/http": "^6.20.13|^7.30.4|^8.22.2",
+                "illuminate/support": "^6.20.13|^7.30.4|^8.22.2",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "laravel/legacy-factories": "^1.0.4",
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^4.9|^5.8|^6.3",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\QueryBuilder\\QueryBuilderServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\QueryBuilder\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Vanderbist",
+                    "email": "alex@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Easily build Eloquent queries from API requests",
+            "homepage": "https://github.com/spatie/laravel-query-builder",
+            "keywords": [
+                "laravel-query-builder",
+                "spatie"
+            ],
+            "time": "2022-11-28T13:50:55+00:00"
+        },
+        {
             "name": "swiftmailer/swiftmailer",
             "version": "v6.3.0",
             "source": {
@@ -4558,6 +4619,77 @@
                 "validate"
             ],
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "yajra/laravel-datatables-oracle",
+            "version": "v9.21.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yajra/laravel-datatables.git",
+                "reference": "a7fd01f06282923e9c63fa27fe6b391e21dc321a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/a7fd01f06282923e9c63fa27fe6b391e21dc321a",
+                "reference": "a7fd01f06282923e9c63fa27fe6b391e21dc321a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "5.8.*|^6|^7|^8|^9",
+                "illuminate/filesystem": "5.8.*|^6|^7|^8|^9",
+                "illuminate/http": "5.8.*|^6|^7|^8|^9",
+                "illuminate/support": "5.8.*|^6|^7|^8|^9",
+                "illuminate/view": "5.8.*|^6|^7|^8|^9",
+                "php": "^7.1.3|^8"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.8|^4.0|^5.0|^6.0|^7.0"
+            },
+            "suggest": {
+                "yajra/laravel-datatables-buttons": "Plugin for server-side exporting of dataTables.",
+                "yajra/laravel-datatables-editor": "Plugin to use DataTables Editor (requires a license).",
+                "yajra/laravel-datatables-fractal": "Plugin for server-side response using Fractal.",
+                "yajra/laravel-datatables-html": "Plugin for server-side HTML builder of dataTables."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "9.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Yajra\\DataTables\\DataTablesServiceProvider"
+                    ],
+                    "aliases": {
+                        "DataTables": "Yajra\\DataTables\\Facades\\DataTables"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helper.php"
+                ],
+                "psr-4": {
+                    "Yajra\\DataTables\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjay Angeles",
+                    "email": "aqangeles@gmail.com"
+                }
+            ],
+            "description": "jQuery DataTables API for Laravel 5|6|7|8|9",
+            "keywords": [
+                "datatables",
+                "jquery",
+                "laravel"
+            ],
+            "time": "2022-07-12T04:48:03+00:00"
         }
     ],
     "packages-dev": [
