@@ -29,6 +29,22 @@ import Modal from './pages/components/Modal.vue'
 import VueMultiselect from 'vue-multiselect'
 
 import Swal from 'sweetalert2';
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    iconColor: 'white',
+    customClass: {
+        popup: 'colored-toast',
+    },
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+})
+
 
 createApp(AppTemplate)
 .use(pinia)
@@ -39,6 +55,7 @@ createApp(AppTemplate)
 .component('Modal', Modal)
 .component('VueMultiselect', VueMultiselect)
 .provide('Swal',Swal)
+.provide('Toast',Toast)
 .mount('#app');
 
 const store = useSessionStore();

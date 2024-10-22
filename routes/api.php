@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,13 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::post('save_user', 'save_user');
         Route::post('update_status', 'update_status');
     });
+
+    Route::controller(CategoryController::class)->group(function (){
+        Route::get('get_category', 'get_category');
+        Route::post('save_category', 'save_category');
+        Route::post('update_status', 'update_status');
+    });
 });
+
 
 

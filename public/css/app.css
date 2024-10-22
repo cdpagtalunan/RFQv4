@@ -12954,5 +12954,35 @@ div.table-responsive > div.dt-container > div.row > div[class^=col-]:last-child 
     }
   }
 
+.colored-toast.swal2-icon-success {
+    background-color: #49A745 !important;
+}
 
+.colored-toast.swal2-icon-error {
+    background-color: #DC3545 !important;
+}
 
+.colored-toast.swal2-icon-warning {
+    background-color: #FEC105 !important;
+}
+
+.colored-toast.swal2-icon-info {
+    background-color: #3ACAF0 !important;
+}
+
+.colored-toast.swal2-icon-question {
+    background-color: #6C757D !important;
+}
+.colored-toast .swal2-title {
+    color: rgb(255, 255, 255);
+}
+  
+.colored-toast .swal2-close {
+    color: white;
+}
+.colored-toast .swal2-html-container {
+    color: white;
+}
+.swal-wide{
+    width:850px !important;
+}

@@ -5,7 +5,8 @@
             <form @submit.prevent="$emit('saveEvent')" method="post" >
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="modalComponentIdLabel">{{ title }}</h4>
+
+                        <h4 class="modal-title" id="modalComponentIdLabel"><icons icon="fas fa-info-circle fa-sm"></icons> {{ title }}</h4>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">

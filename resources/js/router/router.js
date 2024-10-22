@@ -4,6 +4,8 @@ import AdminLayout from '../layout/AdminLayout/AdminLayout.vue';
 // Pages
 import Dashboard from '../pages/Dashboard.vue';
 import UserManagement from '../pages/UserManagement.vue';
+import CategoryManagement from '../pages/CategoryManagement.vue';
+import Request from '../pages/Requestor.vue';
 
 // Interceptors
 import Forbidden from '../pages/interceptors/403.vue';
@@ -36,6 +38,16 @@ const routes = [
                 path: 'user',
                 name: 'UserManagement',
                 component: UserManagement
+            },
+            {
+                path: 'category',
+                name: 'CategoryManagement',
+                component: CategoryManagement
+            },
+            {
+                path: 'request',
+                name: 'Request',
+                component: Request
             },
         ],
     },
