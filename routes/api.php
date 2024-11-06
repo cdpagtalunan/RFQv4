@@ -44,7 +44,7 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::post('save_item', 'save_item');
         Route::post('done_request', 'done_request');
         Route::get('get_request_details_by_id', 'get_request_details_by_id');
-        Route::get('generate_control_no', 'generate_control_no');
+        // Route::get('generate_control_no', 'generate_control_no');
     });
 
     Route::controller(UomController::class)->group(function(){

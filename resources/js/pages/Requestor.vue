@@ -45,7 +45,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <label>Control No.:</label>
-                                <input type="text" class="form-control" readonly v-model="formRequest.ctrl_no" name="ctrl_no">
+                                <input type="text" class="form-control" readonly v-model="formRequest.ctrl_no" name="ctrl_no" placeholder="Auto Generated">
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -313,7 +313,7 @@
     // Request Form Variables
     const formRequestInitVal = {
         id           : '',
-        ctrl_no      : 0,
+        ctrl_no      : '',
         category_id  : '',
         date_needed  : null,
         attachment   : '',
@@ -463,11 +463,11 @@
     });
 
     const onAddRequest = () => {
-        api.get('api/generate_control_no').then((result)=>{
-            formRequest.ctrl_no = result.data;
-        }).catch((err) => {
-            console.log(err);
-        });
+        // api.get('api/generate_control_no').then((result)=>{
+        //     formRequest.ctrl_no = result.data;
+        // }).catch((err) => {
+        //     console.log(err);
+        // });
         formRequest.checkedReupload = true;
         modalRequest.value.show();
     }
@@ -496,6 +496,7 @@
         api.post('api/save_req_details', formData).then((result)=>{
             props.nextTab()
             formRequest.id = result.data.id;
+            formRequest.ctrl_no = result.data.ctrl_no;
             // formItem.fk_quotation_requests_id = formRequest.id;
             dtQuotationRequest.draw();
             dtRequestItem.draw();
@@ -543,7 +544,6 @@
                 });
                 modalRequest.value.hide();
                 dtQuotationRequest.draw();
-                btnDisabled.value = false;
             }
             else{
                 Toast.fire({
@@ -551,9 +551,15 @@
                     title: "Something went wrong. <br> Please contact ISS."
                 })
             }
+            btnDisabled.value = false;
+
         }).catch((err) => {
             console.log(err);
+            btnDisabled.value = false;
+
         });
+
+
     }
 
     const getRequestDetailsById = (id) => {

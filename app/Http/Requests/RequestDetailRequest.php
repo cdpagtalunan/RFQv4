@@ -25,7 +25,7 @@ class RequestDetailRequest extends FormRequest
     {
         return [
             // 'cc' => '',
-            'ctrl_no' => 'required',
+            // 'ctrl_no' => 'required',
             'category_id' => 'required',
             'date_needed' => 'required',
             'justification' => 'required'

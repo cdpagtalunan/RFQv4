@@ -49,7 +49,7 @@ class RequestController extends Controller
         date_default_timezone_set('Asia/Manila');
         $data = $request->validated();
         
-        if($request->checkedReupload == 'true'){
+        if($request->checkedReupload == 'true' && $request->attachement != ''){
             $original_filename = $request->file('attachment')->getClientOriginalName();
             Storage::putFileAs('public/file_attachments', $request->attachment, $original_filename);
 
@@ -64,10 +64,36 @@ class RequestController extends Controller
             return $this->RequestRepository->update($request->id, $data);
         }
         else{ // Create
+            /**
+             * Generate Control number
+             */
+            $relations = [];
+            $conditions = array(
+                'deleted_at' => null
+            );
+            $request_repository_data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
+    
+    
+            $currentMonth = Carbon::now()->month;
+            $currentYear = Carbon::now()->format('y');
+    
+            $collection = collect($request_repository_data)->filter(function ($request) use ($currentMonth) {
+                return $request->created_at->month === $currentMonth;
+            })->sortBy([['id', 'DESC']]);
+    
+            $new_count = count($collection) + 1;
+            if($new_count < 999){
+                $new_count = str_pad($new_count, 3, '0', STR_PAD_LEFT);
+            }
+            $new_ctrl_no = "RFQ-{$currentYear}{$currentMonth}-{$new_count}";
+
+            // Data
+            $data['ctrl_no'] = $new_ctrl_no;
             $data['created_by'] = $_SESSION['rapidx_user_id'];
             $data['created_at'] = NOW();
 
             return $this->RequestRepository->insertGetId($data);
+
         }
     }
 
@@ -117,7 +143,6 @@ class RequestController extends Controller
             ];
             $rfq = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
             $rfq_collection = collect($rfq)->first();
-
             $conditions = array(
                 'user_access' => 1
             );
@@ -126,6 +151,7 @@ class RequestController extends Controller
 
             $emailArray['data'] = $rfq_collection;
             $emailArray['cc'] = explode(',',$rfq_collection->cc);
+            array_push($emailArray['cc'],$rfq_collection->created_by_details->email);
             $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray();
             $emailArray['subject'] = "RFQv4 - $rfq_collection->ctrl_no For Logisitics Assignment <Do Not Reply!>";
             $emailArray['emailFilePath'] = 'transaction_email';
@@ -197,28 +223,28 @@ class RequestController extends Controller
         return collect($data)->first();
     }
 
-    public function generate_control_no(Request $request){
-        date_default_timezone_set('Asia/Manila');
-        $relations = [];
-        $conditions = array(
-            'deleted_at' => null
-        );
-        $data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
+    // public function generate_control_no(Request $request){
+    //     date_default_timezone_set('Asia/Manila');
+    //     $relations = [];
+    //     $conditions = array(
+    //         'deleted_at' => null
+    //     );
+    //     $data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
 
 
-        $currentMonth = Carbon::now()->month;
-        $currentYear = Carbon::now()->format('y');
+    //     $currentMonth = Carbon::now()->month;
+    //     $currentYear = Carbon::now()->format('y');
 
-        $collection = collect($data)->filter(function ($request) use ($currentMonth) {
-            return $request->created_at->month === $currentMonth;
-        })->sortBy([['id', 'DESC']]);
+    //     $collection = collect($data)->filter(function ($request) use ($currentMonth) {
+    //         return $request->created_at->month === $currentMonth;
+    //     })->sortBy([['id', 'DESC']]);
 
-        $new_count = count($collection) + 1;
-        if($new_count < 999){
-            $new_count = str_pad($new_count, 3, '0', STR_PAD_LEFT);
-        }
-        $new_ctrl_no = "RFQ-{$currentYear}{$currentMonth}-{$new_count}";
+    //     $new_count = count($collection) + 1;
+    //     if($new_count < 999){
+    //         $new_count = str_pad($new_count, 3, '0', STR_PAD_LEFT);
+    //     }
+    //     $new_ctrl_no = "RFQ-{$currentYear}{$currentMonth}-{$new_count}";
 
-        return response()->json($new_ctrl_no);
-    }
+    //     return response()->json($new_ctrl_no);
+    // }
 }

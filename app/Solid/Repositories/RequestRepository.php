@@ -25,7 +25,8 @@ class RequestRepository implements RequestRepositoryInterface
             return response()->json([
                 'result' => true,
                 'msg' => 'Transaction Success',
-                'id' => $id
+                'id' => $id,
+                'ctrl_no' => $data['ctrl_no']
             ]);
         }catch(Exemption $e){
             DB::rollback();
