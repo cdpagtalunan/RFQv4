@@ -375,7 +375,7 @@
                         getRequestDetailsById(id);
                     });
                 }
-
+                
                 cell.querySelector('.btnViewRequest').addEventListener('click', function(){
                     let id = this.getAttribute('data-id');
                     getRequestDetailsForView(id);
@@ -476,6 +476,7 @@
         modalItem.value.show();
     }
 
+    // Accept number only on input type number
     const isNumber = (evt) => {
         evt = (evt) ? evt : window.event;
         var charCode = (evt.which) ? evt.which : evt.keyCode;
@@ -487,7 +488,6 @@
     }
 
     const onNext = (props) => {
-
         let formData = new FormData();
         Object.keys(formRequest).forEach(function(key) {
             formData.append(key, formRequest[key]);
@@ -521,8 +521,6 @@
                 });
                 dtRequestItem.draw();
                 modalItem.value.hide();
-                // console.log(modal.value);
-
             }
             else{
                 Toast.fire({

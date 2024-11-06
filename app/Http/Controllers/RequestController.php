@@ -34,9 +34,6 @@ class RequestController extends Controller
     }
     
     public function dt_get_request_item(Request $request){
-        // $rfq = RequestItem::where('fk_quotation_requests_id', $request->id)
-        // ->whereNull('deleted_at')
-        // ->get();
         $condition = array(
             'fk_quotation_requests_id' => $request->id,
             'deleted_at'               => null,
