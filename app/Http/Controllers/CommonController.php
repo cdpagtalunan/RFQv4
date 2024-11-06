@@ -32,6 +32,13 @@ class CommonController extends Controller
 
             $_SESSION['rfq_type'] = $user_access->user_type;
             $_SESSION['rfq_access'] = $user_access->user_access;
+
+            return $_SESSION;
+            // return response()->json([
+            //     'rfq_user_details' => $user_access,
+            //     'session' => $_SESSION
+            // ]);
+            return $user_access;
         }
     }
 }

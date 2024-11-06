@@ -14,7 +14,7 @@ export const useSessionStore = defineStore("session", {
         checkSession(){
             api.get('check_access').then((result)=>{
                 let data = result.data;
-
+                console.log('useSessionStore', data)
                 this.uType   = data.user_type
                 this.uAccess = data.user_access
             }).catch((err) => {

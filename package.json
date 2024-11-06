@@ -32,6 +32,7 @@
         "sweetalert2": "^11.14.3",
         "vue": "^3.5.9",
         "vue-multiselect": "^3.1.0",
-        "vue-router": "^4.4.5"
+        "vue-router": "^4.4.5",
+        "vue3-form-wizard": "^0.2.4"
     }
 }

@@ -30,7 +30,7 @@
 
        
     </section>
-    <Modal title="Add User" backdrop="static" >
+    <Modal title="Add User" backdrop="static" id="modalUser">
         <template #body>
             <div class="row">
                 <div class="col-sm-12">
@@ -166,7 +166,7 @@
 
     onMounted(() => {
         dt = table.value.dt;
-        modal.value = new Modal(document.querySelector('#modalComponentId'), {});
+        modal.value = new Modal(document.querySelector('#modalUser'), {});
         getRapidxUserList(document.querySelector(".selRapidxUser"));
     })
 
@@ -188,6 +188,8 @@
             if(result.data.result == true){
                 modal.value.hide();
                 dt.ajax.reload();
+                // dt.draw();
+                // console.log(dt);
             }
         }).catch((err) => {
             console.log(err);

@@ -6,4 +6,5 @@ interface CategoryRepositoryInterface
     public function getAllCategory();
     public function insert(array $data);
     public function update(int $id,array $data);
+    public function getCategoryWithCondition(array $condition);
 }

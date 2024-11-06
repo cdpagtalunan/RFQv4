@@ -18,7 +18,7 @@
                             <DataTable
                                 class="table table-sm table-bordered table-hover wrap display"
                                 :columns="columns"
-                                ajax="api/get_category"
+                                ajax="api/dt_get_category"
                                 ref="table"
                                 :options="options"
                             />

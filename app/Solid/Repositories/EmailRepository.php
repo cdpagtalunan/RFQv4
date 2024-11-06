@@ -1,0 +1,28 @@
+<?php
+namespace App\Solid\Repositories;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Mail;
+/**
+ * Import Interfaces
+ */
+use App\Solid\Interfaces\EmailRepositoryInterface;
+
+
+class EmailRepository implements EmailRepositoryInterface
+{
+    public function sendEmail(array $emailArray){
+
+        $test = json_decode($emailArray['data'], true);
+        Mail::send("mail.{$emailArray['emailFilePath']}",$test, function($message) use ($emailArray) {
+            $message->bcc('cpagtalunan@pricon.ph');
+            $message->to($emailArray['to']);
+            $message->cc($emailArray['cc']);
+            if($emailArray['bcc']){
+                $message->bcc($emailArray['bcc']);
+            }
+            $message->subject($emailArray['subject']);
+        });
+    }
+}

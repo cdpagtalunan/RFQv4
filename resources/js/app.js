@@ -44,6 +44,8 @@ const Toast = Swal.mixin({
         toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
 })
+import Vue3FormWizard from 'vue3-form-wizard'
+import 'vue3-form-wizard/dist/style.css'
 
 
 createApp(AppTemplate)
@@ -56,6 +58,7 @@ createApp(AppTemplate)
 .component('VueMultiselect', VueMultiselect)
 .provide('Swal',Swal)
 .provide('Toast',Toast)
+.use(Vue3FormWizard)
 .mount('#app');
 
 const store = useSessionStore();

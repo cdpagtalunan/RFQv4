@@ -51,4 +51,13 @@ class CategoryRepository implements CategoryRepositoryInterface
             return $e;
         }
     }
+
+    public function getCategoryWithCondition(array $condition){
+        $query = Category::query();
+
+        foreach ($condition as $key => $value) {
+            $query->where($key, $value);
+        }
+        return $query->get();
+    }
 }

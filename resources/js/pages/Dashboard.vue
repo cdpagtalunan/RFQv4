@@ -1,7 +1,7 @@
 <template>
-    html123
+  html
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+import { ref } from "vue";
 </script>

@@ -120,13 +120,13 @@ class UserController extends Controller
     $data = $request->validated();
 
     if(isset($request->id)){ // Update
-      $data['updated_by'] = $_SESSION['rapidx_username'];
+      $data['updated_by'] = $_SESSION['rapidx_user_id'];
 
       return $this->UserAccessRepository->update($request->id, $data);
 
     }
     else{ // Create
-      $data['created_by'] = $_SESSION['rapidx_username'];
+      $data['created_by'] = $_SESSION['rapidx_user_id'];
       $data['created_at'] = NOW();
       return $this->UserAccessRepository->insert($data);
     }

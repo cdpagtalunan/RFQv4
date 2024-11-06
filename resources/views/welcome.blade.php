@@ -13,6 +13,8 @@
 
         <script src="{{ asset('public/template/adminlte/js/adminlte.min.js') }}" defer></script>
         <script src="{{ asset('public/js/common.js') }}" defer></script>
+
+
         <style>
             body {
                 font-family: 'Nunito', sans-serif;

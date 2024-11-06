@@ -30,9 +30,9 @@ const handleValidatorErrors = (errors) => {
 
             // Add invalid class & title validation
             if(field){
-                document.querySelector(`input[name="${field}"]`).classList.add('is-invalid');
-                document.querySelector(`select[name="${field}"]`).classList.add('is-invalid');
-                document.querySelector(`textarea[name="${field}"]`).classList.add('is-invalid');
+                document.querySelector(`[name="${field}"]`).classList.add('is-invalid');
+                // document.querySelector(`[name="${field}"]`).classList.add('is-invalid');
+                // document.querySelector(`[name="${field}"]`).classList.add('is-invalid');
 
             }
         }

@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RequestController;
 use App\Http\Controllers\CategoryController;
 
 /*
@@ -29,9 +31,24 @@ Route::middleware('checkSessionExist')->group(function(){
     });
 
     Route::controller(CategoryController::class)->group(function (){
-        Route::get('get_category', 'get_category');
+        Route::get('dt_get_category', 'dt_get_category');
         Route::post('save_category', 'save_category');
         Route::post('update_status', 'update_status');
+        Route::get('get_category', 'get_category');
+    });
+
+    Route::controller(RequestController::class)->group(function(){
+        Route::get('dt_get_request_item', 'dt_get_request_item');
+        Route::get('dt_get_request', 'dt_get_request');
+        Route::post('save_req_details', 'save_req_details');
+        Route::post('save_item', 'save_item');
+        Route::post('done_request', 'done_request');
+        Route::get('get_request_details_by_id', 'get_request_details_by_id');
+        Route::get('generate_control_no', 'generate_control_no');
+    });
+
+    Route::controller(UomController::class)->group(function(){
+        Route::get('get_uom', 'get_uom');
     });
 });
 

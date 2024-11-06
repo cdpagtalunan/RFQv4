@@ -16,7 +16,7 @@ class CategoryController extends Controller
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function get_category(Request $request){
+    public function dt_get_category(Request $request){
         $category = $this->categoryRepository->getAllCategory();
 
         return DataTables::of($category)
@@ -50,11 +50,11 @@ class CategoryController extends Controller
         $data = $request->validated();
 
         if(isset($request->id)){ // Update
-            $data['updated_by'] = $_SESSION['rapidx_username'];
+            $data['updated_by'] = $_SESSION['rapidx_user_id'];
             return $this->categoryRepository->update($request->id, $data);
         }
         else{ // Create
-            $data['created_by'] = $_SESSION['rapidx_username'];
+            $data['created_by'] = $_SESSION['rapidx_user_id'];
             $data['created_at'] = NOW();
             return $this->categoryRepository->insert($data);
         }
@@ -71,5 +71,13 @@ class CategoryController extends Controller
 
         return $this->categoryRepository->update($request->id, $data);
 
+    }
+
+    public function get_category(Request $request){
+
+        $condition = array(
+            'deleted_at' => NULL
+        );
+        return $this->categoryRepository->getCategoryWithCondition($condition);
     }
 }
