@@ -11,7 +11,7 @@
                 <div class="col">
                     <Card :cardBody="true" :cardHeader="true">
                         <template #header>
-                            <!-- <label class="h3">User</label> -->
+                            <label class="h4">Category List</label>
                             <button class="btn btn-primary float-right" @click="onAddCategory"><icons icon="fas fa-plus"></icons> Add Category</button>
                         </template>
                         <template #body>
@@ -29,7 +29,7 @@
         </div>
     </section>
 
-    <Modal :title="modalTitle" backdrop="static" >
+    <Modal :title="modalTitle" id="modalAdd" backdrop="static">
         <template #body>
             <input type="hidden" v-model="formCategory.id">
             <div class="form-group">
@@ -129,8 +129,8 @@
     const formCategory = reactive({...formCategoryInitVal});
     onMounted(() => {
         dt = table.value.dt;
-        modal.value = new Modal(document.querySelector('#modalComponentId'), {});
-        document.getElementById("modalComponentId").addEventListener('hidden.bs.modal', event => {
+        modal.value = new Modal(document.querySelector('#modalAdd'), {});
+        document.getElementById("modalAdd").addEventListener('hidden.bs.modal', event => {
             Object.assign(formCategory, formCategoryInitVal);
             const invalidElements = document.querySelectorAll('.is-invalid');
             const validElements = document.querySelectorAll('.is-valid');
@@ -181,7 +181,7 @@
     }
 
     const updateStatus = (id, status) => {
-        api.post('api/update_status', {'id' : id, 'status': status}).then((result)=>{
+        api.post('api/update_cat_status', {'id' : id, 'status': status}).then((result)=>{
             let res = result.data;
             if(res.result == true){
                 Toast.fire({

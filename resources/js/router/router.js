@@ -6,6 +6,7 @@ import Dashboard from '../pages/Dashboard.vue';
 import UserManagement from '../pages/UserManagement.vue';
 import CategoryManagement from '../pages/CategoryManagement.vue';
 import Request from '../pages/Requestor.vue';
+import Transaction from '../pages/Transaction.vue';
 
 // Interceptors
 import Forbidden from '../pages/interceptors/403.vue';
@@ -48,6 +49,11 @@ const routes = [
                 path: 'request',
                 name: 'Request',
                 component: Request
+            },
+            {
+                path: 'transaction',
+                name: 'Transaction',
+                component: Transaction
             },
         ],
     },

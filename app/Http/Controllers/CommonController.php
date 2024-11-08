@@ -27,7 +27,7 @@ class CommonController extends Controller
             $user_access = collect($user_access)->first();
 
             if(!isset($user_access)){
-                return response()->json(['msg' => 'User Dont Have Access '], 403);
+                return response()->json(['msg' => 'User Dont Have Access '], 401);
             }
 
             $_SESSION['rfq_type'] = $user_access->user_type;

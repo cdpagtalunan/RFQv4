@@ -19,31 +19,32 @@
         <div class="col-sm-12">
             Good Day!
             <br>
-            Please be informed that RFQ is for purchasing assignment.
+            {{-- Please be informed that RFQ is for purchasing assignment. --}}
+            {{ $body }}
             <br>
             <hr>
            <strong><i>RFQ Details:</i></strong>
             <table style="width: 40%;">
                 <tbody>
                     <tr>
-                        <td><strong>RFQ Control Number:</strong></td>
-                        <td>{{ $ctrl_no }}</td>
+                        <td><strong>RFQ Control Number</strong></td>
+                        <td>:{{ $ctrl_no }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Category:</strong></td>
-                        <td>{{ $category_details['category_name'] }}</td>
+                        <td><strong>Category</strong></td>
+                        <td>:{{ $category_details['category_name'] }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Date Needed:</strong></td>
-                        <td>{{ $date_needed }}</td>
+                        <td><strong>Date Needed</strong></td>
+                        <td>:{{ $date_needed }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Justification:</strong></td>
-                        <td>{{ $justification }}</td>
+                        <td><strong>Justification</strong></td>
+                        <td>:{{ $justification }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Requestor:</strong></td>
-                        <td>{{ $created_by_details['name'] }}</td>
+                        <td><strong>Requestor</strong></td>
+                        <td>:{{ $created_by_details['name'] }}</td>
                     </tr>
                 </tbody>
             </table>

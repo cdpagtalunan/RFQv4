@@ -22,6 +22,9 @@ class CreateQuotationRequestsTable extends Migration
             $table->string('attachment')->nullable();
             $table->string('cc')->nullable();
             $table->string('justification')->nullable();
+            $table->string('assigned_by')->nullable();
+            $table->string('assigned_at')->nullable();
+            $table->string('assigned_to')->nullable();
             $table->string('created_by');
             $table->string('updated_by')->nullable();
             $table->softDeletes();

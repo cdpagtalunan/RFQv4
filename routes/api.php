@@ -6,6 +6,7 @@ use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,7 @@ Route::middleware('checkSessionExist')->group(function(){
     Route::controller(CategoryController::class)->group(function (){
         Route::get('dt_get_category', 'dt_get_category');
         Route::post('save_category', 'save_category');
-        Route::post('update_status', 'update_status');
+        Route::post('update_cat_status', 'update_cat_status');
         Route::get('get_category', 'get_category');
     });
 
@@ -49,6 +50,14 @@ Route::middleware('checkSessionExist')->group(function(){
 
     Route::controller(UomController::class)->group(function(){
         Route::get('get_uom', 'get_uom');
+    });
+
+    Route::controller(TransactionController::class)->group(function(){
+        Route::get('dt_get_log_request', 'dt_get_log_request');
+        Route::get('dt_get_items_supplier', 'dt_get_items_supplier');
+        Route::get('get_purchasing_staff', 'get_purchasing_staff');
+        Route::post('assign_request', 'assign_request');
+        
     });
 });
 

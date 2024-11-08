@@ -1,6 +1,23 @@
 import Axios from 'axios';
 import Router from './router/router';
+import { inject } from 'vue';
 
+import Swal from 'sweetalert2';
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    iconColor: 'white',
+    customClass: {
+        popup: 'colored-toast',
+    },
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+})
 const axios = Axios.create()
 axios.interceptors.response.use(
     (response) => {
@@ -8,11 +25,16 @@ axios.interceptors.response.use(
     },
     (error) => {
         if(error.response && error.response.status === 401){
+            Router.push({name : '403'});
+
             console.log('401');
         }
 
         if(error.response && error.response.status === 403){
-            Router.push({name : '403'});
+            Toast.fire({
+                icon: "error",
+                title: 'You are not allowed to make this transaction!'
+            });
             console.log('403');
         }
 

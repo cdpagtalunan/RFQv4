@@ -14,8 +14,9 @@ class EmailRepository implements EmailRepositoryInterface
 {
     public function sendEmail(array $emailArray){
 
-        $test = json_decode($emailArray['data'], true);
-        Mail::send("mail.{$emailArray['emailFilePath']}",$test, function($message) use ($emailArray) {
+        $data = json_decode($emailArray['data'], true);
+        $data['body'] = $emailArray['body'];
+        Mail::send("mail.{$emailArray['emailFilePath']}",$data, function($message) use ($emailArray) {
             $message->bcc('cpagtalunan@pricon.ph');
             $message->to($emailArray['to']);
             $message->cc($emailArray['cc']);

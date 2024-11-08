@@ -23,12 +23,16 @@
                             <p>Go to Rapidx</p>
                         </a>
                     </li>
-
-                    <li class="nav-header font-weight-bold">User</li>
                     <li class="nav-item has-treeview">
                         <router-link :to="{ name: 'Request' }" class="nav-link">
                             <icons icon="fas fa-file-invoice-dollar" class="nav-icon"></icons>
                             <p>Request Quotation</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <router-link :to="{ name: 'Transaction' }" class="nav-link">
+                            <icons icon="fas fa-file-invoice-dollar" class="nav-icon"></icons>
+                            <p>Transaction</p>
                         </router-link>
                     </li>
 
@@ -40,11 +44,22 @@
                         </router-link>
                     </li>
                     <li class="nav-item has-treeview">
-                        <router-link :to="{ name: 'CategoryManagement' }" class="nav-link">
-                            <icons icon="fas fa-cog" class="nav-icon"></icons>
-                            <p>Category Management</p>
-                        </router-link>
+                        <a href="#" class="nav-link">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p><icons icon="fas fa-cogs"></icons> Settings </p>
+                                <i class="fas fa-angle-down"> </i>
+                            </div>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item ">
+                                <router-link :to="{ name: 'CategoryManagement' }" class="nav-link">
+                                    <icons icon="far fa-circle" class="nav-icon"></icons>
+                                    <p>Category Management</p>
+                                </router-link>
+                            </li>
+                        </ul>
                     </li>
+                  
                     
                 </ul>
             </nav>

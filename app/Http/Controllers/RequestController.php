@@ -132,6 +132,7 @@ class RequestController extends Controller
                 'subject'       => '',
                 'data'          => [],
                 'emailFilePath' => '',
+                'body'          => ''
             );
 
             $conditions = array(
@@ -155,6 +156,7 @@ class RequestController extends Controller
             $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray();
             $emailArray['subject'] = "RFQv4 - $rfq_collection->ctrl_no For Logisitics Assignment <Do Not Reply!>";
             $emailArray['emailFilePath'] = 'transaction_email';
+            $emailArray['body'] = 'Please be informed that RFQ is for purchasing assignment.';
 
             // $data = json_decode($emailArray);
 

@@ -60,7 +60,6 @@
                                     :searchable="true"
                                     :allow-empty="true"
                                     name="category_id"
-
                                 >
                                     <template #noResult>
                                         No User Found. Register User on RapidX.
@@ -356,6 +355,10 @@
         paginate: false,
         info: false,
         ordering: false,
+        columnDefs: [
+            {"className": 'dt-head-center', "targets": "_all"},
+            {"className": "dt-body-left", "targets": "_all"}
+        ]
     }
 
     // Quotation request datatable variables
