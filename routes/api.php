@@ -6,6 +6,7 @@ use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\TransactionController;
 
 /*
@@ -58,6 +59,12 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::get('get_purchasing_staff', 'get_purchasing_staff');
         Route::post('assign_request', 'assign_request');
         
+    });
+
+    Route::controller(CurrencyController::class)->group(function(){
+        Route::post('save_currency', 'save_currency');
+        Route::get('dt_get_currency', 'dt_get_currency');
+        Route::post('update_status', 'update_status');
     });
 });
 

@@ -2,7 +2,7 @@
      <Breadcrumbs >
         <template #breadcrumbs>
             <li class="breadcrumb-item"><a href="">Dashboard</a></li>
-            <li class="breadcrumb-item active">Category Management</li>
+            <li class="breadcrumb-item active">Category Settings</li>
         </template>
     </Breadcrumbs>
     <section class="content">

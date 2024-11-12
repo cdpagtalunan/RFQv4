@@ -5,6 +5,7 @@ import AdminLayout from '../layout/AdminLayout/AdminLayout.vue';
 import Dashboard from '../pages/Dashboard.vue';
 import UserManagement from '../pages/UserManagement.vue';
 import CategoryManagement from '../pages/CategoryManagement.vue';
+import CurrencyManagement from '../pages/CurrencyManagement.vue';
 import Request from '../pages/Requestor.vue';
 import Transaction from '../pages/Transaction.vue';
 
@@ -44,6 +45,11 @@ const routes = [
                 path: 'category',
                 name: 'CategoryManagement',
                 component: CategoryManagement
+            },
+            {
+                path: 'currency',
+                name: 'CurrencyManagement',
+                component: CurrencyManagement
             },
             {
                 path: 'request',

@@ -46,7 +46,7 @@
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <div class="d-flex justify-content-between align-items-center">
-                                <p><icons icon="fas fa-cogs"></icons> Settings </p>
+                                <p><icons icon="fas fa-cogs"></icons> Settings</p>
                                 <i class="fas fa-angle-down"> </i>
                             </div>
                         </a>
@@ -54,7 +54,15 @@
                             <li class="nav-item ">
                                 <router-link :to="{ name: 'CategoryManagement' }" class="nav-link">
                                     <icons icon="far fa-circle" class="nav-icon"></icons>
-                                    <p>Category Management</p>
+                                    <p>Category </p>
+                                </router-link>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item ">
+                                <router-link :to="{ name: 'CurrencyManagement' }" class="nav-link">
+                                    <icons icon="far fa-circle" class="nav-icon"></icons>
+                                    <p>Currency </p>
                                 </router-link>
                             </li>
                         </ul>
