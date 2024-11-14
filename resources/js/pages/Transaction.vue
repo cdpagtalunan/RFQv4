@@ -88,7 +88,8 @@
             </div>
 
             <hr>
-            <div v-if="status == 1">
+            <!-- Viewing only -->
+            <div v-if="status == 1"> 
                 <h5>Requested Item(s)</h5>
                 <div class="row">
                     <div class="col-md-12">
@@ -114,7 +115,7 @@
                     </div>
                 </div>
             </div>
-        
+            <!-- Assigning of supplier -->
             <div class="row" :class="status > 1 ? '' : 'd-none'">
                 <div class="col-md-12">
                     <DataTable
@@ -168,16 +169,113 @@
             </template>
         </Modal>
 
-        <Modal title="Supplier Info" id="modalAddSupplier" :modal-footer="true">
+        <Modal title="Supplier Info" id="modalAddSupplier" :modal-footer="true" style-size="min-width: 1000px !important;">
             <template #body>
+                <input type="text" v-model="formSupplierDetails.request_item_id">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Item</label>
+                            <input type="text" class="form-control" readonly v-model="itemDetails.itemDesc">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="text" class="form-control" readonly v-model="itemDetails.itemQty">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>UOM</label>
+                            <input type="text" class="form-control" readonly v-model="itemDetails.itemUom">
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <h4>Quotation Details</h4>
                 <div class="row">
                     <div class="col-sm-12">
-                        
+                        <div class="input-group">
+                            <span class="input-group-text w-25">Supplier:</span>
+                            <input type="text"  id="txtSupplier" name="supplier_name" v-model="formSupplierDetails.supplier_name" class="form-control" list="supplierList">
+                            <datalist id="supplierList">
+                                <option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.supplier_name"></option>
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">Price:</span>
+                            <select class="form-control w-25"  v-model="formSupplierDetails.currency">
+                                <option v-for="currency in currencies" :key="currency.id" :value="currency.currency">{{ currency.currency }}</option>
+                            </select>
+                            <input type="number" name="price" class="form-control w-25" v-model="formSupplierDetails.price">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">MOQ:</span>
+                            <input type="text"  id="" class="form-control" name="moq" v-model="formSupplierDetails.moq">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">Warranty/Guarantee:</span>
+                            <input type="text"  id="" class="form-control" name="warranty" v-model="formSupplierDetails.warranty">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">Lead Time:</span>
+                            <input type="text"  id="" class="form-control" name="lead_time" v-model="formSupplierDetails.lead_time">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">Date Served:</span>
+                            <input type="text"  id="" class="form-control" name="date_served"v-model="formSupplierDetails.date_served">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">Quotation Validity:</span>
+                            <input type="text"  id="" class="form-control" name="quotation_validity" v-model="formSupplierDetails.quotation_validity">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">Terms of Payment:</span>
+                            <input type="text"  id="" class="form-control" name="terms_of_payment" v-model="formSupplierDetails.terms_of_payment">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">Attachment:</span>
+                            <input type="file"  id="" class="form-control" @change="onFileChange">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12">
+                        <div class="input-group">
+                            <span class="input-group-text w-25">Remarks:</span>
+                            <!-- <input type="text"  id="" class="form-control" name="remarks" v-model="formSupplierDetails.remarks"> -->
+                             <textarea class="form-control" name="remarks" v-model="formSupplierDetails.remarks"></textarea>
+                        </div>
                     </div>
                 </div>
             </template>
             <template #footerButton>
-                <button class="btn btn-primary" id="btnSaveSupplier">Save</button>
+                <button class="btn btn-primary" id="btnSaveSupplier" @click="btnSaveQuotationDetails">Save</button>
             </template>
         </Modal>
     </section>
@@ -186,29 +284,50 @@
 <script setup>
     import { ref, onMounted, reactive, inject } from 'vue';
     import api from '../axios';
-
     // Import DataTable
     import DataTable from 'datatables.net-vue3';
     import DataTablesCore from 'datatables.net-bs5';
     DataTable.use(DataTablesCore);
 
     const Toast = inject('Toast');
-    
     const reqFilterStatus = ref(2);
-    // const viewRequest = ref();
     const viewRequest = reactive({
-        request : null,
+        request: null,
         status : ''
     });
     const modalView = ref();
     const id = ref(0);
     const status = ref();
     const modalAssign = ref();
+    const modalSupplier = ref();
     const purchaseStaff = ref([]);
     const assignedRequestDetails = reactive({
-        assigned_to : '',
+        assigned_to: '',
         request_id : null,
     });
+    const itemDetails = reactive({
+        itemDesc: '',
+        itemQty : 0,
+        itemUom : ''
+    })
+    const suppliers = ref([]);
+    const currencies = ref([]);
+    const formSupplierDetailsInitVal = {
+        request_item_id   : null,
+        supplier_name     : null,
+        currency          : 'PHP',
+        price             : null,
+        moq               : null,
+        warranty          : null,
+        lead_time         : null,
+        date_served       : null,
+        quotation_validity: null,
+        terms_of_payment  : null,
+        remarks           : null,
+        attachment        : null
+    }
+
+    const formSupplierDetails = reactive({...formSupplierDetailsInitVal});
 
     // tblLogRequest variables
     let dtLogRequest;
@@ -253,6 +372,7 @@
                         viewRequest.request = JSON.parse(requestDetails);
                         dtItemSupplier.draw();
                         modalView.value.show();
+                        
                     });
                 }
             },
@@ -287,10 +407,12 @@
             data: 'action', 
             title: 'Action',
             createdCell(cell){
-                cell.querySelector('.btnAddSupplier').addEventListener('click', function(){
-                    let itemId = this.getAttribute('data-item-id');
-
-
+                cell.querySelector('.btnAddQuotation').addEventListener('click', function(){
+                    formSupplierDetails.request_item_id = this.getAttribute('data-item-id');
+                    itemDetails.itemDesc = this.getAttribute('data-item-name');
+                    itemDetails.itemQty = this.getAttribute('data-item-qty');
+                    itemDetails.itemUom = this.getAttribute('data-item-uom');
+                    modalSupplier.value.show();
                 })
             }
         },
@@ -324,11 +446,27 @@
         // Declare Modal to be used
         modalView.value = new Modal(document.querySelector('#viewModalRequest'), {});
         modalAssign.value = new Modal(document.querySelector('#modalAssign'), {});
-
+        modalSupplier.value = new Modal(document.querySelector('#modalAddSupplier'), {});
+        
         document.getElementById("modalAssign").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
         })
+        document.getElementById("modalAddSupplier").addEventListener('hidden.bs.modal', event => {
+            Object.assign(formSupplierDetails, formSupplierDetailsInitVal)
+        })
 
+        // Getting suppliers
+        api.get('api/get_supplier').then((result)=>{
+            suppliers.value = result.data;
+        }).catch((err) => {
+            console.log(err);
+        });
+        // Getting currency
+        api.get('api/get_currency').then((result)=>{
+            currencies.value = result.data;
+        }).catch((err) => {
+            console.log(err);
+        });
     });
 
     const getRequestDetails = (id) => {
@@ -352,6 +490,37 @@
                 Toast.fire({
                     icon: 'error',
                     title: 'Something went wrong. <br> Please contact ISS.'
+                });
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    // For uploading file in supplier details
+    const onFileChange = (event) => {
+        formSupplierDetails.attachment = event.target.files[0];
+    }
+
+    const btnSaveQuotationDetails = () => {
+        let formData = new FormData();
+        
+        Object.keys(formSupplierDetails).forEach(function(key) {
+            formData.append(key, formSupplierDetails[key]);
+        });
+
+        api.post('api/save_quotation', formData).then((result)=>{
+            if(result.data.result == true){
+                Toast.fire({
+                    icon: 'success',
+                    title: result.data.result
+                });
+                modalSupplier.value.hide();
+            }
+            else{
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Something went wrong!'
                 });
             }
         }).catch((err) => {
