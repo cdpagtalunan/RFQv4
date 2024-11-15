@@ -11,4 +11,8 @@ class RequestItem extends Model
 
     protected $table = "request_items";
     protected $connection = "mysql";
+
+    public function item_quotation_details(){
+        return $this->hasMany(RequestItemQuotation::class,  'request_item_id', 'id');
+    }
 }

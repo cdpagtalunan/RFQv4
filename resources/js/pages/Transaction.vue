@@ -169,9 +169,9 @@
             </template>
         </Modal>
 
-        <Modal title="Supplier Info" id="modalAddSupplier" :modal-footer="true" style-size="min-width: 1000px !important;">
+        <Modal title="Quotation List" id="modalAddSupplier" style-size="min-width: 1400px !important;">
             <template #body>
-                <input type="text" v-model="formSupplierDetails.request_item_id">
+                <input type="text" v-model="itemDetails.itemId">
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="form-group">
@@ -193,12 +193,38 @@
                     </div>
                 </div>
                 <hr>
-                <h4>Quotation Details</h4>
+                <h4>Supplier List</h4>
+                <div class="row">
+                    <div class="col-sm-12 d-flex justify-content-end">
+                        <button class="btn btn-primary btn-sm" title="Add Supplier Quotation" @click="modalAddSupplierDetails.show()">Add Supplier Quotation</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 table-responsive">
+                        <DataTable
+                            class="table table-sm table-bordered table-hover wrap display"
+                            :columns="columnsSupplierQuotation"
+                            :ajax="{
+                                url: 'api/dt_get_supplier_quotation',
+                                data: function (param){
+                                    param.item_id = formSupplierDetails.request_item_id
+                                }
+                            }"
+                            ref="tableSupplierQuotation"
+                            :options="optionsSupplierQuotation"
+                        />
+                    </div>
+                </div>
+            </template>
+        </Modal>
+
+        <Modal title="Supplier Info" :modal-footer="true" modal-size="modal-md" id="modalAddSupplierDetails">
+            <template #body>
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-25">Supplier:</span>
-                            <input type="text"  id="txtSupplier" name="supplier_name" v-model="formSupplierDetails.supplier_name" class="form-control" list="supplierList">
+                            <input type="text"  id="txtSupplier" name="supplier_name" v-model="formSupplierDetails.supplier_name" class="form-control" list="supplierList" autocomplete="off">
                             <datalist id="supplierList">
                                 <option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.supplier_name"></option>
                             </datalist>
@@ -206,7 +232,7 @@
                     </div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Price:</span>
                             <select class="form-control w-25"  v-model="formSupplierDetails.currency">
@@ -215,7 +241,9 @@
                             <input type="number" name="price" class="form-control w-25" v-model="formSupplierDetails.price">
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">MOQ:</span>
                             <input type="text"  id="" class="form-control" name="moq" v-model="formSupplierDetails.moq">
@@ -223,13 +251,15 @@
                     </div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Warranty/Guarantee:</span>
                             <input type="text"  id="" class="form-control" name="warranty" v-model="formSupplierDetails.warranty">
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Lead Time:</span>
                             <input type="text"  id="" class="form-control" name="lead_time" v-model="formSupplierDetails.lead_time">
@@ -237,13 +267,15 @@
                     </div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Date Served:</span>
                             <input type="text"  id="" class="form-control" name="date_served"v-model="formSupplierDetails.date_served">
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Quotation Validity:</span>
                             <input type="text"  id="" class="form-control" name="quotation_validity" v-model="formSupplierDetails.quotation_validity">
@@ -251,13 +283,16 @@
                     </div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Terms of Payment:</span>
                             <input type="text"  id="" class="form-control" name="terms_of_payment" v-model="formSupplierDetails.terms_of_payment">
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Attachment:</span>
                             <input type="file"  id="" class="form-control" @change="onFileChange">
@@ -268,7 +303,6 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-25">Remarks:</span>
-                            <!-- <input type="text"  id="" class="form-control" name="remarks" v-model="formSupplierDetails.remarks"> -->
                              <textarea class="form-control" name="remarks" v-model="formSupplierDetails.remarks"></textarea>
                         </div>
                     </div>
@@ -300,12 +334,14 @@
     const status = ref();
     const modalAssign = ref();
     const modalSupplier = ref();
+    const modalAddSupplierDetails = ref();
     const purchaseStaff = ref([]);
     const assignedRequestDetails = reactive({
         assigned_to: '',
         request_id : null,
     });
     const itemDetails = reactive({
+        itemId: null,
         itemDesc: '',
         itemQty : 0,
         itemUom : ''
@@ -313,7 +349,7 @@
     const suppliers = ref([]);
     const currencies = ref([]);
     const formSupplierDetailsInitVal = {
-        request_item_id   : null,
+        // request_item_id   : null,
         supplier_name     : null,
         currency          : 'PHP',
         price             : null,
@@ -408,7 +444,8 @@
             title: 'Action',
             createdCell(cell){
                 cell.querySelector('.btnAddQuotation').addEventListener('click', function(){
-                    formSupplierDetails.request_item_id = this.getAttribute('data-item-id');
+                    // formSupplierDetails.request_item_id = this.getAttribute('data-item-id');
+                    itemDetails.itemId = this.getAttribute('data-item-id');
                     itemDetails.itemDesc = this.getAttribute('data-item-name');
                     itemDetails.itemQty = this.getAttribute('data-item-qty');
                     itemDetails.itemUom = this.getAttribute('data-item-uom');
@@ -431,36 +468,56 @@
             {"className": 'dt-head-left', "targets": "_all"},
             {"className": "dt-body-left", "targets": "_all"}
         ],
-        language: {
-            lengthMenu: 'Display _MENU_ items',
-            entries: {
-                _: 'items',
-                1: 'item'
-            }
-        },
+        // language: {
+        //     lengthMenu: 'Display _MENU_ items',
+        //     entries: {
+        //         _: 'items',
+        //         1: 'item'
+        //     }
+        // },
+    }
+
+    // Table variables for item supplier quotation
+    let dtSupplierQuotation;
+    const tableSupplierQuotation = ref();
+    const columnsSupplierQuotation = [
+        { data: 'supplier_name', title: 'Supplier Name'},
+        { data: 'currency', title: 'Currency' },
+        { data: 'price', title: 'Price' },
+        { data: 'moq', title: 'MOQ' },
+        { data: 'warranty', title: 'Warranty' },
+        { data: 'lead_time', title: 'Lead Time' },
+        { data: 'date_served', title: 'Date Served' },
+        { data: 'quotation_validity', title: 'Quotation Validity' },
+        { data: 'terms_of_payment', title: 'Terms of Payment' },
+        { data: 'attachment_link', title: 'Attachment' },
+        { data: 'remarks', title: 'Remarks' },
+    ]
+    const optionsSupplierQuotation = {
+        searching: false,
+        info: false,
+        paginate: false,
     }
 
     onMounted(() => {
         dtLogRequest = tableLotRequest.value.dt;
         dtItemSupplier = tableItemSupplier.value.dt;
+        dtSupplierQuotation = tableSupplierQuotation.value.dt;
         // Declare Modal to be used
         modalView.value = new Modal(document.querySelector('#viewModalRequest'), {});
         modalAssign.value = new Modal(document.querySelector('#modalAssign'), {});
         modalSupplier.value = new Modal(document.querySelector('#modalAddSupplier'), {});
+        modalAddSupplierDetails.value = new Modal(document.querySelector('#modalAddSupplierDetails'), {});
         
         document.getElementById("modalAssign").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
         })
-        document.getElementById("modalAddSupplier").addEventListener('hidden.bs.modal', event => {
+        document.getElementById("modalAddSupplierDetails").addEventListener('hidden.bs.modal', event => {
             Object.assign(formSupplierDetails, formSupplierDetailsInitVal)
         })
-
         // Getting suppliers
-        api.get('api/get_supplier').then((result)=>{
-            suppliers.value = result.data;
-        }).catch((err) => {
-            console.log(err);
-        });
+        getSupplier();
+        
         // Getting currency
         api.get('api/get_currency').then((result)=>{
             currencies.value = result.data;
@@ -503,19 +560,24 @@
     }
 
     const btnSaveQuotationDetails = () => {
+        document.getElementById('btnSaveSupplier').setAttribute('disabled', 'true');
         let formData = new FormData();
         
         Object.keys(formSupplierDetails).forEach(function(key) {
             formData.append(key, formSupplierDetails[key]);
         });
 
+        formData.append('request_item_id', itemDetails.itemId);
+    
         api.post('api/save_quotation', formData).then((result)=>{
             if(result.data.result == true){
                 Toast.fire({
                     icon: 'success',
-                    title: result.data.result
+                    title: result.data.msg
                 });
-                modalSupplier.value.hide();
+                modalAddSupplierDetails.value.hide();
+                dtSupplierQuotation.ajax.reload();
+                getSupplier();
             }
             else{
                 Toast.fire({
@@ -523,6 +585,18 @@
                     title: 'Something went wrong!'
                 });
             }
+            document.getElementById('btnSaveSupplier').removeAttribute('disabled');
+
+        }).catch((err) => {
+            console.log(err);
+            document.getElementById('btnSaveSupplier').removeAttribute('disabled');
+
+        });
+    }
+
+    const getSupplier = () => {
+        api.get('api/get_supplier').then((result)=>{
+            suppliers.value = result.data;
         }).catch((err) => {
             console.log(err);
         });

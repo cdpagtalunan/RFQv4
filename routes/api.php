@@ -4,9 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CommonController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TransactionController;
 
 /*
@@ -58,6 +60,8 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::get('dt_get_items_supplier', 'dt_get_items_supplier');
         Route::get('get_purchasing_staff', 'get_purchasing_staff');
         Route::post('assign_request', 'assign_request');
+        Route::post('save_quotation', 'save_quotation');
+        Route::get('dt_get_supplier_quotation', 'dt_get_supplier_quotation');
         
     });
 
@@ -65,7 +69,14 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::post('save_currency', 'save_currency');
         Route::get('dt_get_currency', 'dt_get_currency');
         Route::post('update_status', 'update_status');
+        Route::get('get_currency', 'get_currency');
     });
+
+    Route::controller(SupplierController::class)->group(function(){
+        Route::get('get_supplier', 'get_supplier');
+    });
+
+    
 });
 
 

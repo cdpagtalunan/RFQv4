@@ -51,4 +51,12 @@ class CurrencyRepository implements CurrencyRepositoryInterface
             return $e;
         }
     }
+
+    public function getCurrencyWithCondition(array $condition){
+        $query = Currency::query();
+        foreach ($condition as $key => $value) {
+            $query->where($key, $value);
+        }
+        return $query->get();
+    }
 }

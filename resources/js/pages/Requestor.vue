@@ -479,7 +479,7 @@
         modalItem.value.show();
     }
 
-    // Accept number only on input type number
+    // // Accept number only on input type number
     const isNumber = (evt) => {
         evt = (evt) ? evt : window.event;
         var charCode = (evt.which) ? evt.which : evt.keyCode;

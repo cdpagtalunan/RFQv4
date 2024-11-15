@@ -70,4 +70,11 @@ class CurrencyController extends Controller
         }
         return $this->CurrencyRepository->update($request->id, $data);
     }
+
+    public function get_currency(Request $request){
+        $condition = array(
+            'deleted_at' => null,
+        );
+        return $this->CurrencyRepository->getCurrencyWithCondition($condition);
+    }
 }

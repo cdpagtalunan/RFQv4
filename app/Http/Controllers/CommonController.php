@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Solid\Interfaces\RapidxRepositoryInterface;
 use App\Solid\Interfaces\UserAccessRepositoryInterface;
 
@@ -40,5 +41,9 @@ class CommonController extends Controller
             // ]);
             return $user_access;
         }
+    }
+
+    public function download(Request $request, $file){
+        return Storage::download("public/quotation_attachments/$file",);
     }
 }

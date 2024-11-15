@@ -38,8 +38,8 @@ class RequestController extends Controller
             'fk_quotation_requests_id' => $request->id,
             'deleted_at'               => null,
         );
-
-        $rfq = $this->RequestRepository->getRequestItemWithCondition($condition);
+        $relations = array();
+        $rfq = $this->RequestRepository->getRequestItemWithConditionAndRelation($condition, $relations);
 
         return DataTables::of($rfq)
         ->make(true);

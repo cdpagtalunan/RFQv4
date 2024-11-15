@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use DataTables;
 use Illuminate\Http\Request;
 use App\Http\Requests\AssignRequest;
+use App\Http\Requests\QuotationRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Solid\Interfaces\EmailRepositoryInterface;
 use App\Solid\Interfaces\RequestRepositoryInterface;
+use App\Solid\Interfaces\SupplierRepositoryInterface;
 use App\Solid\Interfaces\UserAccessRepositoryInterface;
 
 class TransactionController extends Controller
@@ -14,15 +17,18 @@ class TransactionController extends Controller
     protected $RequestRepository;
     protected $UserAccessRepository;
     protected $EmailRepository;
+    protected $SupplierRepository;
     
     public function __construct( 
         RequestRepositoryInterface $RequestRepository,
         UserAccessRepositoryInterface $UserAccessRepository,
-        EmailRepositoryInterface $EmailRepository
+        EmailRepositoryInterface $EmailRepository,
+        SupplierRepositoryInterface $SupplierRepository
     ){
-        $this->RequestRepository = $RequestRepository;
+        $this->RequestRepository    = $RequestRepository;
         $this->UserAccessRepository = $UserAccessRepository;
-        $this->EmailRepository = $EmailRepository;
+        $this->EmailRepository      = $EmailRepository;
+        $this->SupplierRepository   = $SupplierRepository;
     }
     public function dt_get_log_request(Request $request){
         $relations = array(
@@ -128,16 +134,76 @@ class TransactionController extends Controller
         $condition = array(
             'fk_quotation_requests_id' => $request->id
         );
-        $items = $this->RequestRepository->getRequestItemWithCondition($condition);
+        $relations = array('item_quotation_details');
+        $items = $this->RequestRepository->getRequestItemWithConditionAndRelation($condition, $relations);
 
         return DataTables::of($items)
         ->addColumn('action', function($items){
             $result = "";
             $result .= "<center>";
-            $result .= "<button class='btn btn-sm btn-primary btnAddSupplier' title='Add Supplier' data-item-id='{$items->id}'><i class='fas fa-file-circle-plus'></i></button>";
+            $result .= "<button class='btn btn-sm btn-primary btnAddQuotation' title='Add Supplier' 
+                data-item-id='{$items->id}'
+                data-item-name='{$items->item_name}'
+                data-item-qty='{$items->qty}'
+                data-item-uom='{$items->uom}'
+            >
+            <i class='fas fa-file-circle-plus'></i></button>";
+
             $result .= "</center>";
             return $result; 
         })
+        ->make(true);
+    }
+
+    public function save_quotation(QuotationRequest $request){
+
+        $data = $request->validated();
+        /*
+            * Manage the attachment 
+        */
+        $original_filename = null;
+        if($request->file('attachment')){
+            $original_filename = $request->file('attachment')->getClientOriginalName();
+
+            Storage::putFileAs('public/quotation_attachments', $request->attachment, $original_filename);
+        }
+        $data['attachment'] = $original_filename;
+        /*
+            * Manage the supplier
+        */
+        $supplier_condition = array(
+            'supplier_name' => trim($request->supplier_name),
+            'deleted_at' => null
+        );
+        $existing_supplier = $this->SupplierRepository->getSupplierWithCondition($supplier_condition);
+        $existing_supplier = collect($existing_supplier)->first();
+
+        if(!$existing_supplier){
+            $supplier_data = array(
+                'supplier_name' => trim($request->supplier_name),
+                'created_by'    => $_SESSION['rapidx_user_id']
+            );
+            $this->SupplierRepository->insert($supplier_data);
+        }
+
+        // * Save Item Quotation
+        $data['created_by'] = $_SESSION['rapidx_user_id'];
+        return $this->RequestRepository->insertItemQuotation($data);
+    }
+
+    public function dt_get_supplier_quotation(Request $request){
+        $condition = array(
+            'deleted_at' => null
+        );
+        $supplier_quotation = $this->RequestRepository->getSupplierQuotationWithCondition($condition);
+        
+        return DataTables::of($supplier_quotation)
+        ->addColumn('attachment_link', function($supplier_quotation){
+            $result = "";
+            $result .= "<a href='download/{$supplier_quotation->attachment}' target='_blank'>{$supplier_quotation->attachment}</a>";
+            return $result;
+        })
+        ->rawColumns(['attachment_link'])
         ->make(true);
     }
 }
