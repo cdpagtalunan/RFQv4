@@ -100,7 +100,8 @@ class RequestRepository implements RequestRepositoryInterface
             
             return response()->json([
                 'result' => true,
-                'msg' => 'Transaction Success!'
+                'msg'    => 'Transaction Success!',
+                'fn'     => 'insertItemQuotation'
             ]);
         }catch(Exemption $e){
             DB::rollback();
@@ -114,5 +115,43 @@ class RequestRepository implements RequestRepositoryInterface
             $query->where($key, $value);
         }
         return $query->get();
+    }
+
+    public function updateItemQuotation(int $id, array $data){
+        DB::beginTransaction();
+        try{
+            RequestItemQuotation::where('id', $id)
+            ->update($data);
+
+            DB::commit();
+            return response()->json([
+                'result' => true,
+                'msg'    => 'Transaction Success!',
+                'fn'     => 'updateItemQuotation'
+            ]);
+        }catch(Exemption $e){
+            DB::rollback();
+            return $e;
+        }
+    }
+
+    public function deleteQuotation(int $id){
+        DB::beginTransaction();
+        
+        try{
+            RequestItemQuotation::where('id', $id)
+            ->delete();
+            
+            DB::commit();
+
+            return response()->json([
+                'result' => true,
+                'msg' => 'Successfully Deleted!',
+                'fn' => 'deleteQuotation'
+            ]);
+        }catch(Exemption $e){
+            DB::rollback();
+            return $e;
+        }
     }
 }

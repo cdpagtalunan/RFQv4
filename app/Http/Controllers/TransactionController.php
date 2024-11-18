@@ -162,9 +162,12 @@ class TransactionController extends Controller
             * Manage the attachment 
         */
         $original_filename = null;
+        if(isset($request->id)){
+            $original_filename = $request->attachment;
+        }
         if($request->file('attachment')){
             $original_filename = $request->file('attachment')->getClientOriginalName();
-
+            
             Storage::putFileAs('public/quotation_attachments', $request->attachment, $original_filename);
         }
         $data['attachment'] = $original_filename;
@@ -185,10 +188,19 @@ class TransactionController extends Controller
             );
             $this->SupplierRepository->insert($supplier_data);
         }
-
         // * Save Item Quotation
-        $data['created_by'] = $_SESSION['rapidx_user_id'];
-        return $this->RequestRepository->insertItemQuotation($data);
+        if(isset($request->id)){
+            $data['updated_by'] = $_SESSION['rapidx_user_id'];
+            $data['updated_at'] = NOW();
+            return $this->RequestRepository->updateItemQuotation($request->id, $data);
+          
+        }
+        else{
+            $data['created_by'] = $_SESSION['rapidx_user_id'];
+            $data['created_at'] = NOW();
+            return $this->RequestRepository->insertItemQuotation($data);
+        }
+        
     }
 
     public function dt_get_supplier_quotation(Request $request){
@@ -198,12 +210,24 @@ class TransactionController extends Controller
         $supplier_quotation = $this->RequestRepository->getSupplierQuotationWithCondition($condition);
         
         return DataTables::of($supplier_quotation)
+        ->addColumn('action', function($supplier_quotation){
+            $result = "";
+            $result .= "<center class='d-flex flex-row'>";
+            $result .= "<button class='btn btn-sm btn-secondary btnEditQuotation' data-id='{$supplier_quotation->id}' data-quotation='".json_encode($supplier_quotation)."'><i class='fas fa-edit'></i></button>";
+            $result .= "<button class='btn btn-sm btn-danger btnDeleteQuotation ml-1' data-id='{$supplier_quotation->id}'><i class='fas fa-trash'></i></button>";
+            $result .= "</center>";
+            return $result;
+        })
         ->addColumn('attachment_link', function($supplier_quotation){
             $result = "";
             $result .= "<a href='download/{$supplier_quotation->attachment}' target='_blank'>{$supplier_quotation->attachment}</a>";
             return $result;
         })
-        ->rawColumns(['attachment_link'])
+        ->rawColumns(['attachment_link', 'action'])
         ->make(true);
+    }
+
+    public function delete_quotation(Request $request){
+        return $this->RequestRepository->deleteQuotation($request->id);
     }
 }

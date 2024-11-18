@@ -26,12 +26,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                  
                             </div>
-                            
                         </template>
                         <template #body>
-
                             <DataTable
                                 class="table table-sm table-bordered table-hover wrap display"
                                 :columns="columnsLogRequest"
@@ -89,30 +86,28 @@
 
             <hr>
             <!-- Viewing only -->
-            <div v-if="status == 1"> 
-                <h5>Requested Item(s)</h5>
-                <div class="row">
-                    <div class="col-md-12">
-                        <table class="table table-bordered table-sm">
-                            <thead>
+            <h5>Requested Item(s)</h5>
+            <div class="row" v-if="status == 1">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-sm">
+                        <thead>
 
-                                <tr>
-                                    <th>Item/Description</th>
-                                    <th>Quantity</th>
-                                    <th>UOM</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-if="viewRequest.request != undefined" v-for="itemDetails in viewRequest.request.item_details" :key="itemDetails.id">
-                                    <td>{{ itemDetails.item_name }}</td>
-                                    <td>{{ itemDetails.qty }}</td>
-                                    <td>{{ itemDetails.uom }}</td>
-                                    <td>{{ itemDetails.remarks }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            <tr>
+                                <th>Item/Description</th>
+                                <th>Quantity</th>
+                                <th>UOM</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="viewRequest.request != undefined" v-for="itemDetails in viewRequest.request.item_details" :key="itemDetails.id">
+                                <td>{{ itemDetails.item_name }}</td>
+                                <td>{{ itemDetails.qty }}</td>
+                                <td>{{ itemDetails.uom }}</td>
+                                <td>{{ itemDetails.remarks }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <!-- Assigning of supplier -->
@@ -169,9 +164,9 @@
             </template>
         </Modal>
 
-        <Modal title="Quotation List" id="modalAddSupplier" style-size="min-width: 1400px !important;">
+        <Modal title="Quotation List" id="modalAddSupplier" style-size="min-width: 1400px !important;" backdrop="static">
             <template #body>
-                <input type="text" v-model="itemDetails.itemId">
+                <input type="hidden" v-model="itemDetails.itemId">
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="form-group">
@@ -295,7 +290,14 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Attachment:</span>
-                            <input type="file"  id="" class="form-control" @change="onFileChange">
+                            <input type="file"  id="" class="form-control" @change="onFileChange" v-if="!formSupplierDetails.id || checkReupload == true">
+                            <input type="input"  class="form-control" v-model="formSupplierDetails.attachment" readonly v-else>
+                        </div>
+                        <div class="form-check" v-if="formSupplierDetails.id">
+                            <input class="form-check-input" type="checkbox" id="reupload" v-model="checkReupload">
+                            <label class="form-check-label" for="reupload">
+                                Reupload Attachment
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -331,6 +333,7 @@
     });
     const modalView = ref();
     const id = ref(0);
+    const checkReupload = ref(false);
     const status = ref();
     const modalAssign = ref();
     const modalSupplier = ref();
@@ -349,7 +352,7 @@
     const suppliers = ref([]);
     const currencies = ref([]);
     const formSupplierDetailsInitVal = {
-        // request_item_id   : null,
+        id                : '',
         supplier_name     : null,
         currency          : 'PHP',
         price             : null,
@@ -468,19 +471,43 @@
             {"className": 'dt-head-left', "targets": "_all"},
             {"className": "dt-body-left", "targets": "_all"}
         ],
-        // language: {
-        //     lengthMenu: 'Display _MENU_ items',
-        //     entries: {
-        //         _: 'items',
-        //         1: 'item'
-        //     }
-        // },
     }
 
     // Table variables for item supplier quotation
     let dtSupplierQuotation;
     const tableSupplierQuotation = ref();
     const columnsSupplierQuotation = [
+        { 
+            data: 'action', 
+            title: 'Action',
+            searchable: false,
+            sortable: false,
+            createdCell(cell){
+                cell.querySelector('.btnEditQuotation').addEventListener('click', function(){
+                    let supplierQuotationId = this.getAttribute('data-id');
+                    let supplierQuotation = this.getAttribute('data-quotation');
+                    let parsedData = JSON.parse(supplierQuotation);
+                    formSupplierDetails.id                 = parsedData.id
+                    formSupplierDetails.supplier_name      = parsedData.supplier_name
+                    formSupplierDetails.currency           = parsedData.currency
+                    formSupplierDetails.price              = parsedData.price
+                    formSupplierDetails.moq                = parsedData.moq
+                    formSupplierDetails.warranty           = parsedData.warranty
+                    formSupplierDetails.lead_time          = parsedData.lead_time
+                    formSupplierDetails.date_served        = parsedData.date_served
+                    formSupplierDetails.quotation_validity = parsedData.quotation_validity
+                    formSupplierDetails.terms_of_payment   = parsedData.terms_of_payment
+                    formSupplierDetails.remarks            = parsedData.remarks
+                    formSupplierDetails.attachment         = parsedData.attachment
+                    modalAddSupplierDetails.value.show();
+                })
+
+                cell.querySelector('.btnDeleteQuotation').addEventListener('click', function(){
+                    let supplierQuotationId = this.getAttribute('data-id');
+                    deleteQuotation(supplierQuotationId);
+                })
+            }
+        },
         { data: 'supplier_name', title: 'Supplier Name'},
         { data: 'currency', title: 'Currency' },
         { data: 'price', title: 'Price' },
@@ -513,7 +540,8 @@
             assignedRequestDetails.assigned_to = '';
         })
         document.getElementById("modalAddSupplierDetails").addEventListener('hidden.bs.modal', event => {
-            Object.assign(formSupplierDetails, formSupplierDetailsInitVal)
+            Object.assign(formSupplierDetails, formSupplierDetailsInitVal);
+            checkReupload.value = false;
         })
         // Getting suppliers
         getSupplier();
@@ -599,6 +627,30 @@
             suppliers.value = result.data;
         }).catch((err) => {
             console.log(err);
+        });
+    }
+
+    const deleteQuotation = (id) => {
+        api.post('api/delete_quotation', {id: id}).then((result)=>{
+            if(result.data.result){
+                Toast.fire({
+                    icon: 'success',
+                    title: result.data.msg
+                });
+                dtSupplierQuotation.ajax.reload();
+            }
+            else{
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Something went wrong.'
+                })
+            }
+        }).catch((err) => {
+            console.log(err);
+            Toast.fire({
+                icon: 'error',
+                title: 'Something went wrong.'
+            })
         });
     }
 </script>
