@@ -152,6 +152,17 @@ class TransactionController extends Controller
             $result .= "</center>";
             return $result; 
         })
+        ->addColumn('no_of_quotation', function($items){
+            $condition = array(
+                'deleted_at' => null,
+                'request_item_id' => $items->id
+            );
+            $quotations = $this->RequestRepository->getSupplierQuotationWithCondition($condition);
+            // return count($quotations);
+            return "<center><span class='badge badge-info'>".count($quotations)."</span></center>";
+            // return "<center>".count($quotations)."</center>";
+        })
+        ->rawColumns(['action', 'no_of_quotation'])
         ->make(true);
     }
 
@@ -205,6 +216,7 @@ class TransactionController extends Controller
 
     public function dt_get_supplier_quotation(Request $request){
         $condition = array(
+            'request_item_id' => $request->item_id,
             'deleted_at' => null
         );
         $supplier_quotation = $this->RequestRepository->getSupplierQuotationWithCondition($condition);
@@ -229,5 +241,59 @@ class TransactionController extends Controller
 
     public function delete_quotation(Request $request){
         return $this->RequestRepository->deleteQuotation($request->id);
+    }
+
+    public function proceed_approval(Request $request){
+        $data = array(
+            // 'status' => 3,
+            'updated_by' => $_SESSION['rapidx_user_id']
+        );
+        $update_result = $this->RequestRepository->update($request->id, $data);
+
+        if(isset($update_result)){
+             /**
+             *
+             * @param array $emailArray
+            */
+            $emailArray = array(
+                'to'            => [],
+                'cc'            => [],
+                'bcc'           => [],
+                'subject'       => '',
+                'data'          => [],
+                'emailFilePath' => '',
+                'body'          => '',
+            );
+
+            $request_conditions = array(
+                'id' => $request->id,
+            );
+            $request_relations = array(
+                'item_details',
+                'item_details.item_quotation_details',
+                'created_by_details',
+                'assigned_to_details',
+            );
+
+            $request_details = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($request_conditions, $request_relations);
+            $request_collection = collect($request_details)->first();
+
+            $
+
+            $emailArray['data'] = $request_details;
+            // $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
+            $emailArray['cc'] = explode(',',$request_collection->cc);
+            array_push($emailArray['cc'],$request_collection->created_by_details->email);
+            $emailArray['subject'] = "RFQv4 - {$request_collection->ctrl_no} Request Assigned";
+            $emailArray['emailFilePath'] = 'transaction_email';
+            $emailArray['body'] = "Please be informed that RFQ is assigned to {$request_collection->assigned_to_details->name}";
+            return $emailArray;
+
+        }
+        else{
+            return response()->json([
+                'msg' => 'something went wrong.'
+            ], 422);
+        }
     }
 }

@@ -47,87 +47,91 @@
             </div>
         </div>
 
-        <Modal title="View Request" id="viewModalRequest" modal-size="modal-lg" :modal-footer="false">
+        <Modal title="View Request" id="viewModalRequest" modal-size="modal-lg" :modal-footer="viewRequest.modalFooter">
             <template #body>
-            <div class="row">
-                <div class="col-md-3">
-                    <label>Control No.:</label>
-                    <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.ctrl_no " readonly>
+                <input type="text" :value="viewRequest.request == undefined ? '' : viewRequest.request.id">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Control No.:</label>
+                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.ctrl_no" readonly>
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-6">
-                    <label>Category:</label>
-                    <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.category_details.category_name " readonly>
-                    
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <label>Category:</label>
+                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.category_details.category_name " readonly>
+                        
+                    </div>
+                    <div class="col-md-6">
+                        <label>Date Needed:</label>
+                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.date_needed " readonly>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label>Date Needed:</label>
-                    <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.date_needed " readonly>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <label>Attachment:</label>
+                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.attachment " readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Send CC to:</label>
+                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.cc " readonly>
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-6">
-                    <label>Attachment:</label>
-                    <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.attachment " readonly>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <label> Justification:</label>
+                        
+                        <textarea class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.justification " readonly></textarea>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label>Send CC to:</label>
-                    <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.cc " readonly>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    <label> Justification:</label>
-                    
-                    <textarea class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.justification " readonly></textarea>
-                </div>
-            </div>
 
-            <hr>
-            <!-- Viewing only -->
-            <h5>Requested Item(s)</h5>
-            <div class="row" v-if="status == 1">
-                <div class="col-md-12">
-                    <table class="table table-bordered table-sm">
-                        <thead>
+                <hr>
+                <!-- Viewing only -->
+                <h5>Requested Item(s)</h5>
+                <div class="row" v-if="status == 1">
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-sm">
+                            <thead>
 
-                            <tr>
-                                <th>Item/Description</th>
-                                <th>Quantity</th>
-                                <th>UOM</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-if="viewRequest.request != undefined" v-for="itemDetails in viewRequest.request.item_details" :key="itemDetails.id">
-                                <td>{{ itemDetails.item_name }}</td>
-                                <td>{{ itemDetails.qty }}</td>
-                                <td>{{ itemDetails.uom }}</td>
-                                <td>{{ itemDetails.remarks }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                <tr>
+                                    <th>Item/Description</th>
+                                    <th>Quantity</th>
+                                    <th>UOM</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-if="viewRequest.request != undefined" v-for="itemDetails in viewRequest.request.item_details" :key="itemDetails.id">
+                                    <td>{{ itemDetails.item_name }}</td>
+                                    <td>{{ itemDetails.qty }}</td>
+                                    <td>{{ itemDetails.uom }}</td>
+                                    <td>{{ itemDetails.remarks }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <!-- Assigning of supplier -->
-            <div class="row" :class="status > 1 ? '' : 'd-none'">
-                <div class="col-md-12">
-                    <DataTable
-                        class="table table-sm table-bordered table-hover wrap display"
-                        :columns="columnsItemSupplier"
-                        :ajax="{
-                            url: 'api/dt_get_items_supplier',
-                            data: function (param){
-                                param.id = id
-                            }
-                        }"
-                        ref="tableItemSupplier"
-                        :options="optionsItemSupplier"
-                    />
+                <!-- Assigning of supplier -->
+                <div class="row" :class="status > 1 ? '' : 'd-none'">
+                    <div class="col-md-12">
+                        <DataTable
+                            class="table table-sm table-bordered table-hover wrap display"
+                            :columns="columnsItemSupplier"
+                            :ajax="{
+                                url: 'api/dt_get_items_supplier',
+                                data: function (param){
+                                    param.id = id
+                                }
+                            }"
+                            ref="tableItemSupplier"
+                            :options="optionsItemSupplier"
+                        />
+                    </div>
                 </div>
-            </div>
-        </template>
+            </template>
+            <template #footerButton>
+                <button class="btn btn-success" id="btnProceedApproval" @click="saveForApproval">Save</button>
+            </template>
         </Modal>
 
         <Modal title="Assign Purchasing Staff" id="modalAssign" :modal-footer="true">
@@ -164,7 +168,7 @@
             </template>
         </Modal>
 
-        <Modal title="Quotation List" id="modalAddSupplier" style-size="min-width: 1400px !important;" backdrop="static">
+        <Modal title="Quotation List" id="modalAddSupplier" style-size="min-width: 1400px !important;" backdrop="static" :modal-footer="false">
             <template #body>
                 <input type="hidden" v-model="itemDetails.itemId">
                 <div class="row">
@@ -202,7 +206,7 @@
                             :ajax="{
                                 url: 'api/dt_get_supplier_quotation',
                                 data: function (param){
-                                    param.item_id = formSupplierDetails.request_item_id
+                                    param.item_id = itemDetails.itemId
                                 }
                             }"
                             ref="tableSupplierQuotation"
@@ -290,7 +294,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Attachment:</span>
-                            <input type="file"  id="" class="form-control" @change="onFileChange" v-if="!formSupplierDetails.id || checkReupload == true">
+                            <input type="file"  id="fileId" class="form-control" @change="onFileChange" v-if="!formSupplierDetails.id || checkReupload == true">
                             <input type="input"  class="form-control" v-model="formSupplierDetails.attachment" readonly v-else>
                         </div>
                         <div class="form-check" v-if="formSupplierDetails.id">
@@ -326,10 +330,13 @@
     DataTable.use(DataTablesCore);
 
     const Toast = inject('Toast');
+    const Swal = inject('Swal');
+
     const reqFilterStatus = ref(2);
     const viewRequest = reactive({
         request: null,
-        status : ''
+        status : '',
+        modalFooter: false,
     });
     const modalView = ref();
     const id = ref(0);
@@ -384,6 +391,7 @@
                     // viewRequest.value = JSON.parse(request);
                     viewRequest.request = JSON.parse(request);
                     viewRequest.status = status;
+                    // viewRequest.modalFooter = false;
                     modalView.value.show()
                 });
 
@@ -409,6 +417,8 @@
                         id.value = this.getAttribute('data-id')
 
                         viewRequest.request = JSON.parse(requestDetails);
+                        viewRequest.modalFooter = true;
+
                         dtItemSupplier.draw();
                         modalView.value.show();
                         
@@ -452,10 +462,14 @@
                     itemDetails.itemDesc = this.getAttribute('data-item-name');
                     itemDetails.itemQty = this.getAttribute('data-item-qty');
                     itemDetails.itemUom = this.getAttribute('data-item-uom');
+                    dtSupplierQuotation.ajax.reload();
+                    // viewRequest.modalFooter = true;
+
                     modalSupplier.value.show();
                 })
             }
         },
+        { data:  'no_of_quotation', title: 'No. of Quotation'},
         { data: 'item_name', title: 'Item Name' },
         { data: 'qty', title: 'Quantity' },
         { data: 'uom', title: 'UOM' },
@@ -469,7 +483,8 @@
         paginate: false,
         columnDefs: [
             {"className": 'dt-head-left', "targets": "_all"},
-            {"className": "dt-body-left", "targets": "_all"}
+            {"className": "dt-body-left", "targets": "_all"},
+            // { "className": "bg-info text-dark", "targets": [ 1 ] }
         ],
     }
 
@@ -536,16 +551,21 @@
         modalSupplier.value = new Modal(document.querySelector('#modalAddSupplier'), {});
         modalAddSupplierDetails.value = new Modal(document.querySelector('#modalAddSupplierDetails'), {});
         
+        document.getElementById("viewModalRequest").addEventListener('hidden.bs.modal', event => {
+            assignedRequestDetails.assigned_to = '';
+            viewRequest.modalFooter = false;
+
+        })
         document.getElementById("modalAssign").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
         })
         document.getElementById("modalAddSupplierDetails").addEventListener('hidden.bs.modal', event => {
             Object.assign(formSupplierDetails, formSupplierDetailsInitVal);
+            document.querySelector('#fileId').value = '';
             checkReupload.value = false;
         })
         // Getting suppliers
         getSupplier();
-        
         // Getting currency
         api.get('api/get_currency').then((result)=>{
             currencies.value = result.data;
@@ -553,13 +573,6 @@
             console.log(err);
         });
     });
-
-    const getRequestDetails = (id) => {
-        api.get('api/get_request_details_by_id', {params: {id : id}}).then((result)=>{
-            console.log(result);
-        }).catch((err) => {
-        });
-    }
 
     const onAssignRequest = () => {
         api.post('api/assign_request', assignedRequestDetails).then((result)=>{
@@ -578,6 +591,10 @@
                 });
             }
         }).catch((err) => {
+            Toast.fire({
+                icon: 'error',
+                title: 'Something went wrong. Please call ISS'
+            });
             console.log(err);
         });
     }
@@ -605,6 +622,7 @@
                 });
                 modalAddSupplierDetails.value.hide();
                 dtSupplierQuotation.ajax.reload();
+                dtItemSupplier.ajax.reload();
                 getSupplier();
             }
             else{
@@ -617,6 +635,10 @@
 
         }).catch((err) => {
             console.log(err);
+            Toast.fire({
+                icon: 'error',
+                title: 'Something went wrong. Please call ISS'
+            });
             document.getElementById('btnSaveSupplier').removeAttribute('disabled');
 
         });
@@ -638,6 +660,7 @@
                     title: result.data.msg
                 });
                 dtSupplierQuotation.ajax.reload();
+                dtItemSupplier.ajax.reload();
             }
             else{
                 Toast.fire({
@@ -652,5 +675,35 @@
                 title: 'Something went wrong.'
             })
         });
+    }
+
+    const saveForApproval = () => {
+        Swal.fire({
+            title: `Are you sure?`,
+            text: `This will proceed on Logistics Manager approval`,
+            icon: 'question',
+            position: 'top',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                api.post('api/proceed_approval', {id: viewRequest.request.id}).then((result)=>{
+                    dtLogRequest.draw();
+                    modalView.value.hide();
+                    Toast.fire({
+                        icon: 'success',
+                        title: result.data.msg
+                    });
+                }).catch((err) => {
+                    console.log(err);
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Something went wrong. Please call ISS'
+                    });
+                });
+            }
+        })
     }
 </script>

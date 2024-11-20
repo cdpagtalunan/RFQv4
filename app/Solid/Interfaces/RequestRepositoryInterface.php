@@ -3,7 +3,7 @@ namespace App\Solid\Interfaces;
 
 interface RequestRepositoryInterface
 {
-    // Main Request
+    // Request
     public function insertGetId(array $data);
     public function update(int $id, array $data);
     public function getQuotationRequestWithConditionAndRelation(array $conditions, array $relations);

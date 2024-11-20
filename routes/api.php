@@ -63,6 +63,7 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::post('save_quotation', 'save_quotation');
         Route::get('dt_get_supplier_quotation', 'dt_get_supplier_quotation');
         Route::post('delete_quotation', 'delete_quotation');
+        Route::post('proceed_approval', 'proceed_approval');
         
     });
 
