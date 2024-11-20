@@ -66,6 +66,16 @@
                             <option value="2">Super User</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Approver?</label>
+                        <icons icon="fas fa-circle-info" class="ml-1" data-bs-toggle="tooltip" data-bs-placement="right" title="For logistics approval of quotation" />
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" v-model="formUser.approver">
+                            <label class="form-check-label" v-if="formUser.approver" for="flexSwitchCheckDefault">Yes</label>
+                            <label class="form-check-label" v-else for="flexSwitchCheckDefault">No</label>
+                        </div>
+                    </div>
+                   
                 </div>
             </div>
         </template>
@@ -97,11 +107,15 @@
                 if(cell.querySelector('.btnEditUser')){
 
                     cell.querySelector('.btnEditUser').addEventListener('click', function(){
+                        formUser.approver = false;
+
                         formUser.id = this.getAttribute('data-id');
                         formUser.rapidx_id = this.getAttribute('data-rapidx-id');
                         formUser.user_access = this.getAttribute('data-u-access');
                         formUser.user_type = this.getAttribute('data-u-type');
-
+                        if(this.getAttribute('data-u-approver') == 1){
+                            formUser.approver = true;
+                        }
                         modal.value.show();
                     });
                 }
@@ -159,7 +173,8 @@
         id         : '',
         rapidx_id  : '',
         user_access: 0,
-        user_type  : 0
+        user_type  : 0,
+        approver   : 0
     };
 
     const formUser = reactive({...formUserInitialVal});

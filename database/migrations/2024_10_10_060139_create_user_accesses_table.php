@@ -18,6 +18,7 @@ class CreateUserAccessesTable extends Migration
             $table->unsignedInteger('rapidx_id');
             $table->smallInteger('user_access')->default('0')->comment = "0 - Requestor, 1 - Purchasing";
             $table->smallInteger('user_type')->default('0')->comment = "0 - User, 1 - Admin, 2 - Super User";
+            $table->boolean('approver')->default('0');
             $table->string('created_by');
             $table->string('updated_by')->nullable();
             $table->softDeletes();

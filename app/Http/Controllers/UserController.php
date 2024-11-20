@@ -52,6 +52,7 @@ class UserController extends Controller
         data-rapidx-id='$user->rapidx_id'
         data-u-type='$user->user_type'
         data-u-access='$user->user_access'
+        data-u-approver='$user->approver'
         ><i class='fas fa-edit'></i></button>";
         $result .= "<button class='btn btn-sm btn-danger btnUpdateUser ml-1' data-id='$user->id' data-status='0'><i class='fas fa-trash'></i></button>";
       }

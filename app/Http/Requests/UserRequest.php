@@ -36,7 +36,8 @@ class UserRequest extends FormRequest
             'rapidx_id' => ['required',
             Rule::unique(UserAccess::class,'rapidx_id')->ignore($this->id)],
             'user_access' => 'required',
-            'user_type' => 'required'
+            'user_type' => 'required',
+            'approver' => ''
         ];
     }
 }
