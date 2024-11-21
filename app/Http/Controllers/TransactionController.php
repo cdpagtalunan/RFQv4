@@ -245,7 +245,7 @@ class TransactionController extends Controller
 
     public function proceed_approval(Request $request){
         $data = array(
-            // 'status' => 3,
+            'status' => 3,
             'updated_by' => $_SESSION['rapidx_user_id']
         );
         $update_result = $this->RequestRepository->update($request->id, $data);
@@ -273,27 +273,24 @@ class TransactionController extends Controller
                 'item_details.item_quotation_details',
                 'created_by_details',
                 'assigned_to_details',
+                'category_details'
             );
 
             $request_details = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($request_conditions, $request_relations);
-            $request_collection = collect($request_details)->first();
+            $request_details = collect($request_details)->first();
 
-            $
+            
 
             $emailArray['data'] = $request_details;
             // $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
-            $emailArray['cc'] = explode(',',$request_collection->cc);
-            array_push($emailArray['cc'],$request_collection->created_by_details->email);
-            $emailArray['subject'] = "RFQv4 - {$request_collection->ctrl_no} Request Assigned";
+            $emailArray['cc'] = explode(',',$request_details->cc);
+            array_push($emailArray['cc'],$request_details->created_by_details->email);
+            $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} For Logistics Head Approval";
             $emailArray['emailFilePath'] = 'transaction_email';
-            $emailArray['body'] = "Please be informed that RFQ is assigned to {$request_collection->assigned_to_details->name}";
-            return $emailArray;
+            $emailArray['body'] = "Please be informed that RFQ is now for logistics head approval.";
+            $this->EmailRepository->sendEmail($emailArray);
 
         }
-        else{
-            return response()->json([
-                'msg' => 'something went wrong.'
-            ], 422);
-        }
+        return $update_result;
     }
 }

@@ -30,9 +30,15 @@
                         </router-link>
                     </li>
                     <li class="nav-item has-treeview">
-                        <router-link :to="{ name: 'Transaction' }" class="nav-link">
-                            <icons icon="fas fa-file-invoice-dollar" class="nav-icon"></icons>
-                            <p>Transaction</p>
+                        <router-link :to="{ name: 'LogisticsPurchasing' }" class="nav-link">
+                            <icons icon="fas fa-clipboard-user" class="nav-icon"></icons>
+                            <p>For Quotation</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <router-link :to="{ name: 'LogisticsHead' }" class="nav-link">
+                            <icons icon="fas fa-clipboard-check" class="nav-icon"></icons>
+                            <p>Logistics Head</p>
                         </router-link>
                     </li>
 

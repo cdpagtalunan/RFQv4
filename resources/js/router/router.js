@@ -7,7 +7,8 @@ import UserManagement from '../pages/UserManagement.vue';
 import CategoryManagement from '../pages/CategoryManagement.vue';
 import CurrencyManagement from '../pages/CurrencyManagement.vue';
 import Request from '../pages/Requestor.vue';
-import Transaction from '../pages/Transaction.vue';
+import LogisticsPurchasing from '../pages/LogisticsPurchasing.vue';
+import LogisticsHead from '../pages/LogisticsHead.vue';
 
 // Interceptors
 import Forbidden from '../pages/interceptors/403.vue';
@@ -57,9 +58,14 @@ const routes = [
                 component: Request
             },
             {
-                path: 'transaction',
-                name: 'Transaction',
-                component: Transaction
+                path: 'logistics_purch',
+                name: 'LogisticsPurchasing',
+                component: LogisticsPurchasing
+            },
+            {
+                path: 'logistics_head',
+                name: 'LogisticsHead',
+                component: LogisticsHead
             },
         ],
     },
