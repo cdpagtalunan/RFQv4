@@ -2,7 +2,7 @@
     <Breadcrumbs>
         <template #breadcrumbs>
             <li class="breadcrumb-item"><a href="">Dashboard</a></li>
-            <li class="breadcrumb-item active">Transaction</li>
+            <li class="breadcrumb-item active">RFQv4</li>
         </template>
     </Breadcrumbs>
     <section class="content">
@@ -357,6 +357,7 @@
                     viewRequest.request = JSON.parse(request);
                     viewRequest.status = 0;
 
+                    dtSupplierQuotation.column(0).visible(false); // Remove action button for viewing purposes
                     dtItemSupplier.draw();
                     modalView.value.show()
                 });
@@ -370,7 +371,7 @@
                         viewRequest.request = JSON.parse(requestDetails);
                         viewRequest.modalFooter = true;
                         viewRequest.status = 1;
-
+                        dtSupplierQuotation.column(0).visible(true);
 
                         dtItemSupplier.draw();
                         modalView.value.show();
