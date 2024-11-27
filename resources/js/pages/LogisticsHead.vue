@@ -2,7 +2,7 @@
     <Breadcrumbs>
         <template #breadcrumbs>
             <li class="breadcrumb-item"><a href="">Dashboard</a></li>
-            <li class="breadcrumb-item active">Transaction</li>
+            <li class="breadcrumb-item active">RFQv4</li>
         </template>
     </Breadcrumbs>
     <section class="content">
@@ -84,35 +84,9 @@
                         <textarea class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.justification " readonly></textarea>
                     </div>
                 </div>
-
                 <hr>
-                <!-- Viewing only -->
-                <h5>Requested Item(s)</h5>
-                <div class="row" v-if="status == 1">
-                    <div class="col-md-12">
-                        <table class="table table-bordered table-sm">
-                            <thead>
-
-                                <tr>
-                                    <th>Item/Description</th>
-                                    <th>Quantity</th>
-                                    <th>UOM</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-if="viewRequest.request != undefined" v-for="itemDetails in viewRequest.request.item_details" :key="itemDetails.id">
-                                    <td>{{ itemDetails.item_name }}</td>
-                                    <td>{{ itemDetails.qty }}</td>
-                                    <td>{{ itemDetails.uom }}</td>
-                                    <td>{{ itemDetails.remarks }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <!-- Assigning of supplier -->
-                <div class="row" :class="status > 1 ? '' : 'd-none'">
+                <h4>Requested Item(s)</h4>
+                <div class="row" v-show="viewRequest.status > 1">
                     <div class="col-md-12">
                         <DataTable
                             class="table table-sm table-bordered table-hover wrap display"
@@ -128,6 +102,9 @@
                         />
                     </div>
                 </div>
+            </template>
+            <template #footerButton>
+                <button class="btn btn-success" title="Serve Quotation" id="btnServeQuotation" @click="serveQuotation">Serve</button>
             </template>
         </Modal>
 
@@ -165,6 +142,32 @@
             </template>
         </Modal>
 
+        <Modal title="Quotation Summary" id="modalQuotationSummary" modal-size="modal-xl" :modal-footer="true">
+            <template #body>
+                <div class="row">
+                    <div class="col-sm-12">
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <DataTable
+                        class="table table-sm table-bordered table-hover wrap display"
+                        :columns="columnsQuotationSummary"
+                        :ajax="{
+                            url: 'api/dt_get_quotation_summary',
+                            data: function (param){
+                                param.req_id = itemDetails.itemId
+                            }
+                        }"
+                        ref="tableQuotationSummary"
+                        :options="optionsQuotationSummary"
+                    />
+                </div>
+            </template>
+            <template #footerButton>
+                <button class="btn btn-success" id="btnSaveWinningQuotation" @click="saveWinningQuotation" title="Select Winning Supplier">Select</button>
+            </template>
+        </Modal>
     </section>
 </template>
 
@@ -179,18 +182,15 @@
     const Toast = inject('Toast');
     const Swal = inject('Swal');
 
-    const reqFilterStatus = ref(1);
+    const reqFilterStatus = ref(3);
     const viewRequest = reactive({
         request: null,
         status : '',
-        // modalFooter: false,
     });
+    const id = ref(0);
     const modalView = ref();
-    const checkReupload = ref(false);
-    const status = ref();
     const modalAssign = ref();
-    const modalSupplier = ref();
-    const modalAddSupplierDetails = ref();
+    const modalQuotationSummary = ref();
     const purchaseStaff = ref([]);
     const assignedRequestDetails = reactive({
         assigned_to: '',
@@ -202,24 +202,7 @@
         itemQty : 0,
         itemUom : ''
     })
-    const suppliers = ref([]);
-    const currencies = ref([]);
-    const formSupplierDetailsInitVal = {
-        id                : '',
-        supplier_name     : null,
-        currency          : 'PHP',
-        price             : null,
-        moq               : null,
-        warranty          : null,
-        lead_time         : null,
-        date_served       : null,
-        quotation_validity: null,
-        terms_of_payment  : null,
-        remarks           : null,
-        attachment        : null
-    }
-
-    const formSupplierDetails = reactive({...formSupplierDetailsInitVal});
+    const winningQuotation = ref(null);
 
     // tblLogRequest variables
     let dtLogRequest;
@@ -233,15 +216,15 @@
             createdCell(cell) {
                 cell.querySelector('.btnViewRequest').addEventListener('click', function(){
                     let request = this.getAttribute('data-request');
-                    status.value = this.getAttribute('data-status');
-                    // viewRequest.value = JSON.parse(request);
-                    viewRequest.request = JSON.parse(request);
-                    viewRequest.status = status.value;
+                    id.value = this.getAttribute('data-id');
+                    viewRequest.status =  this.getAttribute('data-status');
 
-                    if(status.value > 1){
-                        dtItemSupplier.ajax.reload();
-                    }
+                    viewRequest.request = JSON.parse(request);
                     modalView.value.show()
+                    if(viewRequest.status > 1){
+
+                        dtItemSupplier.draw();
+                    }
                 });
 
                 if(cell.querySelector('.btnAssignRequest')){
@@ -262,16 +245,40 @@
                 if(cell.querySelector('.btnAddSupplier')){
                     cell.querySelector('.btnAddSupplier').addEventListener('click', function(){
                         let requestDetails = this.getAttribute('data-request');
-                        status.value = this.getAttribute('data-status');
+                        // status.value = this.getAttribute('data-status');
                         id.value = this.getAttribute('data-id')
 
                         viewRequest.request = JSON.parse(requestDetails);
-                        viewRequest.modalFooter = true;
-
-                        dtItemSupplier.draw();
                         modalView.value.show();
                         
                     });
+                }
+
+                if(cell.querySelector('.btnDisapproveQuot')){
+                    cell.querySelector('.btnDisapproveQuot').addEventListener('click', function(){
+                        let id = this.getAttribute('data-id');
+                        Swal.fire({
+                            title: `Are you sure?`,
+                            text: `This will go back to assigned logistics purchasing.`,
+                            icon: 'question',
+                            position: 'top',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                api.post('api/disapprove_quotation', {'status' : 2, 'request_id': id}).then((result)=>{
+                                    if(result.data.result == true){
+                                        dtLogRequest.ajax.reload();
+                                    }
+                                }).catch((err) => {
+                                    console.log(err);
+                                });
+                            }
+                        })
+                    });
+
                 }
             },
         },
@@ -297,7 +304,6 @@
         },
     }
 
-    // Table Variables for Item/Supplier input
     let dtItemSupplier;
     const tableItemSupplier = ref();
     const columnsItemSupplier = [
@@ -311,8 +317,10 @@
                     itemDetails.itemDesc = this.getAttribute('data-item-name');
                     itemDetails.itemQty = this.getAttribute('data-item-qty');
                     itemDetails.itemUom = this.getAttribute('data-item-uom');
-                    dtSupplierQuotation.ajax.reload();
-                    modalSupplier.value.show();
+                    modalQuotationSummary.value.show();
+
+                    dtQuotationSummary = tableQuotationSummary.value.dt;
+                    dtQuotationSummary.ajax.reload();
                 })
             }
         },
@@ -335,6 +343,47 @@
         ],
     }
 
+    // Quotation Summary Table Variable
+    let dtQuotationSummary;
+    const tableQuotationSummary = ref();
+    const columnsQuotationSummary = [
+        { 
+            data: 'action',
+            title: 'Price',
+            createdCell(cell){
+                // This is to set value if logistics already selected winning quotation
+                if(cell.querySelector('input[name="radioSelect"]').getAttribute('data-selected') == 1){
+                    cell.querySelector('input[name="radioSelect"]').checked = true;
+                    winningQuotation.value = cell.querySelector('input[name="radioSelect"]').value;
+                }
+                cell.querySelector('input[name="radioSelect"]').addEventListener('change', function(){
+                    winningQuotation.value = this.value;
+                });
+            }
+        },
+        { data: 'supplier_name', title: 'Supplier Name' },
+        // { data: 'raw_price', title: 'Price' },
+        { data: 'lead_time', title: 'Lead Time' },
+        { data: 'warranty', title: 'Warranty/Guarantee' },
+        { data: 'quotation_validity', title: 'Quotation Validity' },
+        { data: 'terms_of_payment', title: 'Terms of Payment' }
+    ]
+    const optionsQuotationSummary = {
+        responsive: true,
+        serverSide: true,
+        searching: false,
+        info: false,
+        paginate: false,
+        ordering: false,
+        autoWidth: false,
+        columnDefs: [
+            {"className": 'dt-head-left', "targets": "_all"},
+            {"className": "dt-body-left", "targets": "_all"},
+            // { "className": "bg-info text-dark", "targets": [ 1 ] }
+        ],
+        
+    }
+    
     onMounted(() => {
         dtLogRequest = tableLotRequest.value.dt;
         dtItemSupplier = tableItemSupplier.value.dt;
@@ -342,15 +391,19 @@
         // Declare Modal to be used
         modalView.value = new Modal(document.querySelector('#viewModalRequest'), {});
         modalAssign.value = new Modal(document.querySelector('#modalAssign'), {});
+        modalQuotationSummary.value = new Modal(document.querySelector('#modalQuotationSummary'), {});
         
         
         document.getElementById("viewModalRequest").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
-            viewRequest.modalFooter = false;
+            // viewRequest.modalFooter = false;
 
         })
         document.getElementById("modalAssign").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
+        })
+        document.getElementById("modalQuotationSummary").addEventListener('hidden.bs.modal', event => {
+            winningQuotation.value = null;
         })
        
     });
@@ -373,45 +426,37 @@
             }
         }).catch((err) => {
             Toast.fire({
-                icon: 'error',
+            icon: 'error',
                 title: 'Something went wrong. Please call ISS'
             });
             console.log(err);
         });
     }
 
-    // For uploading file in supplier details
-    
-
-    
-
-    const saveForApproval = () => {
-        Swal.fire({
-            title: `Are you sure?`,
-            text: `This will proceed on Logistics Manager approval`,
-            icon: 'question',
-            position: 'top',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                api.post('api/proceed_approval', {id: viewRequest.request.id}).then((result)=>{
-                    dtLogRequest.draw();
-                    modalView.value.hide();
-                    Toast.fire({
-                        icon: 'success',
-                        title: result.data.msg
-                    });
-                }).catch((err) => {
-                    console.log(err);
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Something went wrong. Please call ISS'
-                    });
+    const saveWinningQuotation = () => {
+        if(winningQuotation.value == null){
+            Toast.fire({
+                icon: 'error',
+                title: 'Please select winning supplier quotation.'
+            });
+            return;
+        }
+        api.post('api/select_winning_quotation', {'req_item_quot' : winningQuotation.value, 'req_item_id': itemDetails.itemId}).then((result)=>{
+            if(result.data.result == true){
+                Toast.fire({
+                    icon: 'success',
+                    title: result.data.msg
                 });
+                modalQuotationSummary.value.hide();
+                dtItemSupplier.ajax.reload();
             }
-        })
+        }).catch((err) => {
+            Toast.fire({
+                icon: 'error',
+                title: 'Something went wrong!'
+            });
+            console.log(err);
+        });
     }
+    
 </script>

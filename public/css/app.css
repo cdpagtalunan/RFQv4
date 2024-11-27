@@ -12954,6 +12954,35 @@ div.table-responsive > div.dt-container > div.row > div[class^=col-]:last-child 
     }
   }
 
+html{
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    font-size: 0.9375rem; /*15px*/
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    color: #4b545c;
+    font-family: 'Poppins', sans-serif !important;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.theme-color{
+    color: #4b545c;
+}
+.theme-color-bg{
+    background: #4b545c;
+}
+
+
 .colored-toast.swal2-icon-success {
     background-color: #49A745 !important;
 }
@@ -12986,3 +13015,4 @@ div.table-responsive > div.dt-container > div.row > div[class^=col-]:last-child 
 .swal-wide{
     width:850px !important;
 }
+

@@ -27,6 +27,7 @@ class CreateRequestItemQuotationsTable extends Migration
             $table->string('terms_of_payment');
             $table->string('attachment')->nullable();
             $table->string('remarks');
+            $table->smallInteger('selected_quotation')->default(0)->comment = '0 - not selected, 1 - selected';
             $table->softDeletes();
             $table->string('created_by');
             $table->string('updated_by')->nullable();

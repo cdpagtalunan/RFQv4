@@ -2,7 +2,7 @@
     <Breadcrumbs >
         <template #breadcrumbs>
             <li class="breadcrumb-item"><a href="">Dashboard</a></li>
-            <li class="breadcrumb-item active">Requests</li>
+            <li class="breadcrumb-item active">RFQv4</li>
         </template>
     </Breadcrumbs>
     <section class="content">

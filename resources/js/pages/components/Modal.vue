@@ -1,12 +1,11 @@
 <template>
-    <div class="modal fade" :id="id" tabindex="-1" :data-bs-backdrop="backdrop" aria-labelledby="modalComponentIdLabel" aria-hidden="true">
+    <div class="modal fade" :id="id" tabindex="-1" :data-bs-backdrop="backdrop" aria-labelledby="modalComponentIdLabel">
         <div class="overlay" style="position: absolute;
             width: 100%;
             height: 100%;
             /* z-index: 0; */
             background-color: #000;
             opacity: .5;"
-        
         v-if="overlay == true">
 
         </div>
@@ -16,7 +15,7 @@
 
                     <h4 class="modal-title" id="modalComponentIdLabel"><icons icon="fas fa-info-circle fa-sm"></icons> {{ title }}</h4>
                     <!-- <h4 class="modal-title" :id="areaLabelledBy"><icons :icon="modalIcon"></icons> {{ title }}</h4> -->
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <slot name="body" />

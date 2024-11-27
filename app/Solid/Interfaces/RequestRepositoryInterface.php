@@ -16,6 +16,7 @@ interface RequestRepositoryInterface
     // Item Quotation
     public function insertItemQuotation(array $data);
     public function updateItemQuotation(int $id, array $data);
+    public function updateItemQuotationWithCondition(array $condition, array $data);
     public function getSupplierQuotationWithCondition(array $condition);
     public function deleteQuotation(int $id);
 }

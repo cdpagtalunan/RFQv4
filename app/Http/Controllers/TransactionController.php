@@ -54,6 +54,9 @@ class TransactionController extends Controller
                 case 2:
                     $result .= "<button class='btn btn-sm btn-info btnAddSupplier ml-1' title='Add Supplier' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' data-request='".json_encode($quotation)."' data-status='{$quotation->status}'><i class='fas fa-address-book'></i></button>";
                     break;
+                case 3:
+                    $result .= "<button class='btn btn-sm btn-danger btnDisapproveQuot ml-1' title='Disapprove Quotation' data-id='{$quotation->id}'><i class='fas fa-xmark'></i></button>";
+                    break;
                 default:
                     break;
             }
@@ -134,21 +137,38 @@ class TransactionController extends Controller
         $condition = array(
             'fk_quotation_requests_id' => $request->id
         );
-        $relations = array('item_quotation_details');
+        $relations = array(
+            'item_quotation_details',
+            'request_details'
+        );
         $items = $this->RequestRepository->getRequestItemWithConditionAndRelation($condition, $relations);
 
         return DataTables::of($items)
         ->addColumn('action', function($items){
             $result = "";
             $result .= "<center>";
-            $result .= "<button class='btn btn-sm btn-primary btnAddQuotation' title='Add Supplier' 
-                data-item-id='{$items->id}'
-                data-item-name='{$items->item_name}'
-                data-item-qty='{$items->qty}'
-                data-item-uom='{$items->uom}'
-            >
-            <i class='fas fa-file-circle-plus'></i></button>";
-
+            $collection = collect($items->item_quotation_details)->where('selected_quotation', 1);
+            // return $collection;
+            
+           
+            if(count($collection) > 0 && $items->request_details->status == 3){
+                $result .= "<button class='btn btn-sm btn-success btnAddQuotation' title='View Suppliers' 
+                    data-item-id='{$items->id}'
+                    data-item-name='{$items->item_name}'
+                    data-item-qty='{$items->qty}'
+                    data-item-uom='{$items->uom}'
+                >
+                <i class='fas fa-eye'></i></button>";
+            }
+            else{
+                $result .= "<button class='btn btn-sm btn-primary btnAddQuotation' title='View Suppliers' 
+                    data-item-id='{$items->id}'
+                    data-item-name='{$items->item_name}'
+                    data-item-qty='{$items->qty}'
+                    data-item-uom='{$items->uom}'
+                >
+                <i class='fas fa-eye'></i></button>";
+            }
             $result .= "</center>";
             return $result; 
         })
@@ -289,8 +309,90 @@ class TransactionController extends Controller
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = "Please be informed that RFQ is now for logistics head approval.";
             $this->EmailRepository->sendEmail($emailArray);
-
         }
         return $update_result;
+    }
+
+    public function dt_get_quotation_summary(Request $request){
+        $conditions = array(
+            'request_item_id' => $request->req_id
+        );
+        $quotations = $this->RequestRepository->getSupplierQuotationWithCondition($conditions);
+
+        return DataTables::of($quotations)
+        ->addColumn('action', function($quotations){
+            $result = "";
+            $result = "<input type='radio' name='radioSelect' value='{$quotations->id}' data-selected='{$quotations->selected_quotation}'/> {$quotations->currency} {$quotations->price}";
+            return $result;
+        })
+        ->rawColumns(['action', 'raw_price'])
+        ->make(true);
+    }
+
+    public function select_winning_quotation(Request $request){
+        $to_edit = array(
+            'selected_quotation' => 0
+        );
+        $conditions = array(
+            'request_item_id' => $request->req_item_id
+        );
+        $this->RequestRepository->updateItemQuotationWithCondition($conditions, $to_edit);
+
+
+        $to_edit = array(
+            'selected_quotation' => 1,
+            'updated_by' => $_SESSION['rapidx_user_id']
+        );
+        return $this->RequestRepository->updateItemQuotation($request->req_item_quot, $to_edit);
+    }
+
+    public function disapprove_quotation(Request $request){
+        $edit_array = array(
+            'status' => $request->status,
+            'updated_by' => $_SESSION['rapidx_user_id']
+        );
+        $quotationRequest =  $this->RequestRepository->update($request->request_id, $edit_array);
+        if(isset($quotationRequest)){
+            /**
+             *
+             * @param array $emailArray
+            */
+            $emailArray = array(
+                'to'            => [],
+                'cc'            => [],
+                'bcc'           => [],
+                'subject'       => '',
+                'data'          => [],
+                'emailFilePath' => '',
+                'body'          => '',
+            );
+
+            $request_conditions = array(
+                'id' => $request->request_id,
+            );
+            $request_relations = array(
+                'item_details',
+                'item_details.item_quotation_details',
+                'created_by_details',
+                'assigned_to_details',
+                'category_details'
+            );
+
+            $request_details = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($request_conditions, $request_relations);
+            $request_details = collect($request_details)->first();
+
+            
+
+            $emailArray['data'] = $request_details;
+            // $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
+            $emailArray['cc'] = explode(',',$request_details->cc);
+            array_push($emailArray['cc'],$request_details->created_by_details->email);
+            $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} Disapproved Quotation";
+            $emailArray['emailFilePath'] = 'transaction_email';
+            $emailArray['body'] = "Please be informed that RFQ has been disapproved.";
+            $this->EmailRepository->sendEmail($emailArray);
+        }
+
+        return $quotationRequest;
     }
 }

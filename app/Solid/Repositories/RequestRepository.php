@@ -154,4 +154,26 @@ class RequestRepository implements RequestRepositoryInterface
             return $e;
         }
     }
+
+    public function updateItemQuotationWithCondition(array $condition, array $data){
+        DB::beginTransaction();
+        try{
+            $query = RequestItemQuotation::query();
+            foreach ($condition as $key => $value) {
+                $query->where($key, $value);
+            }
+            $query->update($data);
+
+            DB::commit();
+
+            return response()->json([
+                'result' => true,
+                'msg' => 'Transaction Success!',
+                'fn' => 'updateItemQuotationWithCondition'
+            ]);
+        }catch(Exemption $e){
+            DB::rollback();
+            return $e;
+        }
+    }
 }

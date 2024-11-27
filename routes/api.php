@@ -64,7 +64,9 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::get('dt_get_supplier_quotation', 'dt_get_supplier_quotation');
         Route::post('delete_quotation', 'delete_quotation');
         Route::post('proceed_approval', 'proceed_approval');
-        
+        Route::get('dt_get_quotation_summary', 'dt_get_quotation_summary');
+        Route::post('select_winning_quotation', 'select_winning_quotation');
+        Route::post('disapprove_quotation', 'disapprove_quotation');
     });
 
     Route::controller(CurrencyController::class)->group(function(){

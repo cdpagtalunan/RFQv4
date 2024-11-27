@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\QuotationRequest;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RequestItem extends Model
 {
@@ -14,5 +15,9 @@ class RequestItem extends Model
 
     public function item_quotation_details(){
         return $this->hasMany(RequestItemQuotation::class,  'request_item_id', 'id');
+    }
+
+    public function request_details(){
+        return $this->hasOne(QuotationRequest::class, 'id', 'fk_quotation_requests_id');
     }
 }
