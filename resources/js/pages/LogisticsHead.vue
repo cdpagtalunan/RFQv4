@@ -268,7 +268,7 @@
                             confirmButtonText: 'Yes'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                api.post('api/disapprove_quotation', {'status' : 2, 'request_id': id}).then((result)=>{
+                                api.post('api/disapprove_quotation', {'request_id': id}).then((result)=>{
                                     if(result.data.result == true){
                                         dtLogRequest.ajax.reload();
                                     }
@@ -341,6 +341,21 @@
             {"className": "dt-body-left", "targets": "_all"},
             // { "className": "bg-info text-dark", "targets": [ 1 ] }
         ],
+        drawCallback: function( data ) {
+            /*
+                * This script is to disable or enable the serve button.
+                * disabled = true => there is a item with no selected winning quotation 
+            */
+            let dtDatas = data.json.data;
+            document.getElementById('btnServeQuotation').disabled = false;
+
+            for (let index = 0; index < dtDatas.length; index++) {
+                const element = dtDatas[index];
+                if(element['raw_sel_quotation_status'] == 0){
+                    document.getElementById('btnServeQuotation').disabled = true;
+                }
+            }
+        }
     }
 
     // Quotation Summary Table Variable
@@ -459,4 +474,28 @@
         });
     }
     
+    const serveQuotation = () => {
+        api.post('api/serve_quotation', {'id' : viewRequest.request.id}).then((result)=>{
+            if(result.data.result == true){
+                dtLogRequest.ajax.reload();
+                modalView.value.hide();
+                Toast.fire({
+                    icon: 'success',
+                    title: result.data.msg
+                });
+            }
+            else{
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Something went wrong.'
+                });
+            }
+        }).catch((err) => {
+            Toast.fire({
+                icon: 'error',
+                title: 'Something went wrong.'
+            });
+            console.log(err);
+        });
+    }
 </script>

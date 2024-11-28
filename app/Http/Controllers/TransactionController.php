@@ -182,6 +182,18 @@ class TransactionController extends Controller
             return "<center><span class='badge badge-info'>".count($quotations)."</span></center>";
             // return "<center>".count($quotations)."</center>";
         })
+        ->addColumn('raw_sel_quotation_status', function($items){
+            /*
+                * This additional column can be used in logistics head module
+                * This is to determine if the requested item have a selected winning quotation.
+            */
+            $result = 0;
+            $collection = collect($items->item_quotation_details)->where('selected_quotation', 1);
+            if(count($collection) > 0 && $items->request_details->status == 3){
+               $result = 1;
+            }
+            return $result;
+        })
         ->rawColumns(['action', 'no_of_quotation'])
         ->make(true);
     }
@@ -348,7 +360,7 @@ class TransactionController extends Controller
 
     public function disapprove_quotation(Request $request){
         $edit_array = array(
-            'status' => $request->status,
+            'status' => 2,
             'updated_by' => $_SESSION['rapidx_user_id']
         );
         $quotationRequest =  $this->RequestRepository->update($request->request_id, $edit_array);
@@ -381,8 +393,6 @@ class TransactionController extends Controller
             $request_details = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($request_conditions, $request_relations);
             $request_details = collect($request_details)->first();
 
-            
-
             $emailArray['data'] = $request_details;
             // $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
             $emailArray['cc'] = explode(',',$request_details->cc);
@@ -390,6 +400,54 @@ class TransactionController extends Controller
             $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} Disapproved Quotation";
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = "Please be informed that RFQ has been disapproved.";
+            $this->EmailRepository->sendEmail($emailArray);
+        }
+
+        return $quotationRequest;
+    }
+
+    public function serve_quotation(Request $request){
+        $edit_array = array(
+            'status' => 4,
+            'updated_by' => $_SESSION['rapidx_user_id']
+        );
+        $quotationRequest =  $this->RequestRepository->update($request->id, $edit_array);
+        if(isset($quotationRequest)){
+            /**
+             *
+             * @param array $emailArray
+            */
+            $emailArray = array(
+                'to'            => [],
+                'cc'            => [],
+                'bcc'           => [],
+                'subject'       => '',
+                'data'          => [],
+                'emailFilePath' => '',
+                'body'          => '',
+            );
+
+            $request_conditions = array(
+                'id' => $request->id,
+            );
+            $request_relations = array(
+                'item_details',
+                'item_details.item_quotation_details',
+                'created_by_details',
+                'assigned_to_details',
+                'category_details'
+            );
+
+            $request_details = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($request_conditions, $request_relations);
+            $request_details = collect($request_details)->first();
+
+            $emailArray['data'] = $request_details;
+            // $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
+            $emailArray['cc'] = explode(',',$request_details->cc);
+            array_push($emailArray['cc'],$request_details->created_by_details->email);
+            $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} Served Quotation";
+            $emailArray['emailFilePath'] = 'transaction_email';
+            $emailArray['body'] = "Please be informed that RFQ has been served and ready for EPRPO upload.";
             $this->EmailRepository->sendEmail($emailArray);
         }
 
