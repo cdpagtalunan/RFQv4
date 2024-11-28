@@ -102,6 +102,29 @@
                         />
                     </div>
                 </div>
+                <div class="row" v-show="viewRequest.status == 1">
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+
+                                <tr>
+                                    <th>Item/Description</th>
+                                    <th>Quantity</th>
+                                    <th>UOM</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-if="viewRequest.request != undefined" v-for="itemDetails in viewRequest.request.item_details" :key="itemDetails.id">
+                                    <td>{{ itemDetails.item_name }}</td>
+                                    <td>{{ itemDetails.qty }}</td>
+                                    <td>{{ itemDetails.uom }}</td>
+                                    <td>{{ itemDetails.remarks }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </template>
             <template #footerButton>
                 <button class="btn btn-success" title="Serve Quotation" id="btnServeQuotation" @click="serveQuotation">Serve</button>
@@ -146,22 +169,76 @@
             <template #body>
                 <div class="row">
                     <div class="col-sm-12">
+                        <table class="table table-sm table-bordered wrap">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" >{{ viewRequest.request == undefined ? '' : viewRequest.request.ctrl_no }}</th>
+                                    <th class="text-center" :colspan="quotationDetails.length">{{ itemDetails.itemDesc }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold">Select Quotation</td>
+                                    <td v-for="details in quotationDetails" :key="details.id" class="text-center">
+                                        <input type='radio' name='radioSelect' 
+                                        class="form-check-input"
+                                        :value='details.id'
+                                        v-model="winningQuotation"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Supplier Name</td>
+                                    <td v-for="details in quotationDetails" :key="details.id" 
+                                    :class="[viewRequest.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.supplier_name }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Price</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[viewRequest.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.currency }} {{ details.price }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Lead Time</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[viewRequest.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.lead_time }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Warranty</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[viewRequest.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.warranty }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Quotation Validity</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[viewRequest.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.quotation_validity }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Terms of Payment</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[viewRequest.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.terms_of_payment }}
+                                    </td>
+                                </tr>
 
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                <div class="table-responsive">
-                    <DataTable
-                        class="table table-sm table-bordered table-hover wrap display"
-                        :columns="columnsQuotationSummary"
-                        :ajax="{
-                            url: 'api/dt_get_quotation_summary',
-                            data: function (param){
-                                param.req_id = itemDetails.itemId
-                            }
-                        }"
-                        ref="tableQuotationSummary"
-                        :options="optionsQuotationSummary"
-                    />
                 </div>
             </template>
             <template #footerButton>
@@ -218,13 +295,19 @@
                     let request = this.getAttribute('data-request');
                     id.value = this.getAttribute('data-id');
                     viewRequest.status =  this.getAttribute('data-status');
-
+                    document.getElementById('btnServeQuotation').classList.add('d-none');
+                    document.getElementById('btnSaveWinningQuotation').classList.add('d-none');
                     viewRequest.request = JSON.parse(request);
                     modalView.value.show()
                     if(viewRequest.status > 1){
-
                         dtItemSupplier.draw();
                     }
+                    if(viewRequest.status == 3){
+                        document.getElementById('btnServeQuotation').classList.remove('d-none');
+                        document.getElementById('btnSaveWinningQuotation').classList.remove('d-none');
+                    }
+
+                   
                 });
 
                 if(cell.querySelector('.btnAssignRequest')){
@@ -305,6 +388,7 @@
     }
 
     let dtItemSupplier;
+    const quotationDetails = ref([]);
     const tableItemSupplier = ref();
     const columnsItemSupplier = [
         { 
@@ -318,9 +402,19 @@
                     itemDetails.itemQty = this.getAttribute('data-item-qty');
                     itemDetails.itemUom = this.getAttribute('data-item-uom');
                     modalQuotationSummary.value.show();
-
-                    dtQuotationSummary = tableQuotationSummary.value.dt;
-                    dtQuotationSummary.ajax.reload();
+                    api.get('api/get_quotations', {params: {id : itemDetails.itemId}}).then((result)=>{
+                        // Script Here
+                        quotationDetails.value = result.data;
+                        quotationDetails.value.forEach(element => {
+                            if(element.selected_quotation == 1){
+                                winningQuotation.value = element.id;
+                            }
+                        });
+                    }).catch((err) => {
+                        console.log(err);
+                    });
+                    // dtQuotationSummary = tableQuotationSummary.value.dt;
+                    // dtQuotationSummary.ajax.reload();
                 })
             }
         },
@@ -358,47 +452,6 @@
         }
     }
 
-    // Quotation Summary Table Variable
-    let dtQuotationSummary;
-    const tableQuotationSummary = ref();
-    const columnsQuotationSummary = [
-        { 
-            data: 'action',
-            title: 'Price',
-            createdCell(cell){
-                // This is to set value if logistics already selected winning quotation
-                if(cell.querySelector('input[name="radioSelect"]').getAttribute('data-selected') == 1){
-                    cell.querySelector('input[name="radioSelect"]').checked = true;
-                    winningQuotation.value = cell.querySelector('input[name="radioSelect"]').value;
-                }
-                cell.querySelector('input[name="radioSelect"]').addEventListener('change', function(){
-                    winningQuotation.value = this.value;
-                });
-            }
-        },
-        { data: 'supplier_name', title: 'Supplier Name' },
-        // { data: 'raw_price', title: 'Price' },
-        { data: 'lead_time', title: 'Lead Time' },
-        { data: 'warranty', title: 'Warranty/Guarantee' },
-        { data: 'quotation_validity', title: 'Quotation Validity' },
-        { data: 'terms_of_payment', title: 'Terms of Payment' }
-    ]
-    const optionsQuotationSummary = {
-        responsive: true,
-        serverSide: true,
-        searching: false,
-        info: false,
-        paginate: false,
-        ordering: false,
-        autoWidth: false,
-        columnDefs: [
-            {"className": 'dt-head-left', "targets": "_all"},
-            {"className": "dt-body-left", "targets": "_all"},
-            // { "className": "bg-info text-dark", "targets": [ 1 ] }
-        ],
-        
-    }
-    
     onMounted(() => {
         dtLogRequest = tableLotRequest.value.dt;
         dtItemSupplier = tableItemSupplier.value.dt;

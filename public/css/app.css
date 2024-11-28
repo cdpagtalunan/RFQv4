@@ -12975,6 +12975,11 @@ body {
     overflow-x: hidden;
 }
 
+.checked-ok { 
+    background: #8be082!important;
+}
+
+
 .theme-color{
     color: #4b545c;
 }

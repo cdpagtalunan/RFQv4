@@ -453,4 +453,11 @@ class TransactionController extends Controller
 
         return $quotationRequest;
     }
+    public function get_quotations(Request $request){
+        $condtion = array(
+            'request_item_id' => $request->id
+        );
+        return $this->RequestRepository->getSupplierQuotationWithCondition($condtion);
+        
+    }
 }

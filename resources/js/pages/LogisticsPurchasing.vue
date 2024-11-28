@@ -389,6 +389,7 @@
     const optionsLogRequest = {
         responsive: true,
         serverSide: true,
+        autoWidth: false,
         columnDefs: [
             {"className": 'dt-head-left', "targets": "_all"},
             {"className": "dt-body-left", "targets": "_all"}
@@ -434,6 +435,7 @@
         searching: false,
         info: false,
         paginate: false,
+        autoWidth: false,
         columnDefs: [
             {"className": 'dt-head-left', "targets": "_all"},
             {"className": "dt-body-left", "targets": "_all"},
@@ -492,6 +494,7 @@
         searching: false,
         info: false,
         paginate: false,
+        autoWidth: false,
     }
 
     onMounted(() => {
