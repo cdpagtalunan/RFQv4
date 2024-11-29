@@ -36,6 +36,11 @@
                 <label>Currency:</label>
                 <input type="" class="form-control" v-model="formCurrency.currency" id="txtCurrency" name="currency">
             </div>
+            <div class="form-group">
+                <label>Rate:</label>
+                <icons icon="fas fa-circle-info" class="ml-1" data-bs-toggle="tooltip" data-bs-placement="right" title="This will be the convertion per currency." />
+                <input type="number" class="form-control" v-model="formCurrency.rate" id="txtRate" name="rate">
+            </div>
         </template>
         <template #footerButton>
             <button class="btn btn-success" id="btnSaveCurrency" @click="saveCurrency">Save</button>
@@ -59,7 +64,8 @@
     // Form Currency Variables'
     const formCurrencyIniVal = {
         id: null,
-        currency: ''
+        currency: '',
+        rate: null
     }
     const formCurrency = reactive({...formCurrencyIniVal});
 
@@ -82,12 +88,14 @@
                 });
                 if(cell.querySelector('.btnEditCurrency')){
                     cell.querySelector('.btnEditCurrency').addEventListener('click', function(){
-                    let id = this.getAttribute('data-id');
-                    let currency = this.getAttribute('data-currency');
+                    formCurrency.id = this.getAttribute('data-id');
+                    formCurrency.currency = this.getAttribute('data-currency');
+                    formCurrency.rate = this.getAttribute('data-rate');
 
                     modalTitle.value = "Edit Currency"
-                    formCurrency.id = id;
-                    formCurrency.currency = currency;
+                    // formCurrency.id = id;
+                    // formCurrency.currency = currency;
+                    // formCurrency.rate = currency;
                     modal.value.show();
                 });
                 }
@@ -95,7 +103,8 @@
             },
         },
         { data: 'status', title: 'Status' },
-        { data: 'currency', title: 'Currency' }
+        { data: 'currency', title: 'Currency' },
+        { data: 'rate', title: 'Rate' }
    ];
     const options = {
         responsive: true,

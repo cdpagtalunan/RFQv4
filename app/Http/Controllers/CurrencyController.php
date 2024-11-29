@@ -37,7 +37,7 @@ class CurrencyController extends Controller
         ->addColumn('action', function($currency){
             $result = "";
             if(is_null($currency->deleted_at)){
-                $result .= "<button class='btn btn-sm btn-secondary btnEditCurrency' data-id='{$currency->id}' data-currency='{$currency->currency}'><i class='fas fa-edit'></i></button>";
+                $result .= "<button class='btn btn-sm btn-secondary btnEditCurrency' data-id='{$currency->id}' data-currency='{$currency->currency}' data-rate='{$currency->rate}'><i class='fas fa-edit'></i></button>";
                 $result .= "<button class='btn btn-sm btn-danger btnEditStatus ml-1' data-id='{$currency->id}' data-status='0'><i class='fas fa-ban'></i></button>";
             }
             else{
