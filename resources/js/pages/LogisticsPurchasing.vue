@@ -87,31 +87,7 @@
 
                 <hr>
                 <h5>Requested Item(s)</h5>
-                <!-- <div class="row" v-if="status == 1">
-                    <div class="col-md-12">
-                        <table class="table table-bordered table-sm">
-                            <thead>
-
-                                <tr>
-                                    <th>Item/Description</th>
-                                    <th>Quantity</th>
-                                    <th>UOM</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-if="viewRequest.request != undefined" v-for="itemDetails in viewRequest.request.item_details" :key="itemDetails.id">
-                                    <td>{{ itemDetails.item_name }}</td>
-                                    <td>{{ itemDetails.qty }}</td>
-                                    <td>{{ itemDetails.uom }}</td>
-                                    <td>{{ itemDetails.remarks }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div> -->
-                <!-- <div class="row" :class="status > 1 ? '' : 'd-none'"> -->
-                <div class="row" >
+                <div class="row">
                     <div class="col-md-12">
                         <DataTable
                             class="table table-sm table-bordered table-hover wrap display"
@@ -127,6 +103,7 @@
                         />
                     </div>
                 </div>
+                
             </template>
             <template #footerButton>
                 <button class="btn btn-success" id="btnProceedApproval" @click="saveForApproval">Save</button>
@@ -163,7 +140,7 @@
                         <button class="btn btn-primary btn-sm" title="Add Supplier Quotation" @click="modalAddSupplierDetails.show()" v-if="viewRequest.status == 1">Add Supplier Quotation</button>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" v-show="status <= 3">
                     <div class="col-sm-12 table-responsive">
                         <DataTable
                             class="table table-sm table-bordered table-hover wrap display"
@@ -177,6 +154,80 @@
                             ref="tableSupplierQuotation"
                             :options="optionsSupplierQuotation"
                         />
+                    </div>
+                </div>
+                <!-- For Served only -->
+                <div class="row" v-show="status >= 4"> 
+                    <div class="col-md-12">
+                        <table class="table table-sm table-bordered wrap">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" >{{ viewRequest.request == undefined ? '' : viewRequest.request.ctrl_no }}</th>
+                                    <th class="text-center" :colspan="quotationDetails.length">{{ itemDetails.itemDesc }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold">Select Quotation</td>
+                                    <td v-for="details in quotationDetails" :key="details.id" class="text-center">
+                                        <input type='radio' name='radioSelect' 
+                                        class="form-check-input"
+                                        :value='details.id'
+                                        v-model="winningQuotation"
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Supplier Name</td>
+                                    <td v-for="details in quotationDetails" :key="details.id" 
+                                    :class="[status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.supplier_name }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Price</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.currency }} {{ details.price }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Lead Time</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.lead_time }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Warranty</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.warranty }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Quotation Validity</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.quotation_validity }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Terms of Payment</td>
+                                    <td v-for="details in quotationDetails" :key="details.id"
+                                    :class="[status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                    >
+                                        {{ details.terms_of_payment }}
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </template>
@@ -338,6 +389,8 @@
     }
 
     const formSupplierDetails = reactive({...formSupplierDetailsInitVal});
+    const quotationDetails = ref([]);
+    const winningQuotation = ref();
 
     // tblLogRequest variables
     let dtLogRequest;
@@ -352,6 +405,7 @@
                 cell.querySelector('.btnViewRequest').addEventListener('click', function(){
                     let request = this.getAttribute('data-request');
                     status.value = this.getAttribute('data-status');
+                    console.log(status.value);
                     id.value = this.getAttribute('data-id');
                     
                     viewRequest.request = JSON.parse(request);
@@ -419,6 +473,19 @@
                     itemDetails.itemUom = this.getAttribute('data-item-uom');
                     dtSupplierQuotation.ajax.reload();
 
+                    if(status.value >= 4){
+                        api.get('api/get_quotations', {params: {id : itemDetails.itemId}}).then((result)=>{
+                            // Script Here
+                            quotationDetails.value = result.data;
+                            quotationDetails.value.forEach(element => {
+                                if(element.selected_quotation == 1){
+                                    winningQuotation.value = element.id;
+                                }
+                            });
+                        }).catch((err) => {
+                            console.log(err);
+                        });
+                    }
                     modalSupplier.value.show();
                 })
             }

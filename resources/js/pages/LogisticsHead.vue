@@ -402,6 +402,7 @@
                     itemDetails.itemQty = this.getAttribute('data-item-qty');
                     itemDetails.itemUom = this.getAttribute('data-item-uom');
                     modalQuotationSummary.value.show();
+                    
                     api.get('api/get_quotations', {params: {id : itemDetails.itemId}}).then((result)=>{
                         // Script Here
                         quotationDetails.value = result.data;
