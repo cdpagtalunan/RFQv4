@@ -201,6 +201,10 @@
                                     :class="[viewRequest.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
                                     >
                                         {{ details.currency }} {{ details.price }}
+                                        <div v-if="details.currency != 'PHP'">
+                                            <strong>{{ details.currency }} Saved rate:</strong> {{ details.rate }} <br>
+                                            <strong>{{ details.currency }} Convertion to PHP:</strong> {{ parseFloat(details.price)*parseFloat(details.rate) }}
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
