@@ -40,8 +40,15 @@ class RequestController extends Controller
         );
         $relations = array();
         $rfq = $this->RequestRepository->getRequestItemWithConditionAndRelation($condition, $relations);
-
         return DataTables::of($rfq)
+        ->addColumn('action', function($rfq){
+            $result = "";
+            $result .= "<center>";
+            $result .= "<button class='btn btn-sm btn-danger btnRemoveReqItem' data-id='{$rfq->id}' title='Remove Item'><i class='fas fa-xmark'></i></button>";
+            $result .= "</center>";
+            return $result;
+        })
+        ->rawColumns(['action'])
         ->make(true);
     }
 
@@ -101,15 +108,15 @@ class RequestController extends Controller
         date_default_timezone_set('Asia/Manila');
         $data = $request->validated();
 
-        if(isset($request->id)){ // Update
+        // if(isset($request->id)){ // Update
             
-        }
-        else{ // Create
+        // }
+        // else{ // Create
             $data['created_by'] = $_SESSION['rapidx_user_id'];
             $data['created_at'] = NOW();
             
             return $this->RequestRepository->insertItem($data);
-        }
+        // }
     }
 
     public function done_request(Request $request){
@@ -225,28 +232,7 @@ class RequestController extends Controller
         return collect($data)->first();
     }
 
-    // public function generate_control_no(Request $request){
-    //     date_default_timezone_set('Asia/Manila');
-    //     $relations = [];
-    //     $conditions = array(
-    //         'deleted_at' => null
-    //     );
-    //     $data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
-
-
-    //     $currentMonth = Carbon::now()->month;
-    //     $currentYear = Carbon::now()->format('y');
-
-    //     $collection = collect($data)->filter(function ($request) use ($currentMonth) {
-    //         return $request->created_at->month === $currentMonth;
-    //     })->sortBy([['id', 'DESC']]);
-
-    //     $new_count = count($collection) + 1;
-    //     if($new_count < 999){
-    //         $new_count = str_pad($new_count, 3, '0', STR_PAD_LEFT);
-    //     }
-    //     $new_ctrl_no = "RFQ-{$currentYear}{$currentMonth}-{$new_count}";
-
-    //     return response()->json($new_ctrl_no);
-    // }
+    public function remove_item(Request $request){
+        return $this->RequestRepository->deleteItem($request->id);
+    }
 }

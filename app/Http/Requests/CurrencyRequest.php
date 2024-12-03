@@ -31,7 +31,8 @@ class CurrencyRequest extends FormRequest
     {
         return [
             'currency' =>  ['required',
-            Rule::unique(Currency::class,'currency')->ignore($this->id)]
+            Rule::unique(Currency::class,'currency')->ignore($this->id)],
+            'rate' => ''
         ];
     }
 }

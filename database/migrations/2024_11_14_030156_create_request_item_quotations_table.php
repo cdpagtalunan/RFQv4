@@ -18,7 +18,8 @@ class CreateRequestItemQuotationsTable extends Migration
             $table->unsignedInteger('request_item_id')->comment = "from table request item";
             $table->string('supplier_name');
             $table->string('currency');
-            $table->bigInteger('price');
+            $table->float('price');
+            $table->float('rate')->nullable()->comment = "Rate is equal to the rate on currency";
             $table->string('moq');
             $table->string('warranty');
             $table->string('lead_time');

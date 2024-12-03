@@ -188,7 +188,7 @@
                 <div class="input-group-prepend w-50">
                     <span class="input-group-text w-100">UOM</span>
                 </div>
-                <input list="uom" name="uom" id="txtUom" class="form-control" v-model="formItem.uom">
+                <input list="uom" name="uom" id="txtUom" class="form-control" v-model="formItem.uom" autocomplete="off">
 
                 <datalist id="uom">
                     <option v-for="uom in uoms" :key="uom.id" :value="uom.uom_abbrv">
@@ -201,7 +201,8 @@
                 <div class="input-group-prepend w-50">
                     <span class="input-group-text w-100">Remarks</span>
                 </div>
-                <input type="text" class="form-control" id="txtItemName" name="item_name" v-model="formItem.remarks">
+                <!-- <input type="text" class="form-control" id="txtRemarks" name="remarks" v-model="formItem.remarks"> -->
+                <textarea class="form-control" name="remarks" id="txtRemarks" v-model="formItem.remarks"></textarea>
             </div>
         </template>
         <template #footerButton>
@@ -316,16 +317,11 @@
         category_id  : '',
         date_needed  : null,
         attachment   : '',
-        // attachments  : null,
         cc           : [],
         justification: null,
         checkedReupload : true
     };
     const formRequest = reactive({...formRequestInitVal});
-
-    // Request Table Variable
-    const tableRequestItem = ref();
-    let dtRequestItem
 
     // Item form variables
     const formItemInitVal = {
@@ -341,8 +337,32 @@
     const viewRequestData = ref();
 
     // Item Datatable variables
+    let dtRequestItem
+    const tableRequestItem = ref();
     const columnsRequestItem = [
-        // { data: 'id', title: 'Items' },
+        { 
+            data: 'action',
+            title: 'Action',
+            createdCell(cell){
+                cell.querySelector('.btnRemoveReqItem').addEventListener('click', function(){
+                    let requestItemId = this.getAttribute('data-id');
+                    Swal.fire({
+                        title: `Are you sure?`,
+                        text: `This will item will be deleted.`,
+                        icon: 'question',
+                        position: 'top',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            onRemoveItem(requestItemId);
+                        }
+                    })
+                });
+            }
+        },
         { data: 'item_name', title: 'Item/Description' },
         { data: 'qty', title: 'Quantity' },
         { data: 'uom', title: 'UOM' },
@@ -466,11 +486,6 @@
     });
 
     const onAddRequest = () => {
-        // api.get('api/generate_control_no').then((result)=>{
-        //     formRequest.ctrl_no = result.data;
-        // }).catch((err) => {
-        //     console.log(err);
-        // });
         formRequest.checkedReupload = true;
         modalRequest.value.show();
     }
@@ -516,6 +531,7 @@
     }
     
     const onSaveItem = () => {
+        document.getElementById('btnAddItem').disabled = true;
         formItem.fk_quotation_requests_id = formRequest.id;
         api.post('api/save_item', formItem).then((result)=>{
             if(result.data.result == true){
@@ -532,8 +548,19 @@
                     title: 'Something went wrong. <br> Please contact ISS.'
                 })
             }
+            document.getElementById('btnAddItem').disabled = false;
+
         }).catch((err) => {
             console.log(err);
+            let data = err.response.data;
+            if(err.response.status == 422){
+                Toast.fire({
+                    icon: "error",
+                    title: 'Please fill required fields!'
+                })
+                handleValidatorErrors(data.errors);
+            }
+            document.getElementById('btnAddItem').disabled = false;
         });
     }
 
@@ -597,4 +624,17 @@
         formRequest.attachment = event.target.files[0];
     }
 
+    const onRemoveItem = (requestItemId) => {
+        api.post('api/remove_item', {id: requestItemId}).then((result)=>{
+            if(result.data.result == true){
+                Toast.fire({
+                    icon : 'success',
+                    title: result.data.msg
+                });
+                dtRequestItem.draw();
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
 </script>

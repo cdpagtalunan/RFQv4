@@ -12,6 +12,7 @@ interface RequestRepositoryInterface
     public function insertItem(array $data);
     // public function getRequestItemWithCondition(array $condition);
     public function getRequestItemWithConditionAndRelation(array $conditions, array $relations);
+    public function deleteItem(int $id);
 
     // Item Quotation
     public function insertItemQuotation(array $data);

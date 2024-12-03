@@ -176,4 +176,24 @@ class RequestRepository implements RequestRepositoryInterface
             return $e;
         }
     }
+
+    public function deleteItem(int $id){
+        date_default_timezone_set('Asia/Manila');
+        DB::beginTransaction();
+        try{
+            RequestItem::where('id', $id)
+            ->delete();
+            DB::commit();
+
+            return response()->json([
+                'result' => true,
+                'msg'    => 'Successfully Deleted!',
+                'fn'     => 'deleteItem'
+            ]);
+
+        }catch(Exemption $e){
+            DB::rollback();
+            return $e;
+        }
+    }
 }

@@ -35,6 +35,7 @@ class QuotationRequest extends FormRequest
             'lead_time'          => '',
             'moq'                => '',
             'price'              => 'required',
+            'rate'               => '',
             'quotation_validity' => '',
             'remarks'            => '',
             'request_item_id'    => 'required',

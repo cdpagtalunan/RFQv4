@@ -250,10 +250,26 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Price:</span>
-                            <select class="form-control w-25"  v-model="formSupplierDetails.currency">
-                                <option v-for="currency in currencies" :key="currency.id" :value="currency.currency">{{ currency.currency }}</option>
+                            <select class="form-control w-25"  v-model="formSupplierDetails.currency" @change="checkCurrency">
+                                <option v-for="currency in currencies" :key="currency.id" :value="currency.currency" :data-rate="currency.rate">{{ currency.currency }}</option>
                             </select>
-                            <input type="number" name="price" class="form-control w-25" v-model="formSupplierDetails.price">
+                            <input type="number" name="price" class="form-control w-25" v-model="formSupplierDetails.price" @keyup="convertCurrencyToPhp">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2" v-if="showRate">
+                    <div class="col-sm-12">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">{{ formSupplierDetails.currency }} Rate to PHP:</span>
+                            <input type="text"  id="" class="form-control" name="rate" v-model="formSupplierDetails.rate" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2" v-if="showRate">
+                    <div class="col-sm-12">
+                        <div class="input-group">
+                            <span class="input-group-text w-50">Price Convertion: <icons icon="fas fa-circle-info" data-bs-toggle="tooltip" data-bs-placement="right" title="Product of price and rate"></icons></span>
+                            <input type="text"  id="" class="form-control" name="convertion" v-model="formSupplierDetails.convertion" readonly>
                         </div>
                     </div>
                 </div>
@@ -343,6 +359,7 @@
     // Import DataTable
     import DataTable from 'datatables.net-vue3';
     import DataTablesCore from 'datatables.net-bs5';
+import { icon } from '@fortawesome/fontawesome-svg-core';
     DataTable.use(DataTablesCore);
 
     const Toast = inject('Toast');
@@ -385,12 +402,15 @@
         quotation_validity: null,
         terms_of_payment  : null,
         remarks           : null,
-        attachment        : null
+        attachment        : null,
+        rate              : '',
+        convertion        : null
     }
 
     const formSupplierDetails = reactive({...formSupplierDetailsInitVal});
     const quotationDetails = ref([]);
     const winningQuotation = ref();
+    const showRate = ref(false);
 
     // tblLogRequest variables
     let dtLogRequest;
@@ -528,6 +548,7 @@
                     formSupplierDetails.supplier_name      = parsedData.supplier_name
                     formSupplierDetails.currency           = parsedData.currency
                     formSupplierDetails.price              = parsedData.price
+                    formSupplierDetails.rate               = parsedData.rate
                     formSupplierDetails.moq                = parsedData.moq
                     formSupplierDetails.warranty           = parsedData.warranty
                     formSupplierDetails.lead_time          = parsedData.lead_time
@@ -537,6 +558,11 @@
                     formSupplierDetails.remarks            = parsedData.remarks
                     formSupplierDetails.attachment         = parsedData.attachment
                     modalAddSupplierDetails.value.show();
+
+                    if(parsedData.currency != 'PHP'){
+                        showRate.value = true;
+                        convertCurrencyToPhp();
+                    }
                 })
 
                 cell.querySelector('.btnDeleteQuotation').addEventListener('click', function(){
@@ -548,6 +574,7 @@
         { data: 'supplier_name', title: 'Supplier Name'},
         { data: 'currency', title: 'Currency' },
         { data: 'price', title: 'Price' },
+        { data: 'rate', title: 'Saved Rate' },
         { data: 'moq', title: 'MOQ' },
         { data: 'warranty', title: 'Warranty' },
         { data: 'lead_time', title: 'Lead Time' },
@@ -583,6 +610,8 @@
             Object.assign(formSupplierDetails, formSupplierDetailsInitVal);
             document.querySelector('#fileId').value = '';
             checkReupload.value = false;
+            showRate.value = false;
+
         })
         // Getting suppliers
         getSupplier();
@@ -700,5 +729,24 @@
                 });
             }
         })
+    }
+
+    const checkCurrency = (event) => {
+        const selectedOption = event.target.selectedOptions[0];
+        showRate.value = false;
+        formSupplierDetails.rate = null
+
+        if(selectedOption.value != 'PHP'){
+            showRate.value = true;
+            formSupplierDetails.rate = selectedOption.getAttribute('data-rate')
+        }
+    }
+
+    const convertCurrencyToPhp = () => {
+        let convertedRate = 0;
+        if(showRate.value == true && formSupplierDetails.price != ''){
+            convertedRate = parseFloat(formSupplierDetails.price) * parseFloat(formSupplierDetails.rate);
+        }
+        formSupplierDetails.convertion = convertedRate;
     }
 </script>
