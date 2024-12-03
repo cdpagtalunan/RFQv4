@@ -83,6 +83,9 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::get('get_supplier', 'get_supplier');
     });
 
+    Route::controller(CommonController::class)->group(function(){
+        Route::get('get_stat', 'get_stat');
+    });
     
 });
 

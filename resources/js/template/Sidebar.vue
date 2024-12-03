@@ -24,6 +24,12 @@
                         </a>
                     </li>
                     <li class="nav-item has-treeview">
+                        <router-link :to="{ name: 'Dashboard' }" class="nav-link">
+                            <icons icon="fas fa-gauge" class="nav-icon"></icons>
+                            <p>Dashboard</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item has-treeview">
                         <router-link :to="{ name: 'Request' }" class="nav-link">
                             <icons icon="fas fa-file-invoice-dollar" class="nav-icon"></icons>
                             <p>Request Quotation</p>
@@ -32,7 +38,7 @@
                     <li class="nav-item has-treeview">
                         <router-link :to="{ name: 'LogisticsPurchasing' }" class="nav-link">
                             <icons icon="fas fa-clipboard-user" class="nav-icon"></icons>
-                            <p>For Quotation</p>
+                            <p>Purchasing</p>
                         </router-link>
                     </li>
                     <li class="nav-item has-treeview">
