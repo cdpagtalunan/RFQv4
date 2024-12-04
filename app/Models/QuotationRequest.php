@@ -29,4 +29,7 @@ class QuotationRequest extends Model
     public function assigned_to_details(){
         return $this->hasOne(RapidxUser::class, 'id', 'assigned_to');
     }
+    public function assigned_by_details(){
+        return $this->hasOne(RapidxUser::class, 'id', 'assigned_by');
+    }
 }

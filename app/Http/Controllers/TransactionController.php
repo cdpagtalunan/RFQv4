@@ -34,11 +34,13 @@ class TransactionController extends Controller
         $relations = array(
             'category_details',
             'item_details',
-            'created_by_details'
+            'created_by_details',
+            'assigned_by_details'
         );
         $conditions = array(
             'status'     => $request->status,
-            'deleted_at' => null
+            'deleted_at' => null,
+            'assigned_to' => $_SESSION['rapidx_user_id']
         );
         $quotation = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
 

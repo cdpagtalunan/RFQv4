@@ -35,27 +35,27 @@
                             <p>Request Quotation</p>
                         </router-link>
                     </li>
-                    <li class="nav-item has-treeview">
+                    <li class="nav-item has-treeview" v-if="uAccess == 1 || uType != 0">
                         <router-link :to="{ name: 'LogisticsPurchasing' }" class="nav-link">
                             <icons icon="fas fa-clipboard-user" class="nav-icon"></icons>
                             <p>Purchasing</p>
                         </router-link>
                     </li>
-                    <li class="nav-item has-treeview">
+                    <li class="nav-item has-treeview" v-if="uAccess == 1 && uType != 0">
                         <router-link :to="{ name: 'LogisticsHead' }" class="nav-link">
                             <icons icon="fas fa-clipboard-check" class="nav-icon"></icons>
                             <p>Logistics Head</p>
                         </router-link>
                     </li>
 
-                    <li class="nav-header font-weight-bold">Administrator</li>
-                    <li class="nav-item has-treeview">
+                    <li class="nav-header font-weight-bold" v-if="uType != 0">Administrator</li>
+                    <li class="nav-item has-treeview" v-if="uType != 0">
                         <router-link :to="{ name: 'UserManagement' }" class="nav-link">
                             <icons icon="fas fa-user" class="nav-icon"></icons>
                             <p>User Management</p>
                         </router-link>
                     </li>
-                    <li class="nav-item has-treeview">
+                    <li class="nav-item has-treeview" v-if="uType != 0">
                         <a href="#" class="nav-link">
                             <div class="d-flex justify-content-between align-items-center">
                                 <p><icons icon="fas fa-cogs"></icons> Settings</p>
@@ -79,8 +79,6 @@
                             </li>
                         </ul>
                     </li>
-                  
-                    
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
@@ -93,6 +91,8 @@
 import { onMounted, ref } from 'vue';
 
 const props = defineProps({
-    uType: {type: Number, default: 0}
+    uType: {type: Number, default: 0},
+    uAccess: {type: Number, default: 0},
+    uApprove: {type: Number, default: 0}
 })
 </script>

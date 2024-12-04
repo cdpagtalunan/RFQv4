@@ -175,7 +175,7 @@ class RequestController extends Controller
 
     public function dt_get_request(Request $request){
         $relations = [
-            'category_details'
+            'category_details',
         ];
         $conditions = array(
             'created_by' => $_SESSION['rapidx_user_id']
@@ -207,10 +207,19 @@ class RequestController extends Controller
                     $result .= "<label class='badge badge-secondary'>For Edit</label>";
                     break;
                 case 1:
-                    $result .= "<labe class='badge badge-warning text-dark'>For Purchasing Assignment</labe>";
+                    $result .= "<labe class='badge badge-warning text-dark'>Open RFQ</labe>";
+                    break;
+                case 2:
+                    $result .= "<labe class='badge badge-info'>For Purchasing Quotation</labe>";
+                    break;
+                case 3:
+                    $result .= "<labe class='badge badge-primary'>For Head Approval</labe>";
+                    break;
+                case 4:
+                    $result .= "<labe class='badge badge-success'>Served</labe>";
                     break;
                 default:
-                    $result .= "<labe class='badge badge-warning text-dark'>For Purchasing Quotation</labe>";
+                    $result .= "<labe class='badge badge-warning'>For Purchasing Quotation</labe>";
                     break;
             }
             $result .= "</center>";

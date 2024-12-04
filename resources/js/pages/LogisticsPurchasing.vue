@@ -359,7 +359,7 @@
     // Import DataTable
     import DataTable from 'datatables.net-vue3';
     import DataTablesCore from 'datatables.net-bs5';
-import { icon } from '@fortawesome/fontawesome-svg-core';
+
     DataTable.use(DataTablesCore);
 
     const Toast = inject('Toast');
@@ -459,6 +459,7 @@ import { icon } from '@fortawesome/fontawesome-svg-core';
         { data: 'date_needed', title: 'Date Needed' },
         { data: 'justification', title: 'Justification' },
         { data: 'created_by_details.name', title: 'Requested By' },
+        { data: 'assigned_by_details.name', title: 'Assigned By' },
     ];
     const optionsLogRequest = {
         responsive: true,
