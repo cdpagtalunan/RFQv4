@@ -263,7 +263,7 @@
     const Toast = inject('Toast');
     const Swal = inject('Swal');
 
-    const reqFilterStatus = ref(3);
+    const reqFilterStatus = ref(1);
     const viewRequest = reactive({
         request: null,
         status : '',

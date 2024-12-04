@@ -109,8 +109,8 @@
                 <button class="btn btn-success" id="btnProceedApproval" @click="saveForApproval">Save</button>
             </template>
         </Modal>
-
-        <Modal title="Quotation List" id="modalAddSupplier" style-size="min-width: 1400px !important;" backdrop="static" :modal-footer="false">
+        <!-- style-size="min-width: 1400px !important;" -->
+        <Modal title="Quotation List" id="modalAddSupplier" modal-size="modal-xl" backdrop="static" :modal-footer="false">
             <template #body>
                 <input type="hidden" v-model="itemDetails.itemId">
                 <div class="row">

@@ -566,30 +566,41 @@
 
     const onDoneRequest = () => {
         btnDisabled.value = true;
-        api.post('api/done_request', {id: formRequest.id}).then((result)=>{
-            if(result.data.result == true){
-                Toast.fire({
-                    icon: "success",
-                    title: result.data.msg
-                });
-                modalRequest.value.hide();
-                dtQuotationRequest.draw();
+        Swal.fire({
+            title: `Are you sure?`,
+            text: `RFQ will proceed on purchasing assignment.`,
+            icon: 'question',
+            position: 'top',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                api.post('api/done_request', {id: formRequest.id}).then((result)=>{
+                if(result.data.result == true){
+                    Toast.fire({
+                        icon: "success",
+                        title: result.data.msg
+                    });
+                    modalRequest.value.hide();
+                    dtQuotationRequest.draw();
+                }
+                else{
+                    Toast.fire({
+                        icon: "error",
+                        title: "Something went wrong. <br> Please contact ISS."
+                    })
+                }
+                btnDisabled.value = false;
+
+            }).catch((err) => {
+                console.log(err);
+                btnDisabled.value = false;
+
+            });
             }
-            else{
-                Toast.fire({
-                    icon: "error",
-                    title: "Something went wrong. <br> Please contact ISS."
-                })
-            }
-            btnDisabled.value = false;
-
-        }).catch((err) => {
-            console.log(err);
-            btnDisabled.value = false;
-
-        });
-
-
+        })
     }
 
     const getRequestDetailsById = (id) => {

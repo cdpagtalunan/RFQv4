@@ -40,8 +40,10 @@ class TransactionController extends Controller
         $conditions = array(
             'status'     => $request->status,
             'deleted_at' => null,
-            'assigned_to' => $_SESSION['rapidx_user_id']
         );
+        if($request->status == 2){
+            $conditions['assigned_to'] = $_SESSION['rapidx_user_id'];
+        }
         $quotation = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
 
         return DataTables::of($quotation)
