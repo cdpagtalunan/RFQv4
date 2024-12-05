@@ -411,6 +411,7 @@
     const quotationDetails = ref([]);
     const winningQuotation = ref();
     const showRate = ref(false);
+    const shouldHaveDrawCallback = ref(false);
 
     // tblLogRequest variables
     let dtLogRequest;
@@ -434,6 +435,7 @@
                     dtSupplierQuotation.column(0).visible(false); // Remove action button for viewing purposes
                     dtItemSupplier.draw();
                     modalView.value.show()
+                    shouldHaveDrawCallback.value = false;
                 });
 
                 if(cell.querySelector('.btnAddSupplier')){
@@ -449,6 +451,8 @@
 
                         dtItemSupplier.draw();
                         modalView.value.show();
+                        shouldHaveDrawCallback.value = true;
+
                         
                     });
                 }
@@ -529,6 +533,25 @@
             {"className": "dt-body-left", "targets": "_all"},
             // { "className": "bg-info text-dark", "targets": [ 1 ] }
         ],
+        drawCallback: function( data ) {
+            /*
+                * This script is to disable or enable the serve button.
+                * disabled = true => there is a item with no selected winning quotation 
+            */
+            let dtDatas = data.json.data;
+            console.log(dtDatas);
+            if(shouldHaveDrawCallback.value){
+                if(dtDatas.length != 0){
+                    document.getElementById('btnProceedApproval').disabled = false;
+                    for (let index = 0; index < dtDatas.length; index++) {
+                        const data = dtDatas[index];
+                        if(data['item_quotation_details'].length == 0){
+                            document.getElementById('btnProceedApproval').disabled = true;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Table variables for item supplier quotation
