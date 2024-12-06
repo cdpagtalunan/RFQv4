@@ -78,6 +78,14 @@
                                 </router-link>
                             </li>
                         </ul>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item ">
+                                <router-link :to="{ name: 'UomManagement' }" class="nav-link">
+                                    <icons icon="far fa-circle" class="nav-icon"></icons>
+                                    <p>UOM </p>
+                                </router-link>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </nav>

@@ -54,6 +54,9 @@ Route::middleware('checkSessionExist')->group(function(){
 
     Route::controller(UomController::class)->group(function(){
         Route::get('get_uom', 'get_uom');
+        Route::get('dt_get_uom', 'dt_get_uom');
+        Route::post('save_uom', 'save_uom');
+        Route::post('change_uom_status', 'change_uom_status');
     });
 
     Route::controller(TransactionController::class)->group(function(){

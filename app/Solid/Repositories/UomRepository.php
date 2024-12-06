@@ -20,4 +20,39 @@ class UomRepository implements UomRepositoryInterface
         }
         return $query->get();
     }
+
+    public function insert(array $data){
+        DB::beginTransaction();
+        
+        try{
+            Uom::insert($data);
+            
+            DB::commit();
+            return response()->json([
+                'result' => true,
+                'msg' => 'Transaction Success!',
+            ]);
+        }catch(Exemption $e){
+            DB::rollback();
+            return $e;
+        }
+       
+    }
+
+    public function update(int $id, array $data){
+        DB::beginTransaction();
+        try{
+            Uom::where('id', $id)
+            ->update($data);
+            
+            DB::commit();
+            return response()->json([
+                'result' => true,
+                'msg' => 'Transaction Success!',
+            ]);
+        }catch(Exemption $e){
+            DB::rollback();
+            return $e;
+        }
+    }
 }

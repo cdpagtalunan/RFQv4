@@ -6,6 +6,7 @@ import Dashboard from '../pages/Dashboard.vue';
 import UserManagement from '../pages/UserManagement.vue';
 import CategoryManagement from '../pages/CategoryManagement.vue';
 import CurrencyManagement from '../pages/CurrencyManagement.vue';
+import UomManagement from '../pages/UomManagement.vue';
 import Request from '../pages/Requestor.vue';
 import LogisticsPurchasing from '../pages/LogisticsPurchasing.vue';
 import LogisticsHead from '../pages/LogisticsHead.vue';
@@ -51,6 +52,11 @@ const routes = [
                 path: 'currency',
                 name: 'CurrencyManagement',
                 component: CurrencyManagement
+            },
+            {
+                path: 'uom',
+                name: 'UomManagement',
+                component: UomManagement
             },
             {
                 path: 'request',
