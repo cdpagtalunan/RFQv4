@@ -212,7 +212,7 @@
                     icon: 'error',
                     title: 'Something went wrong!'
                 });
-            }
+            }z
         }).catch((err) => {
             console.log(err);
         });
