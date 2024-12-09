@@ -55,7 +55,27 @@
                             <p>User Management</p>
                         </router-link>
                     </li>
+                    <li class="nav-header font-weight-bold" v-if="uType != 0">Settings</li>
+
                     <li class="nav-item has-treeview" v-if="uType != 0">
+                        <router-link :to="{ name: 'CategoryManagement' }" class="nav-link">
+                            <icons icon="fas fa-cog" class="nav-icon"></icons>
+                            <p>Category </p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item has-treeview" v-if="uType != 0">
+                        <router-link :to="{ name: 'CurrencyManagement' }" class="nav-link">
+                            <icons icon="fas fa-cog" class="nav-icon"></icons>
+                            <p>Currency </p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item has-treeview" v-if="uType != 0">
+                        <router-link :to="{ name: 'UomManagement' }" class="nav-link">
+                            <icons icon="fas fa-cog" class="nav-icon"></icons>
+                            <p>UOM </p>
+                        </router-link>
+                    </li>
+                    <!-- <li class="nav-item has-treeview" v-if="uType != 0">
                         <a href="#" class="nav-link">
                             <div class="d-flex justify-content-between align-items-center">
                                 <p><icons icon="fas fa-cogs"></icons> Settings</p>
@@ -86,7 +106,7 @@
                                 </router-link>
                             </li>
                         </ul>
-                    </li>
+                    </li> -->
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

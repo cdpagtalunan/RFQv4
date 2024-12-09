@@ -250,8 +250,7 @@
             </div>
 
             <hr>
-
-            <div class="row">
+            <div class="row" v-show="!statusForDatatable">
                 <div class="col-md-12">
                     <table class="table table-bordered table-sm">
                         <thead>
@@ -273,8 +272,125 @@
                     </table>
                 </div>
             </div>
+            <div class="row" v-show="statusForDatatable">
+                    <div class="col-md-12">
+                        <DataTable
+                            class="table table-sm table-bordered table-hover wrap display"
+                            :columns="columnsItemSupplier"
+                            :ajax="{
+                                url: 'api/dt_get_items_supplier',
+                                data: function (param){
+                                    param.id = viewRequestData == undefined ? '' : viewRequestData.id
+                                }
+                            }"
+                            ref="tableItemSupplier"
+                            :options="optionsItemSupplier"
+                        />
+                    </div>
+                </div>
         </template>
-     </Modal>
+    </Modal>
+
+    <Modal title="Quotation List" id="modalAddSupplier" modal-size="modal-xl" backdrop="static" :modal-footer="false">
+        <template #body>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Item</label>
+                        <input type="text" class="form-control" readonly v-model="itemDetails.itemDesc">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="text" class="form-control" readonly v-model="itemDetails.itemQty">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>UOM</label>
+                        <input type="text" class="form-control" readonly v-model="itemDetails.itemUom">
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <h4>Supplier List</h4>
+            <!-- For Served only -->
+            <div class="row"> 
+                <div class="col-md-12">
+                    <table class="table table-sm table-bordered wrap">
+                        <thead>
+                            <tr>
+                                <th class="text-center" >{{ viewRequestData == undefined ? '' : viewRequestData.ctrl_no }}</th>
+                                <th class="text-center" :colspan="quotationDetails.length">{{ itemDetails.itemDesc }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold">Select Quotation</td>
+                                <td v-for="details in quotationDetails" :key="details.id" class="text-center">
+                                    <input type='radio' name='radioSelect' 
+                                    class="form-check-input"
+                                    :value='details.id'
+                                    v-model="winningQuotation"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Supplier Name</td>
+                                <td v-for="details in quotationDetails" :key="details.id" 
+                                :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                >
+                                    {{ details.supplier_name }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Price</td>
+                                <td v-for="details in quotationDetails" :key="details.id"
+                                :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                >
+                                    {{ details.currency }} {{ details.price }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Lead Time</td>
+                                <td v-for="details in quotationDetails" :key="details.id"
+                                :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                >
+                                    {{ details.lead_time }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Warranty</td>
+                                <td v-for="details in quotationDetails" :key="details.id"
+                                :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                >
+                                    {{ details.warranty }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Quotation Validity</td>
+                                <td v-for="details in quotationDetails" :key="details.id"
+                                :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                >
+                                    {{ details.quotation_validity }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Terms of Payment</td>
+                                <td v-for="details in quotationDetails" :key="details.id"
+                                :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                >
+                                    {{ details.terms_of_payment }}
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+    </Modal>
 </template>
 
 <script setup>
@@ -302,12 +418,17 @@
     const modalRequest = ref();
     const modalItem = ref();
     const modalViewRequest = ref();
+    const modalSupplier = ref();
     const minDate = ref();
     const category = ref([]);
     const rapidxUser = ref([]);
     const uoms = ref([]);
     const wizard = ref();
     const btnDisabled = ref(false);
+    const quotationDetails = ref([]);
+    const winningQuotation = ref();
+    const statusForDatatable = ref(false);
+
     // const formRequest.checkedReupload = ref(true);
 
     // Request Form Variables
@@ -426,6 +547,86 @@
             {"className": "dt-body-left", "targets": "_all"}
         ]
     }
+
+    /**
+        * Datatable of served items 
+    */
+    const itemDetails = reactive({
+        itemId: null,
+        itemDesc: '',
+        itemQty : 0,
+        itemUom : ''
+    })
+    let dtItemSupplier;
+    const tableItemSupplier = ref();
+    const columnsItemSupplier = [
+        { 
+            data: 'action', 
+            title: 'Action',
+            createdCell(cell){
+                cell.querySelector('.btnAddQuotation').addEventListener('click', function(){
+                    // formSupplierDetails.request_item_id = this.getAttribute('data-item-id');
+                    itemDetails.itemId = this.getAttribute('data-item-id');
+                    itemDetails.itemDesc = this.getAttribute('data-item-name');
+                    itemDetails.itemQty = this.getAttribute('data-item-qty');
+                    itemDetails.itemUom = this.getAttribute('data-item-uom');
+                    // dtSupplierQuotation.ajax.reload();
+
+                    // if(status.value >= 4){
+                        api.get('api/get_quotations', {params: {id : this.getAttribute('data-item-id')}}).then((result)=>{
+                            // Script Here
+                            quotationDetails.value = result.data;
+                            quotationDetails.value.forEach(element => {
+                                if(element.selected_quotation == 1){
+                                    winningQuotation.value = element.id;
+                                }
+                            });
+                        }).catch((err) => {
+                            console.log(err);
+                        });
+                    // }
+                    modalSupplier.value.show();
+                })
+            }
+        },
+        { data:  'no_of_quotation', title: 'No. of Quotation'},
+        { data: 'item_name', title: 'Item Name' },
+        { data: 'qty', title: 'Quantity' },
+        { data: 'uom', title: 'UOM' },
+        { data: 'remarks', title: 'Remarks' },
+    ];
+    const optionsItemSupplier = {
+        responsive: true,
+        serverSide: true,
+        searching: false,
+        info: false,
+        paginate: false,
+        autoWidth: false,
+        columnDefs: [
+            {"className": 'dt-head-left', "targets": "_all"},
+            {"className": "dt-body-left", "targets": "_all"},
+            // { "className": "bg-info text-dark", "targets": [ 1 ] }
+        ],
+        // drawCallback: function( data ) {
+        //     /*
+        //         * This script is to disable or enable the serve button.
+        //         * disabled = true => there is a item with no selected winning quotation 
+        //     */
+        //     let dtDatas = data.json.data;
+        //     console.log(dtDatas);
+        //     if(shouldHaveDrawCallback.value){
+        //         if(dtDatas.length != 0){
+        //             document.getElementById('btnProceedApproval').disabled = false;
+        //             for (let index = 0; index < dtDatas.length; index++) {
+        //                 const data = dtDatas[index];
+        //                 if(data['item_quotation_details'].length == 0){
+        //                     document.getElementById('btnProceedApproval').disabled = true;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+    }
     onBeforeMount(() => {
 
         api.get('api/get_category').then((result)=>{
@@ -456,6 +657,8 @@
         modalRequest.value = new Modal(document.querySelector('#modalRequestId'), {})
         modalItem.value = new Modal(document.querySelector('#modalItemId'), {})
         modalViewRequest.value = new Modal(document.querySelector('#modalViewRequest'), {})
+        modalSupplier.value = new Modal(document.querySelector('#modalAddSupplier'), {});
+
 
         // Reset form after modal is closed
         document.getElementById("modalItemId").addEventListener('hidden.bs.modal', event => {
@@ -624,6 +827,12 @@
     const getRequestDetailsForView = (id) => {
         api.get('api/get_request_details_by_id', {params: {id : id}}).then((result)=>{
             viewRequestData.value = result.data;
+            statusForDatatable.value = false;
+            if(result.data.status == 4){
+                dtItemSupplier = tableItemSupplier.value.dt;
+                statusForDatatable.value = true;
+                dtItemSupplier.ajax.reload();
+            }
             modalViewRequest.value.show();
 
         }).catch((err) => {
