@@ -221,20 +221,20 @@ class TransactionController extends Controller
         /*
             * Manage the supplier
         */
-        $supplier_condition = array(
-            'supplier_name' => trim($request->supplier_name),
-            'deleted_at' => null
-        );
-        $existing_supplier = $this->SupplierRepository->getSupplierWithCondition($supplier_condition);
-        $existing_supplier = collect($existing_supplier)->first();
+        // $supplier_condition = array(
+        //     'supplier_name' => trim($request->supplier_name),
+        //     'deleted_at' => null
+        // );
+        // $existing_supplier = $this->SupplierRepository->getSupplierWithCondition($supplier_condition);
+        // $existing_supplier = collect($existing_supplier)->first();
 
-        if(!$existing_supplier){
-            $supplier_data = array(
-                'supplier_name' => trim($request->supplier_name),
-                'created_by'    => $_SESSION['rapidx_user_id']
-            );
-            $this->SupplierRepository->insert($supplier_data);
-        }
+        // if(!$existing_supplier){
+        //     $supplier_data = array(
+        //         'supplier_name' => trim($request->supplier_name),
+        //         'created_by'    => $_SESSION['rapidx_user_id']
+        //     );
+        //     $this->SupplierRepository->insert($supplier_data);
+        // }
         // * Save Item Quotation
         if(isset($request->id)){
             $data['updated_by'] = $_SESSION['rapidx_user_id'];

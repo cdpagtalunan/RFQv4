@@ -237,13 +237,26 @@
             <template #body>
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="input-group">
-                            <span class="input-group-text w-25">Supplier:</span>
-                            <input type="text"  id="txtSupplier" name="supplier_name" v-model="formSupplierDetails.supplier_name" class="form-control" list="supplierList" autocomplete="off">
+                        <!-- <div class="input-group"> -->
+                            <label>Supplier:</label>
+
+                            <VueMultiselect
+                                v-model="formSupplierDetails.supplier_name"
+                                label="name"
+                                placeholder="Select one"
+                                :options="suppliers.map(option => option.supplier_name)"
+                                :custom-label="labelValue => suppliers.find(x => x.supplier_name == labelValue).supplier_name"
+                                :searchable="true"
+                                :allow-empty="true">
+                                <template #noResult>
+                                    No Supplier Found. Register Supplier on EPRPO.
+                                </template>
+                            </VueMultiselect>
+                            <!-- <input type="text"  id="txtSupplier" name="supplier_name" v-model="formSupplierDetails.supplier_name" class="form-control" list="supplierList" autocomplete="off">
                             <datalist id="supplierList">
                                 <option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.supplier_name"></option>
-                            </datalist>
-                        </div>
+                            </datalist> -->
+                        <!-- </div> -->
                     </div>
                 </div>
                 <div class="row mt-2">

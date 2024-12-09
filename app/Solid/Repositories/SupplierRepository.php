@@ -21,19 +21,19 @@ class SupplierRepository implements SupplierRepositoryInterface
         return $query->get();
     }
 
-    public function insert(array $data){
-        DB::beginTransaction();
-        try{
-            Supplier::insert($data);
-            DB::commit();
+    // public function insert(array $data){
+    //     DB::beginTransaction();
+    //     try{
+    //         Supplier::insert($data);
+    //         DB::commit();
 
-            return response()->json([
-                'result' => true,
-                'msg' => 'Transaction Success!'
-            ]);
-        }catch(Exemption $e){
-            DB::rollback();
-            return $e;
-        }
-    }
+    //         return response()->json([
+    //             'result' => true,
+    //             'msg' => 'Transaction Success!'
+    //         ]);
+    //     }catch(Exemption $e){
+    //         DB::rollback();
+    //         return $e;
+    //     }
+    // }
 }

@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Supplier extends Model
 {
     use HasFactory;
-    protected $table = "suppliers";
-    protected $connection = "mysql";
+    protected $table = "supplier";
+    protected $connection = "mysql_eprpo";
 }

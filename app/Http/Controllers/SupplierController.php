@@ -15,7 +15,7 @@ class SupplierController extends Controller
 
     public function get_supplier(Request $request){
         $condition = array(
-            'deleted_at' => null,
+            'active_flag' => 1,
         );
         return $this->SupplierRepository->getSupplierWithCondition($condition);
     }

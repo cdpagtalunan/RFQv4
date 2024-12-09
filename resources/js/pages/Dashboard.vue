@@ -6,7 +6,7 @@
                     <div class="small-box bg-gradient-warning mt-3">
                         <div class="inner">
                             <h3>{{ dashboardStat.open }}</h3>
-                            <h5>Open RFQ</h5>
+                            <h5>For Assign</h5>
                         </div>
                         <div class="icon">
                             <!-- <i class="fas fa-user-plus"></i> -->
