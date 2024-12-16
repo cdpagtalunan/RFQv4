@@ -155,21 +155,36 @@ class RequestRepository implements RequestRepositoryInterface
         }
     }
 
-    public function updateItemQuotationWithCondition(array $condition, array $data){
+    public function updateItemQuotationWithConditionAndRelation(array $condition, array $data, array $relation){
         DB::beginTransaction();
         try{
             $query = RequestItemQuotation::query();
-            foreach ($condition as $key => $value) {
-                $query->where($key, $value);
+            if (!empty($relation)) {
+                $query->with($relation);
             }
-            $query->update($data);
 
+            if (!empty($condition)) {
+                foreach ($condition as $key => $value) {
+                    // Handle nested relations for condition
+                    if (str_contains($key, '.')) {
+                        [$relation, $field] = explode('.', $key, 2);
+                        $query->whereHas($relation, function ($query) use ($field, $value) {
+                            $query->where($field, $value);
+                        });
+                    } else {
+                        $query->where($key, $value);
+                    }
+                }
+            }
+
+            $query->update($data);
             DB::commit();
 
             return response()->json([
                 'result' => true,
                 'msg' => 'Transaction Success!',
-                'fn' => 'updateItemQuotationWithCondition'
+                'fn' => 'updateItemQuotationWithCondition',
+                'test' => $query
             ]);
         }catch(Exemption $e){
             DB::rollback();

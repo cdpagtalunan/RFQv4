@@ -73,6 +73,7 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::post('disapprove_quotation', 'disapprove_quotation');
         Route::post('serve_quotation', 'serve_quotation');
         Route::get('get_quotations', 'get_quotations');
+        Route::get('get_request_details', 'get_request_details');
     });
 
     Route::controller(CurrencyController::class)->group(function(){

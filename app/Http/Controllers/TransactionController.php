@@ -352,7 +352,8 @@ class TransactionController extends Controller
         $conditions = array(
             'request_item_id' => $request->req_item_id
         );
-        $this->RequestRepository->updateItemQuotationWithCondition($conditions, $to_edit);
+        $relation = array();
+        $this->RequestRepository->updateItemQuotationWithConditionAndRelation($conditions, $to_edit, $relation);
 
 
         $to_edit = array(
@@ -411,6 +412,27 @@ class TransactionController extends Controller
     }
 
     public function serve_quotation(Request $request){
+        // return $request->all();
+        $to_edit = array(
+            'selected_quotation' => 0
+        );
+        $conditions = array(
+            // 'request_item_id' => $request->req_item_id,
+            'request_item_details.fk_quotation_requests_id' => $request->id
+        );
+        $relations = array(
+            'request_item_details'
+        );
+        $this->RequestRepository->updateItemQuotationWithConditionAndRelation($conditions, $to_edit, $relations);
+
+        $to_edit = array(
+            'selected_quotation' => 1,
+            'updated_by' => $_SESSION['rapidx_user_id']
+        );
+        foreach ($request->selected_winner as $sel_winner) {
+            $this->RequestRepository->updateItemQuotation($sel_winner, $to_edit);
+        }
+
         $edit_array = array(
             'status' => 4,
             'updated_by' => $_SESSION['rapidx_user_id']
@@ -446,9 +468,12 @@ class TransactionController extends Controller
             $request_details = collect($request_details)->first();
 
             $emailArray['data'] = $request_details;
-            // $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
-            $emailArray['cc'] = explode(',',$request_details->cc);
-            array_push($emailArray['cc'],$request_details->created_by_details->email);
+            $emailArray['to'] = $request_details->created_by_details->email;
+            if(isset($request_details->cc)){
+                $emailArray['cc'] = explode(',',$request_details->cc);
+            }
+            array_push($emailArray['cc'],$request_details->assigned_to_details->email);
+
             $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} Served Quotation";
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = "Please be informed that RFQ has been served and ready for EPRPO upload.";
@@ -463,5 +488,53 @@ class TransactionController extends Controller
         );
         return $this->RequestRepository->getSupplierQuotationWithCondition($condtion);
         
+    }
+
+    public function get_request_details(Request $request){
+        $relations = [
+            'item_details',
+            'item_details.item_quotation_details',
+            'category_details'
+        ];
+        $conditions = array(
+            'id' => $request->id
+        );
+
+        $data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
+
+        /**
+            * Collection to group the supplier names 
+        */
+        $supplierNames = collect($data)
+        ->pluck('item_details') // Get the item details from the data
+        ->flatten(1) // Flatten the nested array
+        ->pluck('item_quotation_details') // Get the item_quotation_details for each item
+        ->flatten(1) // Flatten the nested array
+        ->pluck('supplier_name') // Get the supplier names
+        ->groupBy(function ($supplier) {
+            return $supplier; // Group by supplier name
+        })
+        ->keys();
+
+
+        $item_details = collect($data)
+        ->pluck('item_details')
+        ->flatten(1);
+
+        $unique_other_details_per_supplier = collect($data)
+        ->pluck('item_details') // Get the item details from the data
+        ->flatten(1) // Flatten the nested array
+        ->pluck('item_quotation_details') // Get the item_quotation_details for each item
+        ->flatten(1) // Flatten the nested array
+        ->unique('lead_time')
+        ->groupBy('supplier_name')
+        ->toArray();
+
+        return response()->json([
+            'rfqDetails'     => $data,
+            'supplierNames' => $supplierNames,
+            'itemDetails'   => $item_details,
+            'uniqueOtherDetailsPerSupplier' => $unique_other_details_per_supplier
+        ]);
     }
 }

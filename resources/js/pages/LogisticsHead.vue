@@ -18,7 +18,7 @@
                                             <span class="input-group-text w-100">Status</span>
                                         </div>
                                         <select id="selStatus" class="form-control" v-model="reqFilterStatus" @change="dtLogRequest.draw()">
-                                            <option value="1">Open</option>
+                                            <option value="1">For Assignment</option>
                                             <!-- <option value="2">For Quotation</option> -->
                                             <option value="3">For Approval</option>
                                             <option value="4">Served</option>
@@ -47,46 +47,75 @@
             </div>
         </div>
 
-        <Modal title="View Request" id="viewModalRequest" modal-size="modal-lg">
-            <template #body>
-                <input type="hidden" :value="viewRequest.request == undefined ? '' : viewRequest.request.id">
+        <Modal title="View Request" id="viewModalRequest" modal-size="modal-xl">
+            <template #body v-if="viewRequest.request != undefined">
+                <input type="hidden" :value="viewRequest.request.id">
                 <div class="row">
                     <div class="col-md-3">
                         <label>Control No.:</label>
-                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.ctrl_no" readonly>
+                        <input type="text" class="form-control" :value="viewRequest.request.ctrl_no" readonly>
                     </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col-md-6">
                         <label>Category:</label>
-                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.category_details.category_name " readonly>
+                        <input type="text" class="form-control" :value="viewRequest.request.category_details.category_name " readonly>
                         
                     </div>
                     <div class="col-md-6">
                         <label>Date Needed:</label>
-                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.date_needed " readonly>
+                        <input type="text" class="form-control" :value="viewRequest.request.date_needed " readonly>
                     </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col-md-6">
                         <label>Attachment:</label>
-                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.attachment " readonly>
+                        <input type="text" class="form-control" :value="viewRequest.request.attachment " readonly>
                     </div>
                     <div class="col-md-6">
                         <label>Send CC to:</label>
-                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.cc " readonly>
+                        <input type="text" class="form-control" :value="viewRequest.request.cc " readonly>
                     </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col-md-12">
                         <label> Justification:</label>
                         
-                        <textarea class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.justification " readonly></textarea>
+                        <textarea class="form-control" :value="viewRequest.request.justification " readonly></textarea>
                     </div>
                 </div>
                 <hr>
                 <h4>Requested Item(s)</h4>
-                <div class="row" v-show="viewRequest.status > 1">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered" id="tableViewApprovals">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier">{{ supplier }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in tableSpecialViewData.itemDetails" :key="item.id">
+                                        <td class="text-center"><strong>{{ item.item_name }}</strong></td>
+                                        <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0">
+                                            <span class="d-flex justify-content-center" v-html="inputFunction(supplier, item.item_quotation_details)"></span>
+                                        </td>
+                                    </tr>
+                                    <tr v-for="additionalRow in tableSpecialViewData.additionalRows" :key="additionalRow">
+                                        <td><strong>{{ additionalRow.title }}</strong></td>
+                                        <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0 text-center">
+                                            <!-- {{ additionalRow.tblColName }} -->
+                                            {{ tableSpecialViewData.uniqueOtherDetailsPerSupplier[supplier][0][additionalRow.tblColName] }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="row" v-show="viewRequest.status > 1">
                     <div class="col-md-12">
                         <DataTable
                             class="table table-sm table-bordered table-hover wrap display"
@@ -101,7 +130,7 @@
                             :options="optionsItemSupplier"
                         />
                     </div>
-                </div>
+                </div> -->
                 <div class="row" v-show="viewRequest.status == 1">
                     <div class="col-md-12">
                         <table class="table table-bordered table-sm">
@@ -263,7 +292,7 @@
     const Toast = inject('Toast');
     const Swal = inject('Swal');
 
-    const reqFilterStatus = ref(1);
+    const reqFilterStatus = ref(3);
     const viewRequest = reactive({
         request: null,
         status : '',
@@ -285,6 +314,35 @@
     })
     const winningQuotation = ref(null);
 
+    /**
+     * @variable {Array} additionalRows - This will serve as the additinal rows in #tableViewApprovals.
+     * Add other data on array to reflect on table
+     * @variable {String} additionalRows.title - This will be the table data along side with additionalRows.tblColName
+     * @variable {string} additionalRows.tblColName - will be the name of the column form database
+    */
+    const tableSpecialViewData = reactive({
+        rfqDetails : [],
+        supplierNames: [],
+        itemDetails: [],
+        uniqueOtherDetailsPerSupplier : [],
+        additionalRows : [
+            {
+                title: 'Durations',
+                tblColName: 'lead_time'
+            }, 
+            {
+                title: 'Terms',
+                tblColName: 'terms_of_payment'
+
+            }, 
+            {
+                title: 'Warranty',
+                tblColName: 'warranty'
+            }, 
+        ],
+    })
+
+
     // tblLogRequest variables
     let dtLogRequest;
     const tableLotRequest = ref();
@@ -302,14 +360,20 @@
                     document.getElementById('btnServeQuotation').classList.add('d-none');
                     document.getElementById('btnSaveWinningQuotation').classList.add('d-none');
                     viewRequest.request = JSON.parse(request);
-                    modalView.value.show()
-                    if(viewRequest.status > 1){
-                        dtItemSupplier.draw();
-                    }
+
+
+                    // if(viewRequest.status > 1){
+                    //     dtItemSupplier.draw();
+                    // }
                     if(viewRequest.status == 3){
                         document.getElementById('btnServeQuotation').classList.remove('d-none');
                         document.getElementById('btnSaveWinningQuotation').classList.remove('d-none');
                     }
+                    if(viewRequest.status > 2){
+                        getDetails(id.value);
+                    }
+                    modalView.value.show()
+
 
                    
                 });
@@ -459,7 +523,7 @@
 
     onMounted(() => {
         dtLogRequest = tableLotRequest.value.dt;
-        dtItemSupplier = tableItemSupplier.value.dt;
+        // dtItemSupplier = tableItemSupplier.value.dt;
 
         // Declare Modal to be used
         modalView.value = new Modal(document.querySelector('#viewModalRequest'), {});
@@ -533,7 +597,13 @@
     }
     
     const serveQuotation = () => {
-        api.post('api/serve_quotation', {'id' : viewRequest.request.id}).then((result)=>{
+        let selectedRadioArray = [];
+        let radioInputs = document.querySelectorAll('input[type="radio"].radioSelectionWinner:checked');
+        radioInputs.forEach(radio => {
+            selectedRadioArray.push(radio.value);
+            // console.log(radio.value); // Access the value of each radio button
+        });
+        api.post('api/serve_quotation', {'id' : viewRequest.request.id, 'selected_winner': selectedRadioArray}).then((result)=>{
             if(result.data.result == true){
                 dtLogRequest.ajax.reload();
                 modalView.value.hide();
@@ -556,4 +626,66 @@
             console.log(err);
         });
     }
+
+    const getDetails = (id) => {
+        api.get('api/get_request_details', {params: {id : id}}).then((result)=>{
+            // details.value = result.data.rfqDetails;
+            // suppliers.value = result.data.supplier_names;
+            tableSpecialViewData.rfqDetails = result.data.rfqDetails;
+            tableSpecialViewData.supplierNames = result.data.supplierNames;
+            tableSpecialViewData.itemDetails = result.data.itemDetails;
+            tableSpecialViewData.uniqueOtherDetailsPerSupplier = result.data.uniqueOtherDetailsPerSupplier;
+
+            // console.log(tableSpecialViewData.additionalRows);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    const inputFunction = (supplier, itemQuotation) => {
+        for (let index = 0; index < itemQuotation.length; index++) {
+
+            const element = itemQuotation[index];
+            // console.log(element);
+
+            let forAppend = '';
+            if(supplier == element['supplier_name']){
+                if(element['currency'] != 'PHP'){
+                    forAppend = `<tr>
+                            <td> Rate/${ element['currency'] }: </td>
+                            <td>${ formatNumber(element['rate']) }</td>
+                        </tr>
+                        <tr >
+                            <td> PHP:</td>
+                            <td>${ formatNumber( element['price'] * element['rate']) }</td>
+                        </tr>
+                        `
+                }
+                return `
+                <table class="table table-borderless table-sm w-50">
+                    <thead>
+                        <tr>
+                            <th colspan=2 class='text-center'>
+                                <div class="form-check">
+                                    <input class="form-check-input radioSelectionWinner" type="radio" name='${element['request_item_id']}' value='${element['id']}'>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class='w-50'>${ element['currency'] }:</td>
+                            <td>${ element['price'] }</td>
+                        </tr>
+                        ${forAppend}
+                        
+                    </tbody>
+                </table>`;
+            }
+        }
+    }
+    const formatNumber = (value) => {
+      return new Intl.NumberFormat().format(value);
+    }
+
 </script>
