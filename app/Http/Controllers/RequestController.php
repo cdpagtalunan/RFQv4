@@ -207,7 +207,7 @@ class RequestController extends Controller
                     $result .= "<label class='badge badge-secondary'>For Edit</label>";
                     break;
                 case 1:
-                    $result .= "<labe class='badge badge-warning text-dark'>Open RFQ</labe>";
+                    $result .= "<labe class='badge badge-warning text-dark'>For Purchasing Assignment</labe>";
                     break;
                 case 2:
                     $result .= "<labe class='badge badge-info'>For Purchasing Quotation</labe>";

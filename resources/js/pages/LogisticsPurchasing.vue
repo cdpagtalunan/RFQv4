@@ -282,12 +282,20 @@
                 </div>
                 <div class="row mt-2">
                     <div class="col-sm-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="switchNoQuotation" v-model="formSupplierDetails.no_quote">
+                            <label class="form-check-label" for="switchNoQuotation">Decline to Quote</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Price:</span>
-                            <select class="form-control w-25"  v-model="formSupplierDetails.currency" @change="checkCurrency">
+                            <select class="form-control w-25"  v-model="formSupplierDetails.currency" @change="checkCurrency" :disabled="formSupplierDetails.no_quote">
                                 <option v-for="currency in currencies" :key="currency.id" :value="currency.currency" :data-rate="currency.rate">{{ currency.currency }}</option>
                             </select>
-                            <input type="number" name="price" class="form-control w-25" v-model="formSupplierDetails.price" @keyup="convertCurrencyToPhp">
+                            <input type="number" name="price" class="form-control w-25" v-model="formSupplierDetails.price" @keyup="convertCurrencyToPhp" :readonly="formSupplierDetails.no_quote">
                         </div>
                     </div>
                 </div>
@@ -295,7 +303,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">{{ formSupplierDetails.currency }} Rate to PHP:</span>
-                            <input type="text"  id="" class="form-control" name="rate" v-model="formSupplierDetails.rate" readonly>
+                            <input type="text"  id="" class="form-control" name="rate" v-model="formSupplierDetails.rate" readonly :readonly="formSupplierDetails.no_quote">
                         </div>
                     </div>
                 </div>
@@ -303,7 +311,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Price Convertion: <icons icon="fas fa-circle-info" data-bs-toggle="tooltip" data-bs-placement="right" title="Product of price and rate"></icons></span>
-                            <input type="text"  id="" class="form-control" name="convertion" v-model="formSupplierDetails.convertion" readonly>
+                            <input type="text"  id="" class="form-control" name="convertion" v-model="formSupplierDetails.convertion" readonly :readonly="formSupplierDetails.no_quote">
                         </div>
                     </div>
                 </div>
@@ -311,7 +319,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">MOQ:</span>
-                            <input type="text"  id="" class="form-control" name="moq" v-model="formSupplierDetails.moq">
+                            <input type="text"  id="" class="form-control" name="moq" v-model="formSupplierDetails.moq" :readonly="formSupplierDetails.no_quote">
                         </div>
                     </div>
                 </div>
@@ -319,7 +327,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Warranty/Guarantee:</span>
-                            <input type="text"  id="" class="form-control" name="warranty" v-model="formSupplierDetails.warranty">
+                            <input type="text"  id="" class="form-control" name="warranty" v-model="formSupplierDetails.warranty" :readonly="formSupplierDetails.no_quote">
                         </div>
                     </div>
                 </div>
@@ -327,7 +335,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Lead Time:</span>
-                            <input type="text"  id="" class="form-control" name="lead_time" v-model="formSupplierDetails.lead_time">
+                            <input type="text"  id="" class="form-control" name="lead_time" v-model="formSupplierDetails.lead_time" :readonly="formSupplierDetails.no_quote">
                         </div>
                     </div>
                 </div>
@@ -335,7 +343,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Date Served:</span>
-                            <input type="text"  id="" class="form-control" name="date_served"v-model="formSupplierDetails.date_served">
+                            <input type="text"  id="" class="form-control" name="date_served"v-model="formSupplierDetails.date_served" :readonly="formSupplierDetails.no_quote">
                         </div>
                     </div>
                 </div>
@@ -343,7 +351,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Quotation Validity:</span>
-                            <input type="text"  id="" class="form-control" name="quotation_validity" v-model="formSupplierDetails.quotation_validity">
+                            <input type="text"  id="" class="form-control" name="quotation_validity" v-model="formSupplierDetails.quotation_validity" :readonly="formSupplierDetails.no_quote">
                         </div>
                     </div>
                 </div>
@@ -351,7 +359,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Terms of Payment:</span>
-                            <input type="text"  id="" class="form-control" name="terms_of_payment" v-model="formSupplierDetails.terms_of_payment">
+                            <input type="text"  id="" class="form-control" name="terms_of_payment" v-model="formSupplierDetails.terms_of_payment" :readonly="formSupplierDetails.no_quote">
                         </div>
                     </div>
                     
@@ -360,7 +368,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Attachment:</span>
-                            <input type="file"  id="fileId" class="form-control" @change="onFileChange" v-if="!formSupplierDetails.id || checkReupload == true">
+                            <input type="file"  id="fileId" class="form-control" @change="onFileChange" v-if="!formSupplierDetails.id || checkReupload == true" :disabled="formSupplierDetails.no_quote">
                             <input type="input"  class="form-control" v-model="formSupplierDetails.attachment" readonly v-else>
                         </div>
                         <div class="form-check" v-if="formSupplierDetails.id">
@@ -375,7 +383,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-25">Remarks:</span>
-                             <textarea class="form-control" name="remarks" v-model="formSupplierDetails.remarks"></textarea>
+                             <textarea class="form-control" name="remarks" v-model="formSupplierDetails.remarks" :readonly="formSupplierDetails.no_quote"></textarea>
                         </div>
                     </div>
                 </div>
@@ -426,19 +434,20 @@
     const currencies = ref([]);
     const formSupplierDetailsInitVal = {
         id                : '',
-        supplier_name     : null,
+        supplier_name     : '',
         currency          : 'PHP',
-        price             : null,
-        moq               : null,
-        warranty          : null,
-        lead_time         : null,
-        date_served       : null,
-        quotation_validity: null,
-        terms_of_payment  : null,
-        remarks           : null,
-        attachment        : null,
+        price             : '',
+        moq               : '',
+        warranty          : '',
+        lead_time         : '',
+        date_served       : '',
+        quotation_validity: '',
+        terms_of_payment  : '',
+        remarks           : '',
+        attachment        : '',
         rate              : '',
-        convertion        : null
+        convertion        : '',
+        no_quote          : false
     }
 
     const formSupplierDetails = reactive({...formSupplierDetailsInitVal});
@@ -611,25 +620,25 @@
             {"className": "dt-body-left", "targets": "_all"},
             // { "className": "bg-info text-dark", "targets": [ 1 ] }
         ],
-        drawCallback: function( data ) {
-            /*
-                * This script is to disable or enable the serve button.
-                * disabled = true => there is a item with no selected winning quotation 
-            */
-            let dtDatas = data.json.data;
-            console.log(dtDatas);
-            if(shouldHaveDrawCallback.value){
-                if(dtDatas.length != 0){
-                    document.getElementById('btnProceedApproval').disabled = false;
-                    for (let index = 0; index < dtDatas.length; index++) {
-                        const data = dtDatas[index];
-                        if(data['item_quotation_details'].length == 0){
-                            document.getElementById('btnProceedApproval').disabled = true;
-                        }
-                    }
-                }
-            }
-        }
+        // drawCallback: function( data ) {
+        //     /*
+        //         * This script is to disable or enable the serve button.
+        //         * disabled = true => there is a item with no selected winning quotation 
+        //     */
+        //     let dtDatas = data.json.data;
+        //     console.log(dtDatas);
+        //     if(shouldHaveDrawCallback.value){
+        //         if(dtDatas.length != 0){
+        //             document.getElementById('btnProceedApproval').disabled = false;
+        //             for (let index = 0; index < dtDatas.length; index++) {
+        //                 const data = dtDatas[index];
+        //                 if(data['item_quotation_details'].length == 0){
+        //                     document.getElementById('btnProceedApproval').disabled = true;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     // Table variables for item supplier quotation
@@ -764,10 +773,18 @@
 
         }).catch((err) => {
             console.log(err);
-            Toast.fire({
-                icon: 'error',
-                title: 'Something went wrong. Please call ISS'
-            });
+            if(err.response.status == 422){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please fill up required fields!'
+                });
+            }
+            else{
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Something went wrong. Please call ISS'
+                });
+            }
             document.getElementById('btnSaveSupplier').removeAttribute('disabled');
 
         });
@@ -807,6 +824,7 @@
     }
 
     const saveForApproval = () => {
+        document.getElementById('btnProceedApproval').disabled = true;
         Swal.fire({
             title: `Are you sure?`,
             text: `This will proceed on Logistics Manager approval`,
@@ -825,13 +843,20 @@
                         icon: 'success',
                         title: result.data.msg
                     });
+                    document.getElementById('btnProceedApproval').disabled = false;
+
                 }).catch((err) => {
                     console.log(err);
                     Toast.fire({
                         icon: 'error',
                         title: 'Something went wrong. Please call ISS'
                     });
+                    document.getElementById('btnProceedApproval').disabled = false;
                 });
+            }
+            else{
+                document.getElementById('btnProceedApproval').disabled = false;
+
             }
         })
     }

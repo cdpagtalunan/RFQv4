@@ -99,16 +99,18 @@
                                 <tbody>
                                     <tr v-for="item in tableSpecialViewData.itemDetails" :key="item.id">
                                         <td class="text-center"><strong>{{ item.item_name }}</strong></td>
-                                        <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0">
-                                            <!-- <span class="d-flex justify-content-center" v-html="inputFunction(supplier, item.item_quotation_details)"></span> -->
+                                        <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0" v-if="item.item_quotation_details.length > 0">
                                             <span class="d-flex justify-content-center" v-html="inputFunction(supplier, item.item_quotation_details)"></span>
                                         </td>
+                                        <td v-else class="text-center text-danger" :colspan="tableSpecialViewData.supplierNames.length"><strong>-- No Quotation --</strong></td>
                                     </tr>
                                     <tr v-for="additionalRow in tableSpecialViewData.additionalRows" :key="additionalRow">
                                         <td><strong>{{ additionalRow.title }}</strong></td>
                                         <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0 text-center">
-                                            <!-- {{ additionalRow.tblColName }} -->
-                                            {{ tableSpecialViewData.uniqueOtherDetailsPerSupplier[supplier][0][additionalRow.tblColName] }}
+                                            {{ 
+                                                tableSpecialViewData.uniqueOtherDetailsPerSupplier[supplier] == undefined ? '' :
+                                                tableSpecialViewData.uniqueOtherDetailsPerSupplier[supplier][0][additionalRow.tblColName] 
+                                            }}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -630,28 +632,42 @@
         });
 
         if(!stop){
-            api.post('api/serve_quotation', {'id' : viewRequest.request.id, 'selected_winner': selectedRadioArray}).then((result)=>{
-                if(result.data.result == true){
-                    dtLogRequest.ajax.reload();
-                    modalView.value.hide();
-                    Toast.fire({
-                        icon: 'success',
-                        title: result.data.msg
+            Swal.fire({
+            title: `Serve request?`,
+            text: `Are you sure you'd like to serve this request?`,
+            icon: 'question',
+            position: 'top',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    api.post('api/serve_quotation', {'id' : viewRequest.request.id, 'selected_winner': selectedRadioArray}).then((result)=>{
+                        if(result.data.result == true){
+                            dtLogRequest.ajax.reload();
+                            modalView.value.hide();
+                            Toast.fire({
+                                icon: 'success',
+                                title: result.data.msg
+                            });
+                        }
+                        else{
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Something went wrong.'
+                            });
+                        }
+                    }).catch((err) => {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Something went wrong.'
+                        });
+                        console.log(err);
                     });
                 }
-                else{
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Something went wrong.'
-                    });
-                }
-            }).catch((err) => {
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Something went wrong.'
-                });
-                console.log(err);
-            });
+            })
+          
         }
 
         document.getElementById('btnServeQuotation').disabled = false;
@@ -680,6 +696,9 @@
             let forAppend = '';
             let forSelected = '';
             if(supplier == element['supplier_name']){
+                if(element['currency'] === null){
+                    return `<strong>Decline to Quote</strong>`;
+                }
                 if(element['currency'] != 'PHP'){
                     forAppend = `<tr>
                             <td> Rate/${ element['currency'] }: </td>

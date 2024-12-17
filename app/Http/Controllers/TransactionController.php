@@ -526,10 +526,11 @@ class TransactionController extends Controller
         ->flatten(1) // Flatten the nested array
         ->pluck('item_quotation_details') // Get the item_quotation_details for each item
         ->flatten(1) // Flatten the nested array
-        ->unique('lead_time')
+        // ->unique('lead_time')
         ->groupBy('supplier_name')
         ->toArray();
 
+        // return $unique_other_details_per_supplier;
         return response()->json([
             'rfqDetails'     => $data,
             'supplierNames' => $supplierNames,

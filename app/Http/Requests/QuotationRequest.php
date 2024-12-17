@@ -28,20 +28,30 @@ class QuotationRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'attachment'         => '',
-            'currency'           => 'required',
-            'date_served'        => '',
-            'lead_time'          => '',
-            'moq'                => '',
-            'price'              => 'required',
-            'rate'               => '',
-            'quotation_validity' => '',
-            'remarks'            => '',
-            'request_item_id'    => 'required',
-            'supplier_name'      => 'required',
-            'terms_of_payment'   => '',
-            'warranty'           => '',
-        ];
+        if($this->no_quote === 'false'){
+            return [
+                'attachment'         => '',
+                'currency'           => 'required',
+                'date_served'        => '',
+                'lead_time'          => '',
+                'moq'                => '',
+                'price'              => 'required',
+                'rate'               => '',
+                'quotation_validity' => '',
+                'remarks'            => '',
+                'request_item_id'    => 'required',
+                'supplier_name'      => 'required',
+                'terms_of_payment'   => '',
+                'warranty'           => '',
+            ];
+        }
+        else{
+            return [
+                'supplier_name'      => 'required',
+                'request_item_id'    => 'required',
+            ];
+        }
+        
+       
     }
 }
