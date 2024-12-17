@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <Modal title="View Request" id="viewModalRequest" modal-size="modal-lg" :modal-footer="viewRequest.modalFooter">
+        <Modal title="View Request" id="viewModalRequest" :modal-size="status == 4 ? 'modal-xl' : 'modal-lg'" :modal-footer="viewRequest.modalFooter">
             <template #body>
                 <input type="hidden" :value="viewRequest.request == undefined ? '' : viewRequest.request.id">
                 <div class="row">
@@ -87,7 +87,7 @@
 
                 <hr>
                 <h5>Requested Item(s)</h5>
-                <div class="row">
+                <div class="row" v-show="status < 4">
                     <div class="col-md-12">
                         <DataTable
                             class="table table-sm table-bordered table-hover wrap display"
@@ -101,6 +101,34 @@
                             ref="tableItemSupplier"
                             :options="optionsItemSupplier"
                         />
+                    </div>
+                </div>
+                <div class="row" v-show="status == 4">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered" id="tableViewApprovals">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier">{{ supplier }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in tableSpecialViewData.itemDetails" :key="item.id">
+                                        <td class="text-center"><strong>{{ item.item_name }}</strong></td>
+                                        <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0">
+                                            <span class="d-flex justify-content-center" v-html="inputFunction(supplier, item.item_quotation_details)"></span>
+                                        </td>
+                                    </tr>
+                                    <tr v-for="additionalRow in tableSpecialViewData.additionalRows" :key="additionalRow">
+                                        <td><strong>{{ additionalRow.title }}</strong></td>
+                                        <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0 text-center">
+                                            {{ tableSpecialViewData.uniqueOtherDetailsPerSupplier[supplier][0][additionalRow.tblColName] }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 
@@ -237,9 +265,7 @@
             <template #body>
                 <div class="row">
                     <div class="col-sm-12">
-                        <!-- <div class="input-group"> -->
                             <label>Supplier:</label>
-
                             <VueMultiselect
                                 v-model="formSupplierDetails.supplier_name"
                                 label="name"
@@ -252,11 +278,6 @@
                                     No Supplier Found. Register Supplier on EPRPO.
                                 </template>
                             </VueMultiselect>
-                            <!-- <input type="text"  id="txtSupplier" name="supplier_name" v-model="formSupplierDetails.supplier_name" class="form-control" list="supplierList" autocomplete="off">
-                            <datalist id="supplierList">
-                                <option v-for="supplier in suppliers" :key="supplier.id" :value="supplier.supplier_name"></option>
-                            </datalist> -->
-                        <!-- </div> -->
                     </div>
                 </div>
                 <div class="row mt-2">
@@ -426,6 +447,34 @@
     const showRate = ref(false);
     const shouldHaveDrawCallback = ref(false);
 
+     /**
+     * @variable {Array} additionalRows - This will serve as the additinal rows in #tableViewApprovals.
+     * Add other data on array to reflect on table
+     * @variable {String} additionalRows.title - This will be the table data along side with additionalRows.tblColName
+     * @variable {string} additionalRows.tblColName - will be the name of the column form database
+    */
+    const tableSpecialViewData = reactive({
+        rfqDetails : [],
+        supplierNames: [],
+        itemDetails: [],
+        uniqueOtherDetailsPerSupplier : [],
+        additionalRows : [
+            {
+                title: 'Durations',
+                tblColName: 'lead_time'
+            }, 
+            {
+                title: 'Terms',
+                tblColName: 'terms_of_payment'
+
+            }, 
+            {
+                title: 'Warranty',
+                tblColName: 'warranty'
+            }, 
+        ],
+    })
+
     // tblLogRequest variables
     let dtLogRequest;
     const tableLotRequest = ref();
@@ -439,16 +488,32 @@
                 cell.querySelector('.btnViewRequest').addEventListener('click', function(){
                     let request = this.getAttribute('data-request');
                     status.value = this.getAttribute('data-status');
-                    console.log(status.value);
                     id.value = this.getAttribute('data-id');
                     
                     viewRequest.request = JSON.parse(request);
                     viewRequest.status = 0;
 
                     dtSupplierQuotation.column(0).visible(false); // Remove action button for viewing purposes
-                    dtItemSupplier.draw();
+                    if(status.value < 4){
+                        dtItemSupplier.draw();
+                    }
+                    else{
+                        api.get('api/get_request_details', {params: {id :  this.getAttribute('data-id')}}).then((result)=>{
+                            // details.value = result.data.rfqDetails;
+                            // suppliers.value = result.data.supplier_names;
+                            tableSpecialViewData.rfqDetails = result.data.rfqDetails;
+                            tableSpecialViewData.supplierNames = result.data.supplierNames;
+                            tableSpecialViewData.itemDetails = result.data.itemDetails;
+                            tableSpecialViewData.uniqueOtherDetailsPerSupplier = result.data.uniqueOtherDetailsPerSupplier;
+                            
+                        }).catch((err) => {
+                            console.log(err);
+                        });
+                    }
+
                     modalView.value.show()
                     shouldHaveDrawCallback.value = false;
+
                 });
 
                 if(cell.querySelector('.btnAddSupplier')){
@@ -641,7 +706,10 @@
         document.getElementById("viewModalRequest").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
             viewRequest.modalFooter = false;
-
+            tableSpecialViewData.rfqDetails                    = [];
+            tableSpecialViewData.supplierNames                 = [];
+            tableSpecialViewData.itemDetails                   = [];
+            tableSpecialViewData.uniqueOtherDetailsPerSupplier = [];
         })
         document.getElementById("modalAddSupplierDetails").addEventListener('hidden.bs.modal', event => {
             Object.assign(formSupplierDetails, formSupplierDetailsInitVal);
@@ -785,5 +853,54 @@
             convertedRate = parseFloat(formSupplierDetails.price) * parseFloat(formSupplierDetails.rate);
         }
         formSupplierDetails.convertion = convertedRate;
+    }
+
+    const inputFunction = (supplier, itemQuotation) => {
+        for (let index = 0; index < itemQuotation.length; index++) {
+
+            const element = itemQuotation[index];
+            let forAppend = '';
+            let forSelected = '';
+            if(supplier == element['supplier_name']){
+                if(element['currency'] != 'PHP'){
+                    forAppend = `<tr>
+                            <td> Rate/${ element['currency'] }: </td>
+                            <td>${ formatNumber(element['rate']) }</td>
+                        </tr>
+                        <tr >
+                            <td> PHP:</td>
+                            <td>${ formatNumber( element['price'] * element['rate']) }</td>
+                        </tr>
+                        `
+                }
+                if(element['selected_quotation'] == 1){
+                    forSelected = `checked`
+                };
+                
+                return `
+                <table class="table table-borderless table-sm w-50">
+                    <thead>
+                        <tr>
+                            <th colspan=2 class='text-center'>
+                                <div class="form-check">
+                                    <input class="form-check-input radioSelectionWinner" type="radio" name='${element['request_item_id']}' value='${element['id']}' ${forSelected}>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class='w-50'>${ element['currency'] }:</td>
+                            <td>${ element['price'] }</td>
+                        </tr>
+                        ${forAppend}
+                        
+                    </tbody>
+                </table>`;
+            }
+        }
+    }
+    const formatNumber = (value) => {
+      return new Intl.NumberFormat().format(value);
     }
 </script>

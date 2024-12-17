@@ -100,6 +100,7 @@
                                     <tr v-for="item in tableSpecialViewData.itemDetails" :key="item.id">
                                         <td class="text-center"><strong>{{ item.item_name }}</strong></td>
                                         <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0">
+                                            <!-- <span class="d-flex justify-content-center" v-html="inputFunction(supplier, item.item_quotation_details)"></span> -->
                                             <span class="d-flex justify-content-center" v-html="inputFunction(supplier, item.item_quotation_details)"></span>
                                         </td>
                                     </tr>
@@ -361,10 +362,6 @@
                     document.getElementById('btnSaveWinningQuotation').classList.add('d-none');
                     viewRequest.request = JSON.parse(request);
 
-
-                    // if(viewRequest.status > 1){
-                    //     dtItemSupplier.draw();
-                    // }
                     if(viewRequest.status == 3){
                         document.getElementById('btnServeQuotation').classList.remove('d-none');
                         document.getElementById('btnSaveWinningQuotation').classList.remove('d-none');
@@ -533,8 +530,12 @@
         
         document.getElementById("viewModalRequest").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
-            // viewRequest.modalFooter = false;
-
+            const radios = document.querySelectorAll('input[type="radio"].radioSelectionWinner');
+            radios.forEach(radio => radio.checked = false);
+            tableSpecialViewData.rfqDetails                    = [];
+            tableSpecialViewData.supplierNames                 = [];
+            tableSpecialViewData.itemDetails                   = [];
+            tableSpecialViewData.uniqueOtherDetailsPerSupplier = [];
         })
         document.getElementById("modalAssign").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
@@ -597,34 +598,65 @@
     }
     
     const serveQuotation = () => {
+        document.getElementById('btnServeQuotation').disabled = true;
+        /**
+            * Validation
+            * To prevent saving withoung selectiong winning quotation. 
+        */
+        let stop = false;
+        // Select all radio buttons
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
+        // Get unique names
+        const uniqueNames = Array.from(new Set(Array.from(radioButtons).map(button => button.name)));
+        uniqueNames.forEach((uniqueNames) => {
+            const radioGroup = document.querySelectorAll(`input[name="${uniqueNames}"]`);
+
+            const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+
+            if (stop) return false;
+            
+            if (!isChecked) {
+                alert("Validation failed! Please select an option.");
+                stop = true;
+            }
+        });
+
+
         let selectedRadioArray = [];
         let radioInputs = document.querySelectorAll('input[type="radio"].radioSelectionWinner:checked');
         radioInputs.forEach(radio => {
             selectedRadioArray.push(radio.value);
             // console.log(radio.value); // Access the value of each radio button
         });
-        api.post('api/serve_quotation', {'id' : viewRequest.request.id, 'selected_winner': selectedRadioArray}).then((result)=>{
-            if(result.data.result == true){
-                dtLogRequest.ajax.reload();
-                modalView.value.hide();
-                Toast.fire({
-                    icon: 'success',
-                    title: result.data.msg
-                });
-            }
-            else{
+
+        if(!stop){
+            api.post('api/serve_quotation', {'id' : viewRequest.request.id, 'selected_winner': selectedRadioArray}).then((result)=>{
+                if(result.data.result == true){
+                    dtLogRequest.ajax.reload();
+                    modalView.value.hide();
+                    Toast.fire({
+                        icon: 'success',
+                        title: result.data.msg
+                    });
+                }
+                else{
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Something went wrong.'
+                    });
+                }
+            }).catch((err) => {
                 Toast.fire({
                     icon: 'error',
                     title: 'Something went wrong.'
                 });
-            }
-        }).catch((err) => {
-            Toast.fire({
-                icon: 'error',
-                title: 'Something went wrong.'
+                console.log(err);
             });
-            console.log(err);
-        });
+        }
+
+        document.getElementById('btnServeQuotation').disabled = false;
+
+      
     }
 
     const getDetails = (id) => {
@@ -635,8 +667,7 @@
             tableSpecialViewData.supplierNames = result.data.supplierNames;
             tableSpecialViewData.itemDetails = result.data.itemDetails;
             tableSpecialViewData.uniqueOtherDetailsPerSupplier = result.data.uniqueOtherDetailsPerSupplier;
-
-            // console.log(tableSpecialViewData.additionalRows);
+            
         }).catch((err) => {
             console.log(err);
         });
@@ -646,9 +677,8 @@
         for (let index = 0; index < itemQuotation.length; index++) {
 
             const element = itemQuotation[index];
-            // console.log(element);
-
             let forAppend = '';
+            let forSelected = '';
             if(supplier == element['supplier_name']){
                 if(element['currency'] != 'PHP'){
                     forAppend = `<tr>
@@ -661,13 +691,17 @@
                         </tr>
                         `
                 }
+                if(element['selected_quotation'] == 1){
+                    forSelected = `checked`
+                };
+                
                 return `
                 <table class="table table-borderless table-sm w-50">
                     <thead>
                         <tr>
                             <th colspan=2 class='text-center'>
                                 <div class="form-check">
-                                    <input class="form-check-input radioSelectionWinner" type="radio" name='${element['request_item_id']}' value='${element['id']}'>
+                                    <input class="form-check-input radioSelectionWinner" type="radio" name='${element['request_item_id']}' value='${element['id']}' ${forSelected}>
                                 </div>
                             </th>
                         </tr>
@@ -687,5 +721,4 @@
     const formatNumber = (value) => {
       return new Intl.NumberFormat().format(value);
     }
-
 </script>
