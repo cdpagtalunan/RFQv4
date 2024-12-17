@@ -2,7 +2,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="small-box bg-gradient-warning mt-3">
                         <div class="inner">
                             <h3>{{ dashboardStat.open }}</h3>
@@ -13,7 +13,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="small-box bg-gradient-info mt-3">
                         <div class="inner">
                             <h3>{{ dashboardStat.forQuot }}</h3>
@@ -24,11 +24,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <div class="small-box bg-gradient-success mt-3">
+                <div class="col-sm-3">
+                    <div class="small-box bg-gradient-primary mt-3">
                         <div class="inner">
                             <h3>{{ dashboardStat.forHeadAp }}</h3>
                             <h5>For Head Approval</h5>
+                        </div>
+                        <div class="icon">
+                            <!-- <i class="fas fa-user-plus"></i> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="small-box bg-gradient-success mt-3">
+                        <div class="inner">
+                            <h3>{{ dashboardStat.served }}</h3>
+                            <h5>Served RFQ</h5>
                         </div>
                         <div class="icon">
                             <!-- <i class="fas fa-user-plus"></i> -->
@@ -47,7 +58,8 @@
     const dashboardStat = reactive({
         open: 0,
         forQuot: 0,
-        forHeadAp: 0
+        forHeadAp: 0,
+        served: 0
     });
 
     onMounted(() => {
@@ -55,6 +67,7 @@
             dashboardStat.open = result.data.open;
             dashboardStat.forQuot = result.data.for_quotation;
             dashboardStat.forHeadAp = result.data.for_approval;
+            dashboardStat.served = result.data.served;
         }).catch((err) => {
             console.log(err);
         });

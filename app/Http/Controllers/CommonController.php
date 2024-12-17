@@ -63,11 +63,13 @@ class CommonController extends Controller
         $open = collect($rfqs)->where('status', 1)->flatten(1)->count();
         $for_quotation = collect($rfqs)->where('status', 2)->flatten(1)->count();
         $for_approval = collect($rfqs)->where('status', 3)->flatten(1)->count();
+        $served = collect($rfqs)->where('status', 4)->flatten(1)->count();
 
         return response()->json([
             'open'          => $open,
             'for_quotation' => $for_quotation,
-            'for_approval'  => $for_approval
+            'for_approval'  => $for_approval,
+            'served'        => $served
         ]);
     }
 }
