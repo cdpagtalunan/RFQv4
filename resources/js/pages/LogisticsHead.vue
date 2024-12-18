@@ -35,7 +35,8 @@
                                 :ajax="{
                                     url: 'api/dt_get_log_request',
                                     data: function (param){
-                                        param.status = reqFilterStatus
+                                        param.status = reqFilterStatus,
+                                        param.type = 1
                                     }
                                 }"
                                 ref="tableLotRequest"
@@ -295,7 +296,7 @@
     const Toast = inject('Toast');
     const Swal = inject('Swal');
 
-    const reqFilterStatus = ref(3);
+    const reqFilterStatus = ref(1);
     const viewRequest = reactive({
         request: null,
         status : '',
@@ -437,6 +438,15 @@
         { data: 'date_needed', title: 'Date Needed' },
         { data: 'justification', title: 'Justification' },
         { data: 'created_by_details.name', title: 'Requested By' },
+        { data: 'assigned_to_details.name', title: 'Assigned To',
+            render: function(data){
+                let toShow = "---";
+                if(data){
+                    toShow = data;
+                }
+                return toShow;
+            }
+        },
     ];
     const optionsLogRequest = {
         responsive: true,
@@ -618,7 +628,12 @@
             if (stop) return false;
             
             if (!isChecked) {
-                alert("Validation failed! Please select an option.");
+                Swal.fire({
+                    title: `Invalid!`,
+                    text: `Please select winning quotations.`,
+                    icon: 'error',
+                    position: 'center',
+                })
                 stop = true;
             }
         });
@@ -633,14 +648,14 @@
 
         if(!stop){
             Swal.fire({
-            title: `Serve request?`,
-            text: `Are you sure you'd like to serve this request?`,
-            icon: 'question',
-            position: 'top',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes'
+                title: `Serve request?`,
+                text: `Are you sure you'd like to serve this request?`,
+                icon: 'question',
+                position: 'center',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
             }).then((result) => {
                 if (result.isConfirmed) {
                     api.post('api/serve_quotation', {'id' : viewRequest.request.id, 'selected_winner': selectedRadioArray}).then((result)=>{
@@ -702,7 +717,7 @@
                 if(element['currency'] != 'PHP'){
                     forAppend = `<tr>
                             <td> Rate/${ element['currency'] }: </td>
-                            <td>${ formatNumber(element['rate']) }</td>
+                            <td>${ element['rate'] }</td>
                         </tr>
                         <tr >
                             <td> PHP:</td>

@@ -176,6 +176,7 @@ class RequestController extends Controller
     public function dt_get_request(Request $request){
         $relations = [
             'category_details',
+            'assigned_to_details',
         ];
         $conditions = array(
             'created_by' => $_SESSION['rapidx_user_id']

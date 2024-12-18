@@ -23,7 +23,7 @@
                             <p>Go to Rapidx</p>
                         </a>
                     </li>
-                    <li class="nav-item has-treeview">
+                    <li class="nav-item has-treeview"  v-if="uAccess == 1 || uType != 0">
                         <router-link :to="{ name: 'Dashboard' }" class="nav-link">
                             <icons icon="fas fa-gauge" class="nav-icon"></icons>
                             <p>Dashboard</p>
@@ -75,38 +75,6 @@
                             <p>UOM </p>
                         </router-link>
                     </li>
-                    <!-- <li class="nav-item has-treeview" v-if="uType != 0">
-                        <a href="#" class="nav-link">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <p><icons icon="fas fa-cogs"></icons> Settings</p>
-                                <i class="fas fa-angle-down"> </i>
-                            </div>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item ">
-                                <router-link :to="{ name: 'CategoryManagement' }" class="nav-link">
-                                    <icons icon="far fa-circle" class="nav-icon"></icons>
-                                    <p>Category </p>
-                                </router-link>
-                            </li>
-                        </ul>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item ">
-                                <router-link :to="{ name: 'CurrencyManagement' }" class="nav-link">
-                                    <icons icon="far fa-circle" class="nav-icon"></icons>
-                                    <p>Currency </p>
-                                </router-link>
-                            </li>
-                        </ul>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item ">
-                                <router-link :to="{ name: 'UomManagement' }" class="nav-link">
-                                    <icons icon="far fa-circle" class="nav-icon"></icons>
-                                    <p>UOM </p>
-                                </router-link>
-                            </li>
-                        </ul>
-                    </li> -->
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

@@ -35,11 +35,14 @@ class TransactionController extends Controller
             'category_details',
             'item_details',
             'created_by_details',
-            'assigned_by_details'
+            'assigned_by_details',
+            'assigned_to_details'
         );
         $conditions = array(
             'status'     => $request->status,
             'deleted_at' => null,
+            // 'assigned_to' => $_SESSION['rapidx_user_id']
+
         );
         if($request->status == 2){
             $conditions['assigned_to'] = $_SESSION['rapidx_user_id'];
@@ -205,6 +208,7 @@ class TransactionController extends Controller
     public function save_quotation(QuotationRequest $request){
 
         $data = $request->validated();
+        // return $data;
         /*
             * Manage the attachment 
         */
@@ -526,7 +530,7 @@ class TransactionController extends Controller
         ->flatten(1) // Flatten the nested array
         ->pluck('item_quotation_details') // Get the item_quotation_details for each item
         ->flatten(1) // Flatten the nested array
-        // ->unique('lead_time')
+        ->whereNotNull('price')
         ->groupBy('supplier_name')
         ->toArray();
 

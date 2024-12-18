@@ -530,6 +530,17 @@
         { data: 'ctrl_no', title: 'Control No.' },
         { data: 'category_details.category_name', title: 'Category' },
         { data: 'date_needed', title: 'Date Needed' },
+        { data: 'created_at', title: 'Created At',
+            render: function(data) {
+                if (data) {
+                    const date = new Date(data);
+                    const formattedDate = date.toISOString().replace('T', ' ').split('.')[0];
+                    return formattedDate; 
+                }
+            }
+        },
+        { data: 'assigned_to_details.name', title: 'Assigned To' },
+        { data: 'assigned_at', title: 'Assigned At' },
     ]
 
     const optionsQuotationRequest = {

@@ -35,7 +35,8 @@
                                 :ajax="{
                                     url: 'api/dt_get_log_request',
                                     data: function (param){
-                                        param.status = reqFilterStatus
+                                        param.status = reqFilterStatus,
+                                        param.type = 0
                                     }
                                 }"
                                 ref="tableLotRequest"
@@ -550,6 +551,15 @@
         { data: 'date_needed', title: 'Date Needed' },
         { data: 'justification', title: 'Justification' },
         { data: 'created_by_details.name', title: 'Requested By' },
+        { data: 'assigned_to_details.name', title: 'Assigned To',
+            render: function(data) {
+                let toShow = "---";
+                if (data) {
+                    toShow = data; 
+                }
+                return toShow;
+            }
+        },
         { data: 'assigned_by_details.name', title: 'Assigned By' },
     ];
     const optionsLogRequest = {
