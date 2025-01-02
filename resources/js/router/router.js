@@ -10,6 +10,7 @@ import UomManagement from '../pages/UomManagement.vue';
 import Request from '../pages/Requestor.vue';
 import LogisticsPurchasing from '../pages/LogisticsPurchasing.vue';
 import LogisticsHead from '../pages/LogisticsHead.vue';
+import Mailer from '../pages/Mailer.vue';
 
 // Interceptors
 import Forbidden from '../pages/interceptors/403.vue';
@@ -77,8 +78,6 @@ const routes = [
     },
     {
         path: "/RFQv4/",
-        // component: AdminLayout,
-        // beforeEnter: isLoggedIn,
         children: [
             {
                 path: '403',
@@ -86,7 +85,12 @@ const routes = [
                 component: Forbidden
             },
         ]
-    }
+    },
+    {
+        path: '/RFQv4/mailer/mail',
+        name: 'mail',
+        component: Mailer,
+    },
 ];
 
 const router = createRouter({

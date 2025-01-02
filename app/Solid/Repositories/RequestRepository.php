@@ -87,7 +87,12 @@ class RequestRepository implements RequestRepositoryInterface
         $query = QuotationRequest::query();
         $query->with($relations);
         foreach ($conditions as $key => $value) {
-            $query->where($key, $value);
+            if(is_array($value)){
+                $query->whereIn($key,$value);
+            }
+            else{
+                $query->where($key, $value);
+            }
         }
         return $query->get();
     }

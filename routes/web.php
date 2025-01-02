@@ -13,6 +13,8 @@ use App\Http\Controllers\CommonController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::view('/mailer/mail','welcome')->name('mail');
+Route::get('get_pending_requests',[CommonController::class, 'get_pending_requests']);
 
 Route::get('check_user', function (Request $request) {
     session_start();
@@ -23,6 +25,7 @@ Route::get('check_user', function (Request $request) {
         return false;
     }
 });
+
 
 Route::middleware('checkSessionExist')->group(function(){
     Route::get('download/{file}', [CommonController::class, 'download']);

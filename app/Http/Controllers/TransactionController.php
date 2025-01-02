@@ -31,6 +31,7 @@ class TransactionController extends Controller
         $this->SupplierRepository   = $SupplierRepository;
     }
     public function dt_get_log_request(Request $request){
+        // return $_SESSION;
         $relations = array(
             'category_details',
             'item_details',
@@ -44,7 +45,7 @@ class TransactionController extends Controller
             // 'assigned_to' => $_SESSION['rapidx_user_id']
 
         );
-        if($request->status == 2){
+        if($request->status == 2 && $_SESSION['rfq_type'] != 2){
             $conditions['assigned_to'] = $_SESSION['rapidx_user_id'];
         }
         $quotation = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
@@ -59,7 +60,9 @@ class TransactionController extends Controller
                     $result .= "<button class='btn btn-sm btn-info btnAssignRequest ml-1' title='Assign Request' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' data-status='{$quotation->status}'><i class='fas fa-user-check'></i></button>";
                     break;
                 case 2:
-                    $result .= "<button class='btn btn-sm btn-info btnAddSupplier ml-1' title='Add Supplier' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' data-request='".json_encode($quotation)."' data-status='{$quotation->status}'><i class='fas fa-address-book'></i></button>";
+                    if($quotation->assigned_to == $_SESSION['rapidx_user_id']){
+                        $result .= "<button class='btn btn-sm btn-info btnAddSupplier ml-1' title='Add Supplier' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' data-request='".json_encode($quotation)."' data-status='{$quotation->status}'><i class='fas fa-address-book'></i></button>";
+                    }
                     break;
                 case 3:
                     $result .= "<button class='btn btn-sm btn-danger btnDisapproveQuot ml-1' title='Disapprove Quotation' data-id='{$quotation->id}'><i class='fas fa-xmark'></i></button>";

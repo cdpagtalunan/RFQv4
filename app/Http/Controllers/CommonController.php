@@ -72,4 +72,15 @@ class CommonController extends Controller
             'served'        => $served
         ]);
     }
+
+    public function get_pending_requests(Request $request){
+        $conditions = array(
+            'status' => ['1', '2', '3']
+        );
+
+        $relations = array();
+
+        $pending_rfqs = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
+
+    }
 }

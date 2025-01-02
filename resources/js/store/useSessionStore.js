@@ -14,7 +14,6 @@ export const useSessionStore = defineStore("session", {
         checkSession(){
             api.get('check_access').then((result)=>{
                 let data = result.data;
-                console.log('useSessionStore', data)
                 this.uType      = data.rfq_type
                 this.uAccess    = data.rfq_access
                 this.name       = data.rapidx_name
