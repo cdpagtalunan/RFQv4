@@ -81,7 +81,7 @@ class RequestController extends Controller
             $request_repository_data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
     
     
-            $currentMonth = Carbon::now()->month;
+            $currentMonth = Carbon::now()->format('m');
             $currentYear = Carbon::now()->format('y');
     
             $collection = collect($request_repository_data)->filter(function ($request) use ($currentMonth) {
