@@ -16,6 +16,9 @@ import Mailer from '../pages/Mailer.vue';
 import Forbidden from '../pages/interceptors/403.vue';
 
 import api from '../axios';
+import { useSessionStore } from '../store/index';
+
+
 
 const isLoggedIn = async () => { // * TO VALIDATE IF SESSION STILL EXIST
     await api.get('check_user').then((result) => {
@@ -28,6 +31,13 @@ const isLoggedIn = async () => { // * TO VALIDATE IF SESSION STILL EXIST
     });
 }
 
+const checkUser = () => {
+    const localStore = useSessionStore();
+    if(localStore.uAccess == 0 && localStore.uType == 0){
+        router.push({ name: 'Request' });
+    }
+}
+
 const routes = [
     {
         path: "/RFQv4/",
@@ -37,26 +47,31 @@ const routes = [
             {
                 path: '',
                 name: 'Dashboard',
+                beforeEnter: checkUser,
                 component: Dashboard
             },
             {
                 path: 'user',
                 name: 'UserManagement',
+                beforeEnter: checkUser,
                 component: UserManagement
             },
             {
                 path: 'category',
                 name: 'CategoryManagement',
+                beforeEnter: checkUser,
                 component: CategoryManagement
             },
             {
                 path: 'currency',
                 name: 'CurrencyManagement',
+                beforeEnter: checkUser,
                 component: CurrencyManagement
             },
             {
                 path: 'uom',
                 name: 'UomManagement',
+                beforeEnter: checkUser,
                 component: UomManagement
             },
             {
@@ -67,11 +82,13 @@ const routes = [
             {
                 path: 'logistics_purch',
                 name: 'LogisticsPurchasing',
+                beforeEnter: checkUser,
                 component: LogisticsPurchasing
             },
             {
                 path: 'logistics_head',
                 name: 'LogisticsHead',
+                beforeEnter: checkUser,
                 component: LogisticsHead
             },
         ],
