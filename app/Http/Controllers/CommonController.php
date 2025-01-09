@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Solid\Interfaces\EmailRepositoryInterface;
 use App\Solid\Interfaces\RapidxRepositoryInterface;
 use App\Solid\Interfaces\RequestRepositoryInterface;
 use App\Solid\Interfaces\UserAccessRepositoryInterface;
@@ -14,10 +15,12 @@ class CommonController extends Controller
     
     public function __construct( 
         UserAccessRepositoryInterface $UserAccessRepository,
-        RequestRepositoryInterface $RequestRepository
+        RequestRepositoryInterface $RequestRepository,
+        EmailRepositoryInterface $EmailRepository
     ) {
         $this->UserAccessRepository = $UserAccessRepository;
         $this->RequestRepository    = $RequestRepository;
+        $this->EmailRepository    = $EmailRepository;
     }
 
     public function check_access(Request $request){
@@ -75,12 +78,40 @@ class CommonController extends Controller
 
     public function get_pending_requests(Request $request){
         $conditions = array(
-            'status' => ['1', '2', '3']
+            'status' => ['1', '2', '3'],
+            'deleted_at' => null,
         );
-
         $relations = array();
-
         $pending_rfqs = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
+        $grouped_rfq = collect($pending_rfqs)->groupBy('status');
 
+        $conditions = array(
+            'user_access' => 1
+        );
+        $relations = ['rapidx_details'];
+        $purchasing_user = $this->UserAccessRepository->getUserWithRelationAndCondition($conditions, $relations);
+
+        /**
+         *
+         * @param array $emailArray
+        */
+        $emailArray = array(
+            'to'            => [],
+            'cc'            => [],
+            'bcc'           => [],
+            'subject'       => '',
+            'data'          => [],
+            'emailFilePath' => '',
+            'body'          => ''
+        );
+        
+        $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray();
+
+        foreach($conditions['status'] AS $status){
+            if(isset($grouped_rfq[$status])){
+
+            }
+        }
+        // $this->EmailRepository->sendEmail($emailArray);
     }
 }

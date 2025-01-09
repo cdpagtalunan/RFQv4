@@ -85,14 +85,16 @@ class RequestController extends Controller
             $currentYear = Carbon::now()->format('y');
     
             $collection = collect($request_repository_data)->filter(function ($request) use ($currentMonth) {
-                return $request->created_at->month === $currentMonth;
+                $month = Carbon::parse($request['created_at'])->format('m');
+                return $month === $currentMonth; // Filter by month
             })->sortBy([['id', 'DESC']]);
-    
+            
             $new_count = count($collection) + 1;
             if($new_count < 999){
                 $new_count = str_pad($new_count, 3, '0', STR_PAD_LEFT);
             }
             $new_ctrl_no = "RFQ-{$currentYear}{$currentMonth}-{$new_count}";
+
 
             // Data
             $data['ctrl_no'] = $new_ctrl_no;
@@ -156,9 +158,10 @@ class RequestController extends Controller
             );
             $relations = ['rapidx_details'];
             $purchasing_user = $this->UserAccessRepository->getUserWithRelationAndCondition($conditions, $relations);
-
             $emailArray['data'] = $rfq_collection;
-            $emailArray['cc'] = explode(',',$rfq_collection->cc);
+            if(!is_null($rfq_collection->cc)){
+                $emailArray['cc'] = explode(',',$rfq_collection->cc);
+            }
             array_push($emailArray['cc'],$rfq_collection->created_by_details->email);
             $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray();
             $emailArray['subject'] = "RFQv4 - $rfq_collection->ctrl_no For Logisitics Assignment <Do Not Reply!>";

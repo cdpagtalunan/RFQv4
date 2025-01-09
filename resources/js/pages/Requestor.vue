@@ -158,6 +158,7 @@
                         class="finish-button btn btn-success"
                         @click="onDoneRequest"
                         :disabled='btnDisabled'
+                        id='btnDone'
                         >
                         {{ props.isLastStep ? "Done" : "Next" }}
                         </button>
@@ -792,27 +793,30 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 api.post('api/done_request', {id: formRequest.id}).then((result)=>{
-                if(result.data.result == true){
-                    Toast.fire({
-                        icon: "success",
-                        title: result.data.msg
-                    });
-                    modalRequest.value.hide();
-                    dtQuotationRequest.draw();
-                }
-                else{
-                    Toast.fire({
-                        icon: "error",
-                        title: "Something went wrong. <br> Please contact ISS."
-                    })
-                }
-                btnDisabled.value = false;
+                    if(result.data.result == true){
+                        Toast.fire({
+                            icon: "success",
+                            title: result.data.msg
+                        });
+                        modalRequest.value.hide();
+                        dtQuotationRequest.draw();
+                    }
+                    else{
+                        Toast.fire({
+                            icon: "error",
+                            title: "Something went wrong. <br> Please contact ISS."
+                        })
+                    }
+                    btnDisabled.value = false;
 
-            }).catch((err) => {
-                console.log(err);
-                btnDisabled.value = false;
+                }).catch((err) => {
+                    console.log(err);
+                    btnDisabled.value = false;
 
-            });
+                });
+            }
+            else{
+                btnDisabled.value = false;
             }
         })
     }
@@ -827,8 +831,10 @@
             formRequest.justification = data.justification
             formRequest.attachment = data.attachment
 
-            let splittedData = data.cc.split(",");
-            formRequest.cc = splittedData;
+            if(data.cc != null){
+                let splittedData = data.cc.split(",");
+                formRequest.cc = splittedData;
+            }
             modalRequest.value.show();
         }).catch((err) => {
             console.log(err);
@@ -839,7 +845,7 @@
         api.get('api/get_request_details_by_id', {params: {id : id}}).then((result)=>{
             viewRequestData.value = result.data;
             statusForDatatable.value = false;
-            if(result.data.status == 4){
+            if(result.data.status == 4 || result.data.status == 3){
                 dtItemSupplier = tableItemSupplier.value.dt;
                 statusForDatatable.value = true;
                 dtItemSupplier.ajax.reload();

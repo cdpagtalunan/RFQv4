@@ -132,7 +132,9 @@ class TransactionController extends Controller
 
             $emailArray['data'] = $rfq_collection;
             $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
-            $emailArray['cc'] = explode(',',$rfq_collection->cc);
+            if(!is_null($rfq_collection->cc)){
+                $emailArray['cc'] = explode(',',$rfq_collection->cc);
+            }
             array_push($emailArray['cc'],$rfq_collection->created_by_details->email);
             $emailArray['subject'] = "RFQv4 - {$rfq_collection->ctrl_no} Request Assigned";
             $emailArray['emailFilePath'] = 'transaction_email';
@@ -326,7 +328,9 @@ class TransactionController extends Controller
 
             $emailArray['data'] = $request_details;
             // $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
-            $emailArray['cc'] = explode(',',$request_details->cc);
+            if(!is_null($request_details->cc)){
+                $emailArray['cc'] = explode(',',$request_details->cc);
+            }
             array_push($emailArray['cc'],$request_details->created_by_details->email);
             $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} For Logistics Head Approval";
             $emailArray['emailFilePath'] = 'transaction_email';

@@ -19,7 +19,7 @@ class CreateRequestItemsTable extends Migration
             $table->string('item_name');
             $table->integer('qty');
             $table->string('uom');
-            $table->longText('remarks');
+            $table->longText('remarks')->nullable();
             $table->string('created_by');
             $table->string('updated_by')->nullable();
             $table->softDeletes();

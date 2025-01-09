@@ -87,7 +87,7 @@
                 </div>
                 <hr>
                 <h4>Requested Item(s)</h4>
-                <div class="row">
+                <div class="row" v-show="viewRequest.status != 1">
                     <div class="col-md-12">
                         <div class="table-responsive">
                             <table class="table table-sm table-bordered" id="tableViewApprovals">
