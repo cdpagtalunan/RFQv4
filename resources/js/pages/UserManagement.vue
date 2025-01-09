@@ -93,6 +93,8 @@
     DataTable.use(DataTablesCore);
 
     const Swal = inject('Swal');
+    const Toast = inject('Toast');
+
 
     let dt;
     const modal = ref();
@@ -183,6 +185,9 @@
         dt = table.value.dt;
         modal.value = new Modal(document.querySelector('#modalUser'), {});
         getRapidxUserList(document.querySelector(".selRapidxUser"));
+        document.getElementById("modalUser").addEventListener('hidden.bs.modal', event => {
+            Object.assign(formUser, formUserInitialVal);
+        })
     })
 
     const onAddUser = () => {
@@ -201,6 +206,10 @@
     const saveUser = () => {
         api.post('api/save_user', formUser ).then((result)=>{
             if(result.data.result == true){
+                Toast.fire({
+                    icon: 'success',
+                    title: result.data.msg
+                });
                 modal.value.hide();
                 dt.ajax.reload();
                 // dt.draw();
