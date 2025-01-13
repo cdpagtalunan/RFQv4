@@ -81,15 +81,17 @@ class CommonController extends Controller
             'status' => ['1', '2', '3'],
             'deleted_at' => null,
         );
-        $relations = array();
+        $relations = array(
+            'created_by_details'
+        );
         $pending_rfqs = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
         $grouped_rfq = collect($pending_rfqs)->groupBy('status');
 
-        $conditions = array(
+        $conditions_purch_user = array(
             'user_access' => 1
         );
         $relations = ['rapidx_details'];
-        $purchasing_user = $this->UserAccessRepository->getUserWithRelationAndCondition($conditions, $relations);
+        $purchasing_user = $this->UserAccessRepository->getUserWithRelationAndCondition($conditions_purch_user, $relations);
 
         /**
          *
@@ -105,11 +107,23 @@ class CommonController extends Controller
             'body'          => ''
         );
         
-        $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray();
+        $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray(); // Getting of logistics emails
+        $emailArray['subject'] = "ALERT!! RFQv4 Notification <Do Not Reply>";
 
         foreach($conditions['status'] AS $status){
+            $emailArray['cc'] = array();
             if(isset($grouped_rfq[$status])){
-
+                switch ($status) {
+                    case '1':
+                        break;
+                    case '2':
+                        break;
+                    case '3':
+                        break;
+                    default:
+                        break;
+                }
+                return $grouped_rfq[$status];
             }
         }
         // $this->EmailRepository->sendEmail($emailArray);
