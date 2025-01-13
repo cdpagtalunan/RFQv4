@@ -102,6 +102,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!-- * For Suppliers and their quotations -->
                                     <tr v-for="item in tableSpecialViewData.itemDetails" :key="item.id">
                                         <td class="text-center"><strong>{{ item.item_name }}</strong></td>
                                         <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0" v-if="item.item_quotation_details.length > 0">
@@ -109,12 +110,13 @@
                                         </td>
                                         <td v-else class="text-center text-danger" :colspan="tableSpecialViewData.supplierNames.length"><strong>-- No Quotation --</strong></td>
                                     </tr>
+                                    <!-- * For additional data on datatable (Durations, etc.) -->
                                     <tr v-for="additionalRow in tableSpecialViewData.additionalRows" :key="additionalRow">
                                         <td><strong>{{ additionalRow.title }}</strong></td>
                                         <td v-for="supplier in tableSpecialViewData.supplierNames" :key="supplier" class="p-0 text-center">
                                             {{ 
                                                 tableSpecialViewData.uniqueOtherDetailsPerSupplier[supplier] == undefined ? '' :
-                                                tableSpecialViewData.uniqueOtherDetailsPerSupplier[supplier][0][additionalRow.tblColName] 
+                                                tableSpecialViewData.uniqueOtherDetailsPerSupplier[supplier][0][additionalRow.tblColName]
                                             }}
                                         </td>
                                     </tr>
@@ -719,8 +721,10 @@
 
             const element = itemQuotation[index];
             let forAppend = '';
+            let forAppendAttachment = '';
             let forSelected = '';
             if(supplier == element['supplier_name']){
+                console.log('element', element);
                 if(element['currency'] === null){
                     return `<strong>Decline to Quote</strong>`;
                 }
@@ -738,9 +742,16 @@
                 if(element['selected_quotation'] == 1){
                     forSelected = `checked`
                 };
-                
+
+                /**
+                    * For attachments 
+                */
+                let attachments = element['attachment'].split(',')
+                attachments.forEach(attachment => {
+                    forAppendAttachment += `<a href='download/${attachment}'>${attachment}</a><br>`
+                })
                 return `
-                <table class="table table-borderless table-sm w-50">
+                <table class="table table-borderless table-sm w-100">
                     <thead>
                         <tr>
                             <th colspan=2 class='text-center'>
@@ -756,6 +767,9 @@
                             <td>${ element['price'] }</td>
                         </tr>
                         ${forAppend}
+                        <tr>
+                            <td colspan='2'>${forAppendAttachment}</td>
+                        </tr>
                         
                     </tbody>
                 </table>`;

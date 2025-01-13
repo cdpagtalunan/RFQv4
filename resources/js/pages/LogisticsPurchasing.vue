@@ -373,7 +373,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Attachment:</span>
-                            <input type="file"  id="fileId" class="form-control" @change="onFileChange" v-if="!formSupplierDetails.id || checkReupload == true" :disabled="formSupplierDetails.no_quote">
+                            <input type="file"  id="fileId" class="form-control" @change="onFileChange" multiple v-if="!formSupplierDetails.id || checkReupload == true" :disabled="formSupplierDetails.no_quote">
                             <input type="input"  class="form-control" v-model="formSupplierDetails.attachment" readonly v-else>
                         </div>
                         <div class="form-check" v-if="formSupplierDetails.id">
@@ -449,7 +449,7 @@
         quotation_validity: '',
         terms_of_payment  : '',
         remarks           : '',
-        attachment        : '',
+        attachment        : [],
         rate              : '',
         convertion        : '',
         no_quote          : false
@@ -762,7 +762,9 @@
 
     // For uploading file in supplier details
     const onFileChange = (event) => {
-        formSupplierDetails.attachment = event.target.files[0];
+        // formSupplierDetails.attachment = event.target.files[0];
+        formSupplierDetails.attachment = Array.from(event.target.files);
+
     }
 
     const btnSaveQuotationDetails = () => {
@@ -775,6 +777,10 @@
 
         formData.append('request_item_id', itemDetails.itemId);
     
+        formSupplierDetails.attachment.forEach((file) => {
+            formData.append("attachment[]", file);
+        });
+
         api.post('api/save_quotation', formData).then((result)=>{
             if(result.data.result == true){
                 Toast.fire({
@@ -908,6 +914,7 @@
 
             const element = itemQuotation[index];
             let forAppend = '';
+            let forAppendAttachment = '';
             let forSelected = '';
             if(supplier == element['supplier_name']){
                 if(element['currency'] != 'PHP'){
@@ -925,6 +932,13 @@
                     forSelected = `checked`
                 };
                 
+                /**
+                    * For attachments 
+                */
+                let attachments = element['attachment'].split(',')
+                attachments.forEach(attachment => {
+                    forAppendAttachment += `<a href='download/${attachment}'>${attachment}</a><br>`
+                })
                 return `
                 <table class="table table-borderless table-sm w-50">
                     <thead>
@@ -942,7 +956,9 @@
                             <td>${ element['price'] }</td>
                         </tr>
                         ${forAppend}
-                        
+                        <tr>
+                            <td colspan='2'>${forAppendAttachment}</td>
+                        </tr>
                     </tbody>
                 </table>`;
             }

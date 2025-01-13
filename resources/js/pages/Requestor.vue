@@ -278,21 +278,21 @@
                 </div>
             </div>
             <div class="row" v-show="statusForDatatable">
-                    <div class="col-md-12">
-                        <DataTable
-                            class="table table-sm table-bordered table-hover wrap display"
-                            :columns="columnsItemSupplier"
-                            :ajax="{
-                                url: 'api/dt_get_items_supplier',
-                                data: function (param){
-                                    param.id = viewRequestData.id
-                                }
-                            }"
-                            ref="tableItemSupplier"
-                            :options="optionsItemSupplier"
-                        />
-                    </div>
+                <div class="col-md-12">
+                    <DataTable
+                        class="table table-sm table-bordered table-hover wrap display"
+                        :columns="columnsItemSupplier"
+                        :ajax="{
+                            url: 'api/dt_get_items_supplier',
+                            data: function (param){
+                                param.id = viewRequestData.id
+                            }
+                        }"
+                        ref="tableItemSupplier"
+                        :options="optionsItemSupplier"
+                    />
                 </div>
+            </div>
         </template>
     </Modal>
 
@@ -387,6 +387,14 @@
                                 :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
                                 >
                                     {{ details.terms_of_payment }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Attachments</td>
+                                <td v-for="details in quotationDetails" :key="details.id"
+                                :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                >
+                                    <span v-html="getAttachment(details.attachment)"></span>
                                 </td>
                             </tr>
 
@@ -855,16 +863,19 @@
     }
 
     const getRequestDetailsForView = (id) => {
+
         api.get('api/get_request_details_by_id', {params: {id : id}}).then((result)=>{
+
             viewRequestData.value = result.data;
             if(viewRequestData.value.attachment != null){
                 attachments.value = viewRequestData.value.attachment.split(",");
             }
             statusForDatatable.value = false;
             if(result.data.status == 4 || result.data.status == 3){
-                dtItemSupplier = tableItemSupplier.value.dt;
                 statusForDatatable.value = true;
-                dtItemSupplier.ajax.reload();
+                // dtItemSupplier.ajax.reload();
+                // dtItemSupplier = tableItemSupplier.value.dt;
+
             }
             modalViewRequest.value.show();
 
@@ -892,4 +903,20 @@
             console.log(err);
         });
     }
+
+    const getAttachment = (attachment) => {
+        let result = '<label class="text-danger">No Attachment</label>';
+
+        if(attachment != null){
+            result = "";
+            let splittedAttachment = attachment.split(',');
+            splittedAttachment.forEach(attchmnt => {
+                result += `<a href='download/${attchmnt}'>${attchmnt}</a><br>`;
+            })
+        }
+        return result;
+      
+    }
+
+
 </script>

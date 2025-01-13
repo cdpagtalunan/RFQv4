@@ -108,22 +108,35 @@ class CommonController extends Controller
         );
         
         $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray(); // Getting of logistics emails
+        $emailArray['to'] = ['cpagtalunan@pricon.ph']; // Getting of logistics emails
         $emailArray['subject'] = "ALERT!! RFQv4 Notification <Do Not Reply>";
 
+        // return $grouped_rfq[2];
         foreach($conditions['status'] AS $status){
             $emailArray['cc'] = array();
             if(isset($grouped_rfq[$status])){
+                /** 
+                    * @var $status will accept only $conditions['status'] above.
+                    * 1 = for log manager assignment
+                    * 2 = for purchasing quotation
+                    * 3 = for log head approval
+                */
+                $emailArray['cc'] = collect($grouped_rfq[$status])->pluck('created_by_details.email')->unique()->flatten(1)->toArray(); // get email of RFQ creator
+                $emailArray['data'] = $grouped_rfq[$status];
+
                 switch ($status) {
                     case '1':
+                        $emailArray['emailFilePath'] = "";
                         break;
                     case '2':
+                        $emailArray['emailFilePath'] = "";
                         break;
                     case '3':
+                        $emailArray['emailFilePath'] = "";
                         break;
                     default:
                         break;
                 }
-                return $grouped_rfq[$status];
             }
         }
         // $this->EmailRepository->sendEmail($emailArray);

@@ -211,22 +211,34 @@ class TransactionController extends Controller
     }
 
     public function save_quotation(QuotationRequest $request){
-
         $data = $request->validated();
         // return $data;
         /*
             * Manage the attachment 
         */
         $original_filename = null;
-        if(isset($request->id)){
-            $original_filename = $request->attachment;
-        }
-        if($request->file('attachment')){
-            $original_filename = $request->file('attachment')->getClientOriginalName();
+        $attachment = array();
+        // if(isset($request->id)){
+        //     $original_filename = $request->attachment;
+        // }
+        // if($request->file('attachment')){
+        //     $original_filename = $request->file('attachment')->getClientOriginalName();
             
-            Storage::putFileAs('public/quotation_attachments', $request->attachment, $original_filename);
+        //     Storage::putFileAs('public/quotation_attachments', $request->attachment, $original_filename);
+        // }
+        /**
+            * For multiple upload file 
+        */
+        if ($request->hasFile('attachment')) {
+            foreach ($request->file('attachment') as $file) {
+
+                $original_filename =  $file->getClientOriginalName();
+                Storage::putFileAs('public/quotation_attachments', $file, $original_filename);
+                array_push($attachment, $original_filename);
+            }
         }
-        $data['attachment'] = $original_filename;
+        $data['attachment'] = implode(',', $attachment);
+
         /*
             * Manage the supplier
         */
@@ -277,7 +289,14 @@ class TransactionController extends Controller
         })
         ->addColumn('attachment_link', function($supplier_quotation){
             $result = "";
-            $result .= "<a href='download/{$supplier_quotation->attachment}' target='_blank'>{$supplier_quotation->attachment}</a>";
+            $exploded_attachment = explode(',', $supplier_quotation->attachment);
+            foreach ($exploded_attachment as $key => $attachment) {
+                $result .= "<a href='download/{$attachment}' target='_blank'>{$attachment}</a> <br>";
+                if($key !== array_key_last($exploded_attachment)){
+                    $result .= "<hr>";
+                }
+
+            }
             return $result;
         })
         ->rawColumns(['attachment_link', 'action'])
