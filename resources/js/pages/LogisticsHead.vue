@@ -71,7 +71,11 @@
                 <div class="row mt-2">
                     <div class="col-md-6">
                         <label>Attachment:</label>
-                        <input type="text" class="form-control" :value="viewRequest.request.attachment " readonly>
+                        <!-- <input type="text" class="form-control" :value="viewRequest.request.attachment " readonly> -->
+                        <div class="d-flex flex-column">
+                            <a v-for="(attachment, index) in attachments" :key="index" :href="`download_attachments/${attachment}`" v-if="attachments.length > 0">{{ attachment }}</a>
+                            <label v-else class="text-danger">No Attachment</label>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label>Send CC to:</label>
@@ -317,6 +321,7 @@
         itemUom : ''
     })
     const winningQuotation = ref(null);
+    const attachments = ref([]);
 
     /**
      * @variable {Array} additionalRows - This will serve as the additinal rows in #tableViewApprovals.
@@ -363,7 +368,11 @@
                     viewRequest.status =  this.getAttribute('data-status');
                     document.getElementById('btnServeQuotation').classList.add('d-none');
                     document.getElementById('btnSaveWinningQuotation').classList.add('d-none');
+                    
                     viewRequest.request = JSON.parse(request);
+                    if(viewRequest.request.attachment != null){
+                        attachments.value = viewRequest.request.attachment.split(",");
+                    }
 
                     if(viewRequest.status == 3){
                         document.getElementById('btnServeQuotation').classList.remove('d-none');
@@ -548,6 +557,7 @@
             tableSpecialViewData.supplierNames                 = [];
             tableSpecialViewData.itemDetails                   = [];
             tableSpecialViewData.uniqueOtherDetailsPerSupplier = [];
+            attachments.value = [];
         })
         document.getElementById("modalAssign").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';

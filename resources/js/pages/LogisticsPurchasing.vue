@@ -71,7 +71,11 @@
                 <div class="row mt-2">
                     <div class="col-md-6">
                         <label>Attachment:</label>
-                        <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.attachment " readonly>
+                        <!-- <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.attachment " readonly> -->
+                        <div class="d-flex flex-column">
+                            <a v-for="(attachment, index) in attachments" :key="index" :href="`download_attachments/${attachment}`" v-if="attachments.length > 0">{{ attachment }}</a>
+                            <label v-else class="text-danger">No Attachment</label>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label>Send CC to:</label>
@@ -456,6 +460,7 @@
     const winningQuotation = ref();
     const showRate = ref(false);
     const shouldHaveDrawCallback = ref(false);
+    const attachments = ref([]);
 
      /**
      * @variable {Array} additionalRows - This will serve as the additinal rows in #tableViewApprovals.
@@ -503,6 +508,10 @@
                     viewRequest.request = JSON.parse(request);
                     viewRequest.status = 0;
 
+                    if(viewRequest.request.attachment != null){
+                        attachments.value = viewRequest.request.attachment.split(",");
+                    }
+
                     dtSupplierQuotation.column(0).visible(false); // Remove action button for viewing purposes
                     if(status.value < 4){
                         dtItemSupplier.draw();
@@ -533,6 +542,9 @@
                         id.value = this.getAttribute('data-id')
 
                         viewRequest.request = JSON.parse(requestDetails);
+                        if(viewRequest.request.attachment != null){
+                            attachments.value = viewRequest.request.attachment.split(",");
+                        }
                         viewRequest.modalFooter = true;
                         viewRequest.status = 1;
                         dtSupplierQuotation.column(0).visible(true);
@@ -729,6 +741,7 @@
             tableSpecialViewData.supplierNames                 = [];
             tableSpecialViewData.itemDetails                   = [];
             tableSpecialViewData.uniqueOtherDetailsPerSupplier = [];
+            attachments.value = [];
         })
         document.getElementById("modalAddSupplierDetails").addEventListener('hidden.bs.modal', event => {
             Object.assign(formSupplierDetails, formSupplierDetailsInitVal);

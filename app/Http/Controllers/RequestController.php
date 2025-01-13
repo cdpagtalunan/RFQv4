@@ -55,18 +55,30 @@ class RequestController extends Controller
     public function save_req_details(RequestDetailRequest $request){
         date_default_timezone_set('Asia/Manila');
         $data = $request->validated();
+        $attachment = array();
         
-        if($request->checkedReupload == 'true' && $request->attachement != ''){
-            $original_filename = $request->file('attachment')->getClientOriginalName();
-            Storage::putFileAs('public/file_attachments', $request->attachment, $original_filename);
+        // if($request->checkedReupload == 'true' && $request->attachement != ''){
+        //     $original_filename = $request->file('attachment')->getClientOriginalName();
+        //     Storage::putFileAs('public/file_attachments', $request->attachment, $original_filename);
 
-            $data['attachment'] = $original_filename;
+        //     // $data['attachment'] = $original_filename;
+        //     // array_push($data['attachment'], $original_filename);
+        // }
+        /**
+            * For multiple upload file 
+        */
+        if ($request->hasFile('attachment')) {
+            foreach ($request->file('attachment') as $file) {
+
+                $original_filename =  $file->getClientOriginalName();
+                Storage::putFileAs('public/file_attachments', $file, $original_filename);
+                array_push($attachment, $original_filename);
+            }
         }
-       
-
         $data['cc'] = $request->cc;
 
         if(isset($request->id)){ // Update
+            $data['attachment'] = implode(',', $attachment);
             $data['updated_by'] = $_SESSION['rapidx_user_id'];
             return $this->RequestRepository->update($request->id, $data);
         }
@@ -97,6 +109,7 @@ class RequestController extends Controller
 
 
             // Data
+            $data['attachment'] = implode(',', $attachment);
             $data['ctrl_no'] = $new_ctrl_no;
             $data['created_by'] = $_SESSION['rapidx_user_id'];
             $data['created_at'] = NOW();

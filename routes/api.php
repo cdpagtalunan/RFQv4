@@ -89,6 +89,7 @@ Route::middleware('checkSessionExist')->group(function(){
 
     Route::controller(CommonController::class)->group(function(){
         Route::get('get_stat', 'get_stat');
+        // Route::get('download_attachments/{doc}', 'download_attachments');
     });
     
 });

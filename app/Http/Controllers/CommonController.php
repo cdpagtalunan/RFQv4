@@ -128,4 +128,9 @@ class CommonController extends Controller
         }
         // $this->EmailRepository->sendEmail($emailArray);
     }
+
+    public function download_attachments(Request $request, $file){
+        return Storage::download("public/file_attachments/$file",);
+
+    }
 }

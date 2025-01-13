@@ -76,7 +76,7 @@
                             <div class="col-md-6">
                                 <label>Attachment:</label>
                                 <input type="text" class="form-control" readonly v-model="formRequest.attachment" v-if="formRequest.checkedReupload == false && formRequest.id != ''">
-                                <input type="file" class="form-control" @change="onFileChange" v-if="formRequest.checkedReupload == true">
+                                <input type="file" class="form-control" @change="onFileChange" v-if="formRequest.checkedReupload == true" multiple>
 
                                 <div class="form-check" v-if="formRequest.id != ''">
                                     <input class="form-check-input" type="checkbox" id="chechReupload"  v-model="formRequest.checkedReupload">
@@ -213,40 +213,44 @@
 
     <!-- Modal For Viewing of Request -->
      <Modal title="Request for Quotation" id="modalViewRequest" :modal-footer="false" modal-size="modal-xl">
-        <template #body>
+        <template #body v-if="viewRequestData != undefined">
             
             <div class="row">
                 <div class="col-md-3">
                     <label>Control No.:</label>
-                    <input type="text" class="form-control" :value="viewRequestData == undefined ? '' : viewRequestData.ctrl_no " readonly>
+                    <input type="text" class="form-control" :value="viewRequestData.ctrl_no " readonly>
                 </div>
             </div>
             <div class="row mt-2">
                 <div class="col-md-6">
                     <label>Category:</label>
-                    <input type="text" class="form-control" :value="viewRequestData == undefined ? '' : viewRequestData.category_details.category_name " readonly>
+                    <input type="text" class="form-control" :value="viewRequestData.category_details.category_name " readonly>
                     
                 </div>
                 <div class="col-md-6">
                     <label>Date Needed:</label>
-                    <input type="text" class="form-control" :value="viewRequestData == undefined ? '' : viewRequestData.date_needed " readonly>
+                    <input type="text" class="form-control" :value="viewRequestData.date_needed " readonly>
                 </div>
             </div>
             <div class="row mt-2">
                 <div class="col-md-6">
                     <label>Attachment:</label>
-                    <input type="text" class="form-control" :value="viewRequestData == undefined ? '' : viewRequestData.attachment " readonly>
+                    <!-- <input type="text" class="form-control" :value="viewRequestData.attachment " readonly> -->
+                    <div class="d-flex flex-column">
+                        <a v-for="(attachment, index) in attachments" :key="index" :href="`download_attachments/${attachment}`" v-if="attachments.length > 0">{{ attachment }}</a>
+                        <label v-else class="text-danger">No Attachment</label>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label>Send CC to:</label>
-                    <input type="text" class="form-control" :value="viewRequestData == undefined ? '' : viewRequestData.cc " readonly>
+                    <input type="text" class="form-control" :value="viewRequestData.cc " readonly>
                 </div>
             </div>
             <div class="row mt-2">
                 <div class="col-md-12">
                     <label> Justification:</label>
                     
-                    <textarea class="form-control" :value="viewRequestData == undefined ? '' : viewRequestData.justification " readonly></textarea>
+                    <textarea class="form-control" :value="viewRequestData.justification " readonly></textarea>
                 </div>
             </div>
 
@@ -263,7 +267,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-if="viewRequestData != undefined" v-for="itemDetails in viewRequestData.item_details" :key="itemDetails.id">
+                            <tr  v-for="itemDetails in viewRequestData.item_details" :key="itemDetails.id">
                                 <td>{{ itemDetails.item_name }}</td>
                                 <td>{{ itemDetails.qty }}</td>
                                 <td>{{ itemDetails.uom }}</td>
@@ -281,7 +285,7 @@
                             :ajax="{
                                 url: 'api/dt_get_items_supplier',
                                 data: function (param){
-                                    param.id = viewRequestData == undefined ? '' : viewRequestData.id
+                                    param.id = viewRequestData.id
                                 }
                             }"
                             ref="tableItemSupplier"
@@ -429,6 +433,7 @@
     const quotationDetails = ref([]);
     const winningQuotation = ref();
     const statusForDatatable = ref(false);
+    const attachments = ref([]);
 
     // const formRequest.checkedReupload = ref(true);
 
@@ -438,7 +443,8 @@
         ctrl_no      : '',
         category_id  : '',
         date_needed  : null,
-        attachment   : '',
+        // attachment   : '',
+        attachment   : [],
         cc           : [],
         justification: null,
         checkedReupload : true
@@ -725,8 +731,15 @@
         Object.keys(formRequest).forEach(function(key) {
             formData.append(key, formRequest[key]);
         });
+        formRequest.attachment.forEach((file) => {
+            formData.append("attachment[]", file);
+        });
 
-        api.post('api/save_req_details', formData).then((result)=>{
+        api.post('api/save_req_details', formData,  {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        }).then((result)=>{
             props.nextTab()
             formRequest.id = result.data.id;
             formRequest.ctrl_no = result.data.ctrl_no;
@@ -844,6 +857,9 @@
     const getRequestDetailsForView = (id) => {
         api.get('api/get_request_details_by_id', {params: {id : id}}).then((result)=>{
             viewRequestData.value = result.data;
+            if(viewRequestData.value.attachment != null){
+                attachments.value = viewRequestData.value.attachment.split(",");
+            }
             statusForDatatable.value = false;
             if(result.data.status == 4 || result.data.status == 3){
                 dtItemSupplier = tableItemSupplier.value.dt;
@@ -858,7 +874,9 @@
     }
 
     const onFileChange = (event) => {
-        formRequest.attachment = event.target.files[0];
+        // formRequest.attachment = event.target.files[0];
+        formRequest.attachment = Array.from(event.target.files);
+        console.log(formRequest.attachment);
     }
 
     const onRemoveItem = (requestItemId) => {
@@ -873,5 +891,9 @@
         }).catch((err) => {
             console.log(err);
         });
+    }
+
+    const downloadFile = (doc) => {
+        api.get('api/download_attachments', {params: {doc : doc}})
     }
 </script>

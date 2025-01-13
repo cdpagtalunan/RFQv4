@@ -29,6 +29,7 @@ Route::get('check_user', function (Request $request) {
 
 Route::middleware('checkSessionExist')->group(function(){
     Route::get('download/{file}', [CommonController::class, 'download']);
+    Route::get('download_attachments/{file}', [CommonController::class, 'download_attachments']);
 
     /*
         ! THIS ROUTE WILL BE ACCESS FIRST AND WILL CHECK IF USER HAS ACCESS ON THIS MODULE
