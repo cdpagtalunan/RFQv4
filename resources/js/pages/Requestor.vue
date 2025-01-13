@@ -892,8 +892,4 @@
             console.log(err);
         });
     }
-
-    const downloadFile = (doc) => {
-        api.get('api/download_attachments', {params: {doc : doc}})
-    }
 </script>
