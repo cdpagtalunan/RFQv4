@@ -28,23 +28,23 @@
                 <tbody>
                     <tr>
                         <td><strong>RFQ Control Number</strong></td>
-                        <td>:{{ $ctrl_no }}</td>
+                        <td>:{{ $data['ctrl_no'] }}</td>
                     </tr>
                     <tr>
                         <td><strong>Category</strong></td>
-                        <td>:{{ $category_details['category_name'] }}</td>
+                        <td>:{{ $data['category_details']['category_name'] }}</td>
                     </tr>
                     <tr>
                         <td><strong>Date Needed</strong></td>
-                        <td>:{{ $date_needed }}</td>
+                        <td>:{{ $data['date_needed'] }}</td>
                     </tr>
                     <tr>
                         <td><strong>Justification</strong></td>
-                        <td>:{{ $justification }}</td>
+                        <td>:{{ $data['justification'] }}</td>
                     </tr>
                     <tr>
                         <td><strong>Requestor</strong></td>
-                        <td>:{{ $created_by_details['name'] }}</td>
+                        <td>:{{ $data['created_by_details']['name'] }}</td>
                     </tr>
                 </tbody>
             </table>

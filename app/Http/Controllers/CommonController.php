@@ -82,7 +82,8 @@ class CommonController extends Controller
             'deleted_at' => null,
         );
         $relations = array(
-            'created_by_details'
+            'created_by_details',
+            'category_details'
         );
         $pending_rfqs = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
         $grouped_rfq = collect($pending_rfqs)->groupBy('status');
@@ -108,11 +109,10 @@ class CommonController extends Controller
         );
         
         $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray(); // Getting of logistics emails
-        $emailArray['to'] = ['cpagtalunan@pricon.ph']; // Getting of logistics emails
-        $emailArray['subject'] = "ALERT!! RFQv4 Notification <Do Not Reply>";
-
-        // return $grouped_rfq[2];
+        $emailArray['bcc'] = ['cpagtalunan@pricon.ph']; // Getting of logistics emails
+        
         foreach($conditions['status'] AS $status){
+
             $emailArray['cc'] = array();
             if(isset($grouped_rfq[$status])){
                 /** 
@@ -123,23 +123,26 @@ class CommonController extends Controller
                 */
                 $emailArray['cc'] = collect($grouped_rfq[$status])->pluck('created_by_details.email')->unique()->flatten(1)->toArray(); // get email of RFQ creator
                 $emailArray['data'] = $grouped_rfq[$status];
-
+                $emailArray['emailFilePath'] = 'pending_notification';
                 switch ($status) {
                     case '1':
-                        $emailArray['emailFilePath'] = "";
+                        $emailArray['subject'] = "ALERT!! RFQv4 Notification - For Assignment <Do Not Reply>";
+                        $emailArray['body'] = "Please be informed that RFQ is pending for assignment";
                         break;
                     case '2':
-                        $emailArray['emailFilePath'] = "";
-                        break;
+                        $emailArray['subject'] = "ALERT!! RFQv4 Notification - For Purchasing Quotation <Do Not Reply>";
+                        $emailArray['body'] = "Please be informed that RFQ is pending for purchasing quotation";
+                        break; 
                     case '3':
-                        $emailArray['emailFilePath'] = "";
+                        $emailArray['subject'] = "ALERT!! RFQv4 Notification - For Logistics Head Approval <Do Not Reply>";
+                        $emailArray['body'] = "Please be informed that RFQ is pending for approval";
                         break;
                     default:
                         break;
                 }
+                $this->EmailRepository->sendEmail($emailArray);
             }
         }
-        // $this->EmailRepository->sendEmail($emailArray);
     }
 
     public function download_attachments(Request $request, $file){

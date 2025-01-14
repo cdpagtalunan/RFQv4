@@ -26,17 +26,17 @@
 
     const timer = ref();
     onMounted(() => {
-        // setInterval(getClock, 1000);
+        setInterval(getClock, 1000);
     });
 
-    // const getClock = () => {
+    const getClock = () => {
         timer.value = moment().format('LTS');
-        // if(timer.value == '7:30:05 AM'){
+        if(timer.value == '7:00:00 AM'){
             api.get('/get_pending_requests').then((result)=>{
                 // Script Here
             }).catch((err) => {
                 console.log(err);
             });
-        // }
-    // }
+        }
+    }
 </script>
