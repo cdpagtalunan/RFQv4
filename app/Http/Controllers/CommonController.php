@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Solid\Interfaces\EmailRepositoryInterface;
@@ -110,19 +111,24 @@ class CommonController extends Controller
         
         $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray(); // Getting of logistics emails
         $emailArray['bcc'] = ['cpagtalunan@pricon.ph']; // Getting of logistics emails
-        
+       
+
         foreach($conditions['status'] AS $status){
 
             $emailArray['cc'] = array();
             if(isset($grouped_rfq[$status])){
+                
+                $collection = collect($grouped_rfq[$status])->filter(function ($rfq) {
+                    return $rfq['created_at'] < Carbon::now()->subDay(2)->format('Y-m-d');
+                })->flatten(1);
                 /** 
                     * @var $status will accept only $conditions['status'] above.
                     * 1 = for log manager assignment
                     * 2 = for purchasing quotation
                     * 3 = for log head approval
                 */
-                $emailArray['cc'] = collect($grouped_rfq[$status])->pluck('created_by_details.email')->unique()->flatten(1)->toArray(); // get email of RFQ creator
-                $emailArray['data'] = $grouped_rfq[$status];
+                $emailArray['cc'] = collect($collection)->pluck('created_by_details.email')->unique()->flatten(1)->toArray(); // get email of RFQ creator
+                $emailArray['data'] = $collection;
                 $emailArray['emailFilePath'] = 'pending_notification';
                 switch ($status) {
                     case '1':
