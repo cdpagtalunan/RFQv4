@@ -358,7 +358,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="fw-bold">Lead Time</td>
+                                <td class="fw-bold">Duration</td>
                                 <td v-for="details in quotationDetails" :key="details.id"
                                 :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
                                 >
@@ -387,6 +387,14 @@
                                 :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
                                 >
                                     {{ details.terms_of_payment }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Remarks</td>
+                                <td v-for="details in quotationDetails" :key="details.id"
+                                :class="[viewRequestData.status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
+                                >
+                                    {{ details.remarks }}
                                 </td>
                             </tr>
                             <tr>

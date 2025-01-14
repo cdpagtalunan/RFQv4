@@ -957,6 +957,10 @@
                         </tr>
                         ${forAppend}
                         <tr>
+                            <td class='w-50'>Remarks: </td>
+                            <td>${element['remarks'] == null ? 'N/A' : element['remarks']}</td>
+                        </tr>
+                        <tr>
                             <td colspan='2'>${forAppendAttachment}</td>
                         </tr>
                     </tbody>
