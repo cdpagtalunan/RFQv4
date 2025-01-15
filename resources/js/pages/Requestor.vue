@@ -747,9 +747,13 @@
         Object.keys(formRequest).forEach(function(key) {
             formData.append(key, formRequest[key]);
         });
-        formRequest.attachment.forEach((file) => {
-            formData.append("attachment[]", file);
-        });
+        
+        if(formRequest.attachment != null){
+            formRequest.attachment.forEach((file) => {
+                formData.append("attachment[]", file);
+            });
+        }
+     
 
         api.post('api/save_req_details', formData,  {
             headers: {
