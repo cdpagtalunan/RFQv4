@@ -94,7 +94,7 @@
                     </tbody>
                 </table>
             @else
-                <table border='1' id="tableQuotation">
+                <table border='1' style="width: 100%;" id="tableQuotation">
                     <tr>
                         <th style="width: 50% !important; padding: 2px;"></th>
                         @foreach ($quote_data['supplierNames'] as $supplier)
