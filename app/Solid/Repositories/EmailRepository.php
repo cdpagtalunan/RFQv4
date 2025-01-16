@@ -15,10 +15,17 @@ class EmailRepository implements EmailRepositoryInterface
     public function sendEmail(array $emailArray){
 
         // $data['data'] = json_decode($emailArray['data'], true);
-        $data['data'] = $emailArray['data'];
-        $data['body'] = $emailArray['body'];
+        // $data['data'] = $emailArray['data'];
+        // $data['body'] = $emailArray['body'];
+        $data = array(
+            'data' => $emailArray['data'],
+            'body' => $emailArray['body']
+        );
 
-        // dd($data);
+        if(isset($emailArray['quote_data'])){
+            $data['quote_data'] = $emailArray['quote_data'];
+        }
+
         Mail::send("mail.{$emailArray['emailFilePath']}", $data , function($message) use ($emailArray) {
             $message->bcc('cpagtalunan@pricon.ph');
             $message->to($emailArray['to']);

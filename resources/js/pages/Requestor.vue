@@ -9,20 +9,22 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col">
-                    
                     <Card :cardBody="true" :cardHeader="true">
                         <template #header>
                             <label class="h3">Request for Quotation</label>
                             <button class="btn btn-primary float-right" id="btnAddRequest" @click="onAddRequest"><icons icon="fas fa-plus"></icons>Add Request</button>
                         </template>
                         <template #body>
-                            <DataTable
-                                class="table table-sm table-bordered table-hover wrap display"
-                                :columns="columnsQuotationRequest"
-                                ajax="api/dt_get_request"
-                                ref="tableQuotationRequest"
-                                :options="optionsQuotationRequest"
-                            />
+                            <div class="table-responsive">
+                                <DataTable
+                                    class="table table-sm table-bordered table-hover wrap display"
+                                    :columns="columnsQuotationRequest"
+                                    ajax="api/dt_get_request"
+                                    ref="tableQuotationRequest"
+                                    :options="optionsQuotationRequest"
+                                />
+                            </div>
+                          
                         </template>
                     </Card>
 
@@ -747,14 +749,12 @@
         Object.keys(formRequest).forEach(function(key) {
             formData.append(key, formRequest[key]);
         });
-        
-        if(formRequest.attachment != null){
+
+        if(formRequest.attachment.length != 0){
             formRequest.attachment.forEach((file) => {
                 formData.append("attachment[]", file);
             });
         }
-     
-
         api.post('api/save_req_details', formData,  {
             headers: {
                 "Content-Type": "multipart/form-data",

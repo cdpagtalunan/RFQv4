@@ -25,6 +25,8 @@ use App\Http\Controllers\TransactionController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+// Route::get('get_request_details_by_id', [RequestController::class, 'get_request_details_by_id'])->name('api.get_request_details');
+Route::get('get_request_details', [TransactionController::class,'get_request_details'])->name('api.get_request_details');
 
 Route::middleware('checkSessionExist')->group(function(){
     Route::controller(UserController::class)->group(function () {
@@ -73,7 +75,7 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::post('disapprove_quotation', 'disapprove_quotation');
         Route::post('serve_quotation', 'serve_quotation');
         Route::get('get_quotations', 'get_quotations');
-        Route::get('get_request_details', 'get_request_details');
+        // Route::get('get_request_details', 'get_request_details')->name('api.get_request_details');
     });
 
     Route::controller(CurrencyController::class)->group(function(){

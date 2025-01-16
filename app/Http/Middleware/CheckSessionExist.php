@@ -18,9 +18,11 @@ class CheckSessionExist
     {
         // return $next($request);
         session_start();
+        // dd($_SESSION);
         if (!$_SESSION) {
             return redirect('../');
         }
+
         return $next($request);
 
     }

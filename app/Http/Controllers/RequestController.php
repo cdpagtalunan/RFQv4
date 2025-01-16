@@ -141,8 +141,8 @@ class RequestController extends Controller
             'updated_by' => $_SESSION['rapidx_user_id']
         );
 
-        $update_result = $this->RequestRepository->update($request->id, $data);
-        if(isset($update_result)){
+        // $update_result = $this->RequestRepository->update($request->id, $data);
+        // if(isset($update_result)){
             /**
              *
              * @param array $emailArray
@@ -162,12 +162,14 @@ class RequestController extends Controller
             );
             $relations = [
                 'category_details',
-                'created_by_details'
+                'created_by_details',
+                'item_details'
             ];
             $rfq = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
             $rfq_collection = collect($rfq)->first();
             $conditions = array(
-                'user_access' => 1
+                'user_access' => 1,
+                'deleted_at' => null
             );
             $relations = ['rapidx_details'];
             $purchasing_user = $this->UserAccessRepository->getUserWithRelationAndCondition($conditions, $relations);
@@ -181,12 +183,12 @@ class RequestController extends Controller
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = 'Please be informed that RFQ is for purchasing assignment.';
 
-            // $data = json_decode($emailArray);
 
+            // return $emailArray;
             $this->EmailRepository->sendEmail($emailArray);
-        }
+        // }
 
-        return $update_result;
+        // return $update_result;
     }
 
     public function dt_get_request(Request $request){

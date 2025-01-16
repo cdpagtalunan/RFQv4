@@ -24,6 +24,7 @@
             {{ $body }}
             <br>
             Please see list of pending RFQ below:
+            
             <br>
             <table id="tableRFQ">
                 <thead>

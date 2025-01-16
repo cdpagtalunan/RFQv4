@@ -29,19 +29,21 @@
                             </div>
                         </template>
                         <template #body>
-                            <DataTable
-                                class="table table-sm table-bordered table-hover wrap display"
-                                :columns="columnsLogRequest"
-                                :ajax="{
-                                    url: 'api/dt_get_log_request',
-                                    data: function (param){
-                                        param.status = reqFilterStatus,
-                                        param.type = 1
-                                    }
-                                }"
-                                ref="tableLotRequest"
-                                :options="optionsLogRequest"
-                            />
+                            <div class="table-responsive">
+                                <DataTable
+                                    class="table table-sm table-bordered table-hover wrap display"
+                                    :columns="columnsLogRequest"
+                                    :ajax="{
+                                        url: 'api/dt_get_log_request',
+                                        data: function (param){
+                                            param.status = reqFilterStatus,
+                                            param.type = 1
+                                        }
+                                    }"
+                                    ref="tableLotRequest"
+                                    :options="optionsLogRequest"
+                                />
+                            </div>
                         </template>
                     </Card>
                 </div>
@@ -125,22 +127,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="row" v-show="viewRequest.status > 1">
-                    <div class="col-md-12">
-                        <DataTable
-                            class="table table-sm table-bordered table-hover wrap display"
-                            :columns="columnsItemSupplier"
-                            :ajax="{
-                                url: 'api/dt_get_items_supplier',
-                                data: function (param){
-                                    param.id = id
-                                }
-                            }"
-                            ref="tableItemSupplier"
-                            :options="optionsItemSupplier"
-                        />
-                    </div>
-                </div> -->
                 <div class="row" v-show="viewRequest.status == 1">
                     <div class="col-md-12">
                         <table class="table table-bordered table-sm">
@@ -746,10 +732,13 @@
                 /**
                     * For attachments 
                 */
-                let attachments = element['attachment'].split(',')
-                attachments.forEach(attachment => {
-                    forAppendAttachment += `<a href='download/${attachment}'>${attachment}</a><br>`
-                })
+                if(element['attachment'] != null){
+                    let attachments = element['attachment'].split(',')
+                    attachments.forEach(attachment => {
+                        forAppendAttachment += `<a href='download/${attachment}'>${attachment}</a><br>`
+                    })
+                }
+               
                 return `
                 <table class="table table-borderless table-sm w-100">
                     <thead>

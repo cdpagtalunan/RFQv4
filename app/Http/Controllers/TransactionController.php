@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DataTables;
 use Illuminate\Http\Request;
 use App\Http\Requests\AssignRequest;
+use Illuminate\Support\Facades\Http;
 use App\Http\Requests\QuotationRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Solid\Interfaces\EmailRepositoryInterface;
@@ -312,6 +313,7 @@ class TransactionController extends Controller
             'status' => 3,
             'updated_by' => $_SESSION['rapidx_user_id']
         );
+        
         $update_result = $this->RequestRepository->update($request->id, $data);
 
         if(isset($update_result)){
@@ -343,10 +345,21 @@ class TransactionController extends Controller
             $request_details = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($request_conditions, $request_relations);
             $request_details = collect($request_details)->first();
 
-            
+            $to_conditions = array(
+                'approver' => 1,
+                'deleted_at' => null
+            );
+            $to_relations = array(
+                'rapidx_details',
+            );
+            $to_user = $this->UserAccessRepository->getUserWithRelationAndCondition($to_conditions, $to_relations);
+
+            $quote_data = Http::get(route('api.get_request_details', ['id' => $request->id]));
+            $emailArray['quote_data'] = $quote_data;
 
             $emailArray['data'] = $request_details;
-            // $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
+
+            $emailArray['to'] = collect($to_user)->pluck('rapidx_details.email')->toArray();
             if(!is_null($request_details->cc)){
                 $emailArray['cc'] = explode(',',$request_details->cc);
             }
@@ -354,6 +367,8 @@ class TransactionController extends Controller
             $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} For Logistics Head Approval";
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = "Please be informed that RFQ is now for logistics head approval.";
+
+            // return $emailArray;
             $this->EmailRepository->sendEmail($emailArray);
         }
         return $update_result;
@@ -496,6 +511,9 @@ class TransactionController extends Controller
 
             $request_details = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($request_conditions, $request_relations);
             $request_details = collect($request_details)->first();
+
+            $quote_data = Http::get(route('api.get_request_details', ['id' => $request->id]));
+            $emailArray['quote_data'] = $quote_data;
 
             $emailArray['data'] = $request_details;
             $emailArray['to'] = $request_details->created_by_details->email;

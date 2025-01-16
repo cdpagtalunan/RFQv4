@@ -29,19 +29,22 @@
                             </div>
                         </template>
                         <template #body>
-                            <DataTable
-                                class="table table-sm table-bordered table-hover wrap display"
-                                :columns="columnsLogRequest"
-                                :ajax="{
-                                    url: 'api/dt_get_log_request',
-                                    data: function (param){
-                                        param.status = reqFilterStatus,
-                                        param.type = 0
-                                    }
-                                }"
-                                ref="tableLotRequest"
-                                :options="optionsLogRequest"
-                            />
+                            <div class="table-responsive">
+                                <DataTable
+                                    class="table table-sm table-bordered table-hover wrap display"
+                                    :columns="columnsLogRequest"
+                                    :ajax="{
+                                        url: 'api/dt_get_log_request',
+                                        data: function (param){
+                                            param.status = reqFilterStatus,
+                                            param.type = 0
+                                        }
+                                    }"
+                                    ref="tableLotRequest"
+                                    :options="optionsLogRequest"
+                                />
+                            </div>
+                           
                         </template>
                     </Card>
                 </div>
@@ -873,7 +876,6 @@
                         title: result.data.msg
                     });
                     document.getElementById('btnProceedApproval').disabled = false;
-
                 }).catch((err) => {
                     console.log(err);
                     Toast.fire({
