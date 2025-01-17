@@ -54,8 +54,8 @@ class CommonController extends Controller
     }
 
     public function download(Request $request, $file){
-        // return urldecode($file);
-        return Storage::download("public/quotation_attachments/".urldecode($file),);
+        // return $file;
+        return Storage::download("public/quotation_attachments/$file",);
     }
 
     public function get_stat(Request $request){
@@ -153,7 +153,7 @@ class CommonController extends Controller
     }
 
     public function download_attachments(Request $request, $file){
-        return Storage::download("public/file_attachments/".urldecode($file),);
+        return Storage::download("public/file_attachments/$file",);
 
     }
 }
