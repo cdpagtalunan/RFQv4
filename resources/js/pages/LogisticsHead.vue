@@ -737,7 +737,7 @@
                 if(element['attachment'] != null){
                     let attachments = element['attachment'].split(',')
                     attachments.forEach(attachment => {
-                        forAppendAttachment += `<a href='download/${decodeURIComponent(attachment)}'>${attachment}</a><br>`
+                        forAppendAttachment += `<a href='download/${encodeURIComponent(attachment)}'>${attachment}</a><br>`
                     })
                 }
                

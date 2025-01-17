@@ -923,7 +923,7 @@
             result = "";
             let splittedAttachment = attachment.split(',');
             splittedAttachment.forEach(attchmnt => {
-                result += `<a href='download/${decodeURIComponent(attchmnt)}'>${attchmnt}</a><br>`;
+                result += `<a href='download/${encodeURIComponent(attchmnt)}'>${attchmnt}</a><br>`;
             })
         }
         return result;
