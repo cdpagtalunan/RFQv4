@@ -511,7 +511,7 @@
                     viewRequest.request = JSON.parse(request);
                     viewRequest.status = 0;
 
-                    if(viewRequest.request.attachment != null){
+                    if(viewRequest.request.attachment != null || viewRequest.request.attachment != ''){
                         attachments.value = viewRequest.request.attachment.split(",");
                     }
 
