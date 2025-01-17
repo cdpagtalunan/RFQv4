@@ -95,8 +95,8 @@ class TransactionController extends Controller
         $data['assigned_by'] = $_SESSION['rapidx_user_id'];
         $data['status']      = 2;
         $data['assigned_at'] = NOW();
-        // $update_result = $this->RequestRepository->update($request->request_id, $data);
-        // if(isset($update_result)){
+        $update_result = $this->RequestRepository->update($request->request_id, $data);
+        if(isset($update_result)){
             /**
              *
              * @param array $emailArray
@@ -142,9 +142,9 @@ class TransactionController extends Controller
             $emailArray['body'] = "Please be informed that RFQ is assigned to {$rfq_collection->assigned_to_details->name}";
             // return $emailArray;
             $this->EmailRepository->sendEmail($emailArray);
-        // }
+        }
 
-        // return $update_result;
+        return $update_result;
     }
 
     public function dt_get_items_supplier(Request $request){
