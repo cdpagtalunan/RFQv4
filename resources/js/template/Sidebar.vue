@@ -75,6 +75,8 @@
                             <p>UOM </p>
                         </router-link>
                     </li>
+                    <li class="nav-header font-weight-bold">Exports</li>
+
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

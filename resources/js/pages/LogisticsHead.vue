@@ -358,7 +358,9 @@
                     document.getElementById('btnSaveWinningQuotation').classList.add('d-none');
                     
                     viewRequest.request = JSON.parse(request);
-                    if(viewRequest.request.attachment != null || viewRequest.request.attachment != ''){
+                    console.log(viewRequest.request.attachment);
+
+                    if(viewRequest.request.attachment != null){
                         attachments.value = viewRequest.request.attachment.split(",");
                     }
 
