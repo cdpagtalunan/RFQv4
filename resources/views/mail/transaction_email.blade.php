@@ -98,25 +98,34 @@
                     <tr>
                         <th style="width: 50% !important; padding: 2px;"></th>
                         @foreach ($quote_data['supplierNames'] as $supplier)
-                            <th style='padding: 2px;'>{{ $supplier }}</th>
+                            <th style='padding: 2px; background-color: #13ace8'>{{ $supplier }}</th>
                         @endforeach
                     </tr>
                     @foreach ($quote_data['itemDetails'] as $item)
                         <tr>
                             <td class="text-center"><strong>{{ $item['item_name'] }}</strong></td>
-                            @foreach ($quote_data['supplierNames'] as $supplier)
-                                <td>
-                                    <span class="d-flex justify-content-center">
-                                        @foreach ($item['item_quotation_details'] as $itemQuotation)
-                                            @php
-                                                $element = $itemQuotation;
-                                                $forAppend = '';
-                                                $forAppendAttachment = '';
-                                                $forSelected = '';
-                                                
-                                            @endphp
-                                            @if ($supplier == $element['supplier_name'])
-                                                <table style="border: 0px !important;">
+                            @foreach ($item['item_quotation_details'] as $itemQuotation)
+                                @foreach ($quote_data['supplierNames'] as $supplier)
+                                    @php
+                                        $element = $itemQuotation;
+                                        $forAppend = '';
+                                        $forAppendAttachment = '';
+                                        $forSelected = '';
+                                        
+                                    @endphp
+                                    @if ($supplier == $element['supplier_name'])
+                                       
+                                        @if ($element['selected_quotation'] == 1)
+                                            <td style="background-color: rgb(39, 146, 39);">
+                                        @else
+                                            <td >
+                                        @endif
+                                            <span class="d-flex justify-content-center">
+                                                @if ($element['selected_quotation'] == 1)
+                                                    <table style="border: 0px !important; color: white">
+                                                @else
+                                                    <table style="border: 0px !important;">
+                                                @endif        
                                                     <tbody>
                                                         <tr>
                                                             <td class='w-50'>{{ $element['currency'] }} :</td>
@@ -141,11 +150,10 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                            @endif
-
-                                        @endforeach
-                                    </span>
-                                </td>
+                                            </span>
+                                        </td>
+                                    @endif
+                                @endforeach
                             @endforeach
                         </tr>
                     @endforeach
@@ -189,65 +197,4 @@
         </div>
     </div>
 </body>
-<script>
-    const inputFunction = (supplier, itemQuotation) => {
-        for (let index = 0; index < itemQuotation.length; index++) {
-
-            const element = itemQuotation[index];
-            let forAppend = '';
-            let forAppendAttachment = '';
-            let forSelected = '';
-            if(supplier == element['supplier_name']){
-                if(element['currency'] != 'PHP'){
-                    forAppend = `<tr>
-                            <td> Rate/${ element['currency'] }: </td>
-                            <td>${ formatNumber(element['rate']) }</td>
-                        </tr>
-                        <tr >
-                            <td> PHP:</td>
-                            <td>${ formatNumber( element['price'] * element['rate']) }</td>
-                        </tr>
-                        `
-                }
-                if(element['selected_quotation'] == 1){
-                    forSelected = `checked`
-                };
-                
-                /**
-                    * For attachments 
-                */
-                let attachments = element['attachment'].split(',')
-                attachments.forEach(attachment => {
-                    forAppendAttachment += `<a href='download/${decodeURIComponent(attachment)}'>${attachment}</a><br>`
-                })
-                return `
-                <table class="table table-borderless table-sm w-50">
-                    <thead>
-                        <tr>
-                            <th colspan=2 class='text-center'>
-                                <div class="form-check">
-                                    <input class="form-check-input radioSelectionWinner" type="radio" name='${element['request_item_id']}' value='${element['id']}' ${forSelected}>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class='w-50'>${ element['currency'] }:</td>
-                            <td>${ element['price'] }</td>
-                        </tr>
-                        ${forAppend}
-                        <tr>
-                            <td class='w-50'>Remarks: </td>
-                            <td>${element['remarks'] == null ? 'N/A' : element['remarks']}</td>
-                        </tr>
-                        <tr>
-                            <td colspan='2'>${forAppendAttachment}</td>
-                        </tr>
-                    </tbody>
-                </table>`;
-            }
-        }
-    }
-</script>
 </html>
