@@ -90,7 +90,7 @@ class RequestController extends Controller
              */
             $relations = [];
             $conditions = array(
-                'deleted_at' => null
+                // 'deleted_at' => null
             );
             $request_repository_data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
     

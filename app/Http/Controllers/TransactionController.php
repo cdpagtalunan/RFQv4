@@ -136,6 +136,7 @@ class TransactionController extends Controller
             if(!is_null($rfq_collection->cc)){
                 $emailArray['cc'] = explode(',',$rfq_collection->cc);
             }
+            $emailArray['bcc'] = ['cpagtalunan@pricon.ph'];
             array_push($emailArray['cc'],$rfq_collection->created_by_details->email);
             $emailArray['subject'] = "RFQv4 - {$rfq_collection->ctrl_no} Request Assigned";
             $emailArray['emailFilePath'] = 'transaction_email';
@@ -284,7 +285,7 @@ class TransactionController extends Controller
         ->addColumn('action', function($supplier_quotation){
             $result = "";
             $result .= "<center class='d-flex flex-row'>";
-            $result .= "<button class='btn btn-sm btn-secondary btnEditQuotation' data-id='{$supplier_quotation->id}' data-quotation='".json_encode($supplier_quotation)."'><i class='fas fa-edit'></i></button>";
+            $result .= "<button class='btn btn-sm btn-secondary btnEditQuotation' data-id='{$supplier_quotation->id}' data-quotation='".json_encode($supplier_quotation, JSON_HEX_APOS)."'><i class='fas fa-edit'></i></button>";
             $result .= "<button class='btn btn-sm btn-danger btnDeleteQuotation ml-1' data-id='{$supplier_quotation->id}'><i class='fas fa-trash'></i></button>";
             $result .= "</center>";
             return $result;
@@ -523,6 +524,7 @@ class TransactionController extends Controller
             }
             array_push($emailArray['cc'],$request_details->assigned_to_details->email);
 
+            $emailArray['bcc'] = ['cpagtalunan@pricon.ph'];
             $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} Served Quotation";
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = "Please be informed that RFQ has been served and ready for EPRPO upload.";
