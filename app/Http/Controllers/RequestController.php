@@ -201,7 +201,8 @@ class RequestController extends Controller
             'assigned_to_details',
         ];
         $conditions = array(
-            'created_by' => $_SESSION['rapidx_user_id']
+            'created_by' => $_SESSION['rapidx_user_id'],
+            'deleted_at' => null,
         );
 
         $quotation_request = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
