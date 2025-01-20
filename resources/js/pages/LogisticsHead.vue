@@ -75,7 +75,7 @@
                         <label>Attachment:</label>
                         <!-- <input type="text" class="form-control" :value="viewRequest.request.attachment " readonly> -->
                         <div class="d-flex flex-column">
-                            <a v-for="(attachment, index) in attachments" :key="index" :href="`download_attachments/${attachment}`" v-if="attachments.length > 0">{{ attachment }}</a>
+                            <a v-for="(attachment, index) in attachments" :key="index" :href="`download_attachments/${encodeURIComponent(attachment)}`" v-if="attachments.length > 0">{{ attachment }}</a>
                             <label v-else class="text-danger">No Attachment</label>
                         </div>
                     </div>
