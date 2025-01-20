@@ -269,11 +269,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr  v-for="itemDetails in viewRequestData.item_details" :key="itemDetails.id">
+
+                            <tr  v-for="itemDetails in viewRequestData.item_details" :key="itemDetails.id" v-if="viewRequestData.item_details.length > 0">
                                 <td>{{ itemDetails.item_name }}</td>
                                 <td>{{ itemDetails.qty }}</td>
                                 <td>{{ itemDetails.uom }}</td>
                                 <td>{{ itemDetails.remarks }}</td>
+                            </tr>
+
+                            <tr v-else>
+                                <td colspan="6" class="text-center font-weight-bold">
+                                    No Item Requested
+                                </td>
                             </tr>
                         </tbody>
                     </table>

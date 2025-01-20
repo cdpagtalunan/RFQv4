@@ -111,7 +111,9 @@ class RequestController extends Controller
 
 
             // Data
-            $data['attachment'] = implode(',', $attachment);
+            if(count($attachment) > 0){
+                $data['attachment'] = implode(',', $attachment);
+            }
             $data['ctrl_no'] = $new_ctrl_no;
             $data['created_by'] = $_SESSION['rapidx_user_id'];
             $data['created_at'] = NOW();
