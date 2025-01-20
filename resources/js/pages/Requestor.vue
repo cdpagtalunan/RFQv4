@@ -749,12 +749,16 @@
         Object.keys(formRequest).forEach(function(key) {
             formData.append(key, formRequest[key]);
         });
-
-        if(formRequest.attachment.length != 0){
-            formRequest.attachment.forEach((file) => {
-                formData.append("attachment[]", file);
-            });
+        
+        // console.log(Array.isArray(formRequest.attachment));
+        if(Array.isArray(formRequest.attachment)){
+            if(formRequest.attachment.length != 0){
+                    formRequest.attachment.forEach((file) => {
+                    formData.append("attachment[]", file);
+                });
+            }
         }
+        
         api.post('api/save_req_details', formData,  {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -862,8 +866,12 @@
             formRequest.ctrl_no = data.ctrl_no;
             formRequest.date_needed = data.date_needed;
             formRequest.justification = data.justification
-            formRequest.attachment = data.attachment
+            if(data.attachment != null){
+                formRequest.attachment = data.attachment.split(',')
+            }
+            // formRequest.attachment = data.attachment
 
+            console.log(formRequest.attachment);
             if(data.cc != null){
                 let splittedData = data.cc.split(",");
                 formRequest.cc = splittedData;

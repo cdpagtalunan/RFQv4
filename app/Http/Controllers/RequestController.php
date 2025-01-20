@@ -78,7 +78,9 @@ class RequestController extends Controller
         $data['cc'] = $request->cc;
 
         if(isset($request->id)){ // Update
-            $data['attachment'] = implode(',', $attachment);
+            if($request->checkedReupload == 'true'){
+                $data['attachment'] = implode(',', $attachment);
+            }
             $data['updated_by'] = $_SESSION['rapidx_user_id'];
             return $this->RequestRepository->update($request->id, $data);
         }
