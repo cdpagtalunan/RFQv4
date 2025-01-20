@@ -51,6 +51,7 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::post('done_request', 'done_request');
         Route::get('get_request_details_by_id', 'get_request_details_by_id');
         Route::post('remove_item', 'remove_item');
+        Route::post('cancel_request', 'cancel_request');
         // Route::get('generate_control_no', 'generate_control_no');
     });
 

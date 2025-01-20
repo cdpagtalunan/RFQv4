@@ -239,7 +239,7 @@
                     <label>Attachment:</label>
                     <!-- <input type="text" class="form-control" :value="viewRequestData.attachment " readonly> -->
                     <div class="d-flex flex-column">
-                        <a v-for="(attachment, index) in attachments" :key="index" :href="`download_attachments/${attachment}`" v-if="attachments.length > 0">{{ attachment }}</a>
+                        <a v-for="(attachment, index) in attachments" :key="index" :href="`download_attachments/${encodeURIComponent(attachment)}`" v-if="attachments.length > 0">{{ attachment }}</a>
                         <label v-else class="text-danger">No Attachment</label>
                     </div>
                 </div>
@@ -549,6 +549,25 @@
                         let id = this.getAttribute('data-id');
                         formRequest.checkedReupload = false;
                         getRequestDetailsById(id);
+                    });
+                }
+                if(cell.querySelector('.btnCancelRequest')){
+                    cell.querySelector('.btnCancelRequest').addEventListener('click', function(){
+                        let id = this.getAttribute('data-id');
+                        Swal.fire({
+                            // title: `Are you sure?`,
+                            text: `Are you sure you want to cancel this request?`,
+                            icon: 'question',
+                            position: 'top',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                cancelRequest(id);
+                            }
+                        });
                     });
                 }
                 
@@ -945,5 +964,17 @@
       
     }
 
-
+    const cancelRequest = (requestId) => {
+        api.post('api/cancel_request', {id: requestId}).then((result)=>{
+            if(result.data.result == true){
+                Toast.fire({
+                    icon: "success",
+                    title: result.data.msg
+                });
+                dtQuotationRequest.draw();
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
 </script>

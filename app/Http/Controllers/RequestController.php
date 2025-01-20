@@ -89,9 +89,7 @@ class RequestController extends Controller
              * Generate Control number
              */
             $relations = [];
-            $conditions = array(
-                // 'deleted_at' => null
-            );
+            $conditions = array();
             $request_repository_data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
     
     
@@ -219,6 +217,9 @@ class RequestController extends Controller
                 data-id='$quotation_request->id'>
                     <i class='fas fa-edit'></i>
                 </button>";
+                $result .= "<button class='btn btn-sm btn-danger btnCancelRequest ml-1' title='Cancel Request' data-id='$quotation_request->id'>
+                    <i class='fas fa-xmark'></i>
+                </button>";
             }
             $result .= "</center>";
             return $result;
@@ -267,5 +268,13 @@ class RequestController extends Controller
 
     public function remove_item(Request $request){
         return $this->RequestRepository->deleteItem($request->id);
+    }
+
+    public function cancel_request(Request $request){
+        date_default_timezone_set('Asia/Manila');
+        $data = array(
+            'deleted_at' => NOW(),
+        );
+        return $this->RequestRepository->update($request->id, $data);
     }
 }
