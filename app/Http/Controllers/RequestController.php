@@ -143,8 +143,8 @@ class RequestController extends Controller
             'updated_by' => $_SESSION['rapidx_user_id']
         );
 
-        // $update_result = $this->RequestRepository->update($request->id, $data);
-        // if(isset($update_result)){
+        $update_result = $this->RequestRepository->update($request->id, $data);
+        if(isset($update_result)){
             /**
              *
              * @param array $emailArray
@@ -188,9 +188,9 @@ class RequestController extends Controller
 
             // return $emailArray;
             $this->EmailRepository->sendEmail($emailArray);
-        // }
+        }
 
-        // return $update_result;
+        return $update_result;
     }
 
     public function dt_get_request(Request $request){
