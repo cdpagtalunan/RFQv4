@@ -47,7 +47,7 @@
             <br>
             <hr>
             <strong><i>Request for Quotation Details:</i></strong>
-            <table style="width: 50%;">
+            <table style="width: 80%;">
                 <tbody>
                     <tr>
                         <td><strong>Control Number</strong></td>
@@ -69,6 +69,12 @@
                         <td><strong>Requestor</strong></td>
                         <td>:{{ $data['created_by_details']['name'] }}</td>
                     </tr>
+                    @if($data['status'] > 3)
+                    <tr>
+                        <td><strong>Approver Remarks:</strong></td>
+                        <td>:{{ $data['approver_remarks']}}</td>
+                    </tr>
+                    @endif
                 </tbody>
             </table>
             <br>
@@ -166,6 +172,7 @@
                         </tr>
                     @endforeach
                 </table>
+
             @endif
 
           

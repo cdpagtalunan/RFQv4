@@ -25,6 +25,8 @@ class CreateQuotationRequestsTable extends Migration
             $table->string('assigned_by')->nullable();
             $table->string('assigned_at')->nullable();
             $table->string('assigned_to')->nullable();
+            $table->longText('approver_remarks')->nullable();
+            $table->string('approved_at')->nullable();
             $table->string('created_by');
             $table->string('updated_by')->nullable();
             $table->softDeletes();

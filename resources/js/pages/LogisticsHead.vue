@@ -91,6 +91,12 @@
                         <textarea class="form-control" :value="viewRequest.request.justification " readonly></textarea>
                     </div>
                 </div>
+                <div class="row mt-2" v-show="viewRequest.status != 1">
+                    <div class="col-md-12 form-group">
+                        <label class="form-label">Approver Remarks:</label>
+                        <textarea class="form-control" name="remarks" id="remarks" v-model="approverRemarks"></textarea>
+                    </div>
+                </div>
                 <hr>
                 <h4>Requested Item(s)</h4>
                 <div class="row" v-show="viewRequest.status != 1">
@@ -338,6 +344,7 @@
             }, 
         ],
     })
+    const approverRemarks = ref();
 
 
     // tblLogRequest variables
@@ -548,6 +555,18 @@
             tableSpecialViewData.itemDetails                   = [];
             tableSpecialViewData.uniqueOtherDetailsPerSupplier = [];
             attachments.value = [];
+            approverRemarks.value = '';
+            
+            const invalidElements = document.querySelectorAll('.is-invalid');
+            const validElements = document.querySelectorAll('.is-valid');
+
+            invalidElements.forEach(element => {
+                element.classList.remove('is-invalid');
+            });
+            validElements.forEach(element => {
+                element.classList.remove('is-valid');
+            });
+            // document.getElementsById('remarks').classList.remove('is-invalid')
         })
         document.getElementById("modalAssign").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
@@ -658,7 +677,7 @@
                 confirmButtonText: 'Yes'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    api.post('api/serve_quotation', {'id' : viewRequest.request.id, 'selected_winner': selectedRadioArray}).then((result)=>{
+                    api.post('api/serve_quotation', {'id' : viewRequest.request.id, 'selected_winner': selectedRadioArray, 'remarks' : approverRemarks.value}).then((result)=>{
                         if(result.data.result == true){
                             dtLogRequest.ajax.reload();
                             modalView.value.hide();
@@ -674,11 +693,19 @@
                             });
                         }
                     }).catch((err) => {
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Something went wrong.'
-                        });
-                        console.log(err);
+                        if(err.response.status == 422){
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Please fill-up required fields!'
+                            });
+                            handleValidatorErrors(err.response.data.errors);
+                        }
+                        if(err.response.status == 403){
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'This action is not allowed!'
+                            });
+                        }
                     });
                 }
             })

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DataTables;
 use Illuminate\Http\Request;
+use App\Http\Requests\ServeRequest;
 use App\Http\Requests\AssignRequest;
 use Illuminate\Support\Facades\Http;
 use App\Http\Requests\QuotationRequest;
@@ -462,7 +463,10 @@ class TransactionController extends Controller
         return $quotationRequest;
     }
 
-    public function serve_quotation(Request $request){
+    public function serve_quotation(ServeRequest $request){
+
+        $request->validated();
+
         // return $request->all();
         $to_edit = array(
             'selected_quotation' => 0
@@ -485,8 +489,10 @@ class TransactionController extends Controller
         }
 
         $edit_array = array(
-            'status' => 4,
-            'updated_by' => $_SESSION['rapidx_user_id']
+            'status'           => 4,
+            'approver_remarks' => $request->remarks,
+            'approved_at'      => NOW(),
+            'updated_by'       => $_SESSION['rapidx_user_id']
         );
         $quotationRequest =  $this->RequestRepository->update($request->id, $edit_array);
         if(isset($quotationRequest)){
