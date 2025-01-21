@@ -74,7 +74,7 @@ class TransactionController extends Controller
             $result .= "</center>";
             return $result;
         })
-        ->rawColumns(['action'])
+        // ->rawColumns(['action'])
         ->make(true);
     }
 
@@ -240,7 +240,6 @@ class TransactionController extends Controller
                 array_push($attachment, $original_filename);
             }
         }
-        $data['attachment'] = implode(',', $attachment);
 
         /*
             * Manage the supplier
@@ -261,12 +260,17 @@ class TransactionController extends Controller
         // }
         // * Save Item Quotation
         if(isset($request->id)){
+            // return gettype($request->checkReupload);
+            if($request->checkReupload == 'true'){
+                $data['attachment'] = implode(',', $attachment);
+            }
             $data['updated_by'] = $_SESSION['rapidx_user_id'];
             $data['updated_at'] = NOW();
             return $this->RequestRepository->updateItemQuotation($request->id, $data);
           
         }
         else{
+            $data['attachment'] = implode(',', $attachment);
             $data['created_by'] = $_SESSION['rapidx_user_id'];
             $data['created_at'] = NOW();
             return $this->RequestRepository->insertItemQuotation($data);

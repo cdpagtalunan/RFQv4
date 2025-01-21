@@ -376,11 +376,11 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Attachment:</span>
-                            <input type="file"  id="fileId" class="form-control" @change="onFileChange" multiple v-if="!formSupplierDetails.id || checkReupload == true" :disabled="formSupplierDetails.no_quote">
+                            <input type="file"  id="fileId" class="form-control" @change="onFileChange" multiple v-if="!formSupplierDetails.id || formSupplierDetails.checkReupload == true" :disabled="formSupplierDetails.no_quote">
                             <input type="input"  class="form-control" v-model="formSupplierDetails.attachment" readonly v-else>
                         </div>
                         <div class="form-check" v-if="formSupplierDetails.id">
-                            <input class="form-check-input" type="checkbox" id="reupload" v-model="checkReupload">
+                            <input class="form-check-input" type="checkbox" id="reupload" v-model="formSupplierDetails.checkReupload">
                             <label class="form-check-label" for="reupload">
                                 Reupload Attachment
                             </label>
@@ -423,7 +423,7 @@
     });
     const modalView = ref();
     const id = ref(0);
-    const checkReupload = ref(false);
+    // const checkReupload = ref(false);
     const status = ref();
     const modalSupplier = ref();
     const modalAddSupplierDetails = ref();
@@ -455,7 +455,8 @@
         attachment        : [],
         rate              : '',
         convertion        : '',
-        no_quote          : false
+        no_quote          : false,
+        checkReupload     : false
     }
 
     const formSupplierDetails = reactive({...formSupplierDetailsInitVal});
@@ -499,7 +500,7 @@
     const columnsLogRequest = [
         { 
             data: 'action',
-            title: 'Status',
+            title: 'Action',
             searchable: false,
             sortable: false,
             createdCell(cell) {
@@ -680,11 +681,14 @@
                     let supplierQuotationId = this.getAttribute('data-id');
                     let supplierQuotation = this.getAttribute('data-quotation');
                     let parsedData = JSON.parse(supplierQuotation);
+                    console.log(parsedData);
                     formSupplierDetails.id                 = parsedData.id
                     formSupplierDetails.supplier_name      = parsedData.supplier_name
                     formSupplierDetails.currency           = parsedData.currency
                     formSupplierDetails.price              = parsedData.price
-                    formSupplierDetails.rate               = parsedData.rate
+                    if(parsedData.rate != null){
+                        formSupplierDetails.rate               = parsedData.rate
+                    }
                     formSupplierDetails.moq                = parsedData.moq
                     formSupplierDetails.warranty           = parsedData.warranty
                     formSupplierDetails.lead_time          = parsedData.lead_time
@@ -748,8 +752,8 @@
         })
         document.getElementById("modalAddSupplierDetails").addEventListener('hidden.bs.modal', event => {
             Object.assign(formSupplierDetails, formSupplierDetailsInitVal);
-            document.querySelector('#fileId').value = '';
-            checkReupload.value = false;
+            document.querySelector('#fileId').value = [];
+            formSupplierDetails.checkReupload = false;
             showRate.value = false;
 
         })
@@ -779,10 +783,13 @@
         });
 
         formData.append('request_item_id', itemDetails.itemId);
-    
-        formSupplierDetails.attachment.forEach((file) => {
-            formData.append("attachment[]", file);
-        });
+        
+        if(Array.isArray(formSupplierDetails.attachment)){
+            formSupplierDetails.attachment.forEach((file) => {
+                formData.append("attachment[]", file);
+            });
+        }
+        
 
         api.post('api/save_quotation', formData).then((result)=>{
             if(result.data.result == true){
