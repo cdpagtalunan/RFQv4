@@ -56,14 +56,14 @@ class TransactionController extends Controller
         ->addColumn('action', function($quotation){
             $result = "";
             $result .= "<center>";
-            $result .= "<button class='btn btn-primary btn-sm btnViewRequest' data-id='{$quotation->id}' data-request='".json_encode($quotation)."' data-status='{$quotation->status}' title='View Request'><i class='fas fa-eye'></i></button>";
+            $result .= "<button class='btn btn-primary btn-sm btnViewRequest' data-id='{$quotation->id}' data-request='".json_encode($quotation,JSON_HEX_APOS)."' data-status='{$quotation->status}' title='View Request'><i class='fas fa-eye'></i></button>";
             switch ($quotation->status) {
                 case 1:
                     $result .= "<button class='btn btn-sm btn-info btnAssignRequest ml-1' title='Assign Request' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' data-status='{$quotation->status}'><i class='fas fa-user-check'></i></button>";
                     break;
                 case 2:
                     if($quotation->assigned_to == $_SESSION['rapidx_user_id']){
-                        $result .= "<button class='btn btn-sm btn-info btnAddSupplier ml-1' title='Add Supplier' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' data-request='".json_encode($quotation)."' data-status='{$quotation->status}'><i class='fas fa-address-book'></i></button>";
+                        $result .= "<button class='btn btn-sm btn-info btnAddSupplier ml-1' title='Add Supplier' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' data-request='".json_encode($quotation, JSON_HEX_APOS)."' data-status='{$quotation->status}'><i class='fas fa-address-book'></i></button>";
                     }
                     break;
                 case 3:
@@ -538,6 +538,10 @@ class TransactionController extends Controller
             $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} Served Quotation";
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = "Please be informed that RFQ has been served and ready for EPRPO upload.";
+
+            
+            // return $uniqueAttachments;
+
             $this->EmailRepository->sendEmail($emailArray);
         }
 

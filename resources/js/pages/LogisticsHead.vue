@@ -364,9 +364,9 @@
                     document.getElementById('btnServeQuotation').classList.add('d-none');
                     document.getElementById('btnSaveWinningQuotation').classList.add('d-none');
                     
-                    viewRequest.request = JSON.parse(request);
-                    console.log(viewRequest.request.attachment);
-
+                    viewRequest.request = JSON.parse(request)
+                    approverRemarks.value = viewRequest.request.approver_remarks;
+                    console.log('approverRemarks.value', approverRemarks.value);
                     if(viewRequest.request.attachment != null){
                         attachments.value = viewRequest.request.attachment.split(",");
                     }
@@ -379,9 +379,6 @@
                         getDetails(id.value);
                     }
                     modalView.value.show()
-
-
-                   
                 });
 
                 if(cell.querySelector('.btnAssignRequest')){
@@ -739,7 +736,6 @@
             let forAppendAttachment = '';
             let forSelected = '';
             if(supplier == element['supplier_name']){
-                console.log('element', element);
                 if(element['currency'] === null){
                     return `<strong>Decline to Quote</strong>`;
                 }

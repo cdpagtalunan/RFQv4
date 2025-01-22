@@ -34,10 +34,22 @@ class EmailRepository implements EmailRepositoryInterface
                 $message->bcc($emailArray['bcc']);
             }
             $message->subject($emailArray['subject']);
-            if(!is_null($emailArray['data']['attachment']) || $emailArray['data']['attachment'] != ''){
+            if( (!is_null($emailArray['data']['attachment']) || $emailArray['data']['attachment'] != '') && $emailArray['data']['status'] <= 3 ){
                 $exploded_attachment = explode(',',$emailArray['data']['attachment']);
                 foreach ($exploded_attachment as $key => $attachment) {
                     $message->attach(storage_path("app/public/file_attachments/{$attachment}"));
+                }
+            }
+            else{
+                $uniqueAttachments = collect($emailArray['data']['item_details'])
+                ->flatMap(function ($item) {
+                    return collect($item['item_quotation_details'])->pluck('attachment');
+                })
+                ->unique()
+                ->values();
+
+                foreach ($uniqueAttachments as $key => $attachment) {
+                    $message->attach(storage_path("app/public/quotation_attachments/{$attachment}"));
                 }
             }
         });
