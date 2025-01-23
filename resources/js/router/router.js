@@ -11,6 +11,7 @@ import Request from '../pages/Requestor.vue';
 import LogisticsPurchasing from '../pages/LogisticsPurchasing.vue';
 import LogisticsHead from '../pages/LogisticsHead.vue';
 import Mailer from '../pages/Mailer.vue';
+import Export from '../pages/Export.vue';
 
 // Interceptors
 import Forbidden from '../pages/interceptors/403.vue';
@@ -40,7 +41,7 @@ const checkUser = () => {
 
 const routes = [
     {
-        path: "/RFQv4/",
+        path: "/RFQv4_dev/",
         component: AdminLayout,
         beforeEnter: isLoggedIn,
         children: [
@@ -91,10 +92,16 @@ const routes = [
                 beforeEnter: checkUser,
                 component: LogisticsHead
             },
+            {
+                path: 'export',
+                name: 'Export',
+                // beforeEnter: checkUser,
+                component: Export
+            },
         ],
     },
     {
-        path: "/RFQv4/",
+        path: "/RFQv4_dev/",
         children: [
             {
                 path: '403',
@@ -104,7 +111,7 @@ const routes = [
         ]
     },
     {
-        path: '/RFQv4/mailer/mail',
+        path: '/RFQv4_dev/mailer/mail',
         name: 'mail',
         component: Mailer,
     },

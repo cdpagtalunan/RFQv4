@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommonController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CurrencyController;
@@ -93,6 +94,10 @@ Route::middleware('checkSessionExist')->group(function(){
     Route::controller(CommonController::class)->group(function(){
         Route::get('get_stat', 'get_stat');
         // Route::get('download_attachments/{doc}', 'download_attachments');
+    });
+
+    Route::controller(ExportController::class)->group(function(){
+        Route::get('export', 'export');
     });
     
 });

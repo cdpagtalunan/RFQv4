@@ -76,7 +76,12 @@
                         </router-link>
                     </li>
                     <li class="nav-header font-weight-bold">Exports</li>
-
+                    <li class="nav-item has-treeview">
+                        <router-link :to="{ name: 'Export' }" class="nav-link">
+                            <icons icon="fas fa-cog" class="nav-icon"></icons>
+                            <p>Export </p>
+                        </router-link>
+                    </li>
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

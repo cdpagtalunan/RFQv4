@@ -59,8 +59,26 @@ class RequestRepository implements RequestRepositoryInterface
     public function getRequestItemWithConditionAndRelation(array $condition, array $relation){
         $query = RequestItem::query();
         $query->with($relation);
-        foreach ($condition as $key => $value) {
-            $query->where($key, $value);
+        // foreach ($condition as $key => $value) {
+        //     $query->where($key, $value);
+        // }
+        if (!empty($condition)) {
+            foreach ($condition as $key => $value) {
+                
+                // Handle nested relations for condition
+                if (str_contains($key, 'like:')) {
+                    $key = str_replace('like:', '', $key); // Remove "like:" prefix
+                    $query->where($key, 'LIKE', "$value%");
+                }
+                else if (str_contains($key, '.')) {
+                    [$relation, $field] = explode('.', $key, 2);
+                    $query->whereHas($relation, function ($query) use ($field, $value) {
+                        $query->where($field, $value);
+                    });
+                } else {
+                    $query->where($key, $value);
+                }
+            }
         }
         return $query->get();
     }
@@ -171,6 +189,7 @@ class RequestRepository implements RequestRepositoryInterface
             if (!empty($condition)) {
                 foreach ($condition as $key => $value) {
                     // Handle nested relations for condition
+                    
                     if (str_contains($key, '.')) {
                         [$relation, $field] = explode('.', $key, 2);
                         $query->whereHas($relation, function ($query) use ($field, $value) {
