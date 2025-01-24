@@ -534,6 +534,17 @@ class TransactionController extends Controller
             }
             array_push($emailArray['cc'],$request_details->assigned_to_details->email);
 
+            $to_conditions = array(
+                'user_access' => 1,
+            );
+            $to_relations = array(
+                'rapidx_details',
+            );
+            $to_user = $this->UserAccessRepository->getUserWithRelationAndCondition($to_conditions, $to_relations);
+            $logistics_email = collect($to_user)->pluck('rapidx_details.email')->toArray();
+            array_push($emailArray['cc'],$logistics_email);
+
+
             $emailArray['bcc'] = ['cpagtalunan@pricon.ph'];
             $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} Served Quotation";
             $emailArray['emailFilePath'] = 'transaction_email';
