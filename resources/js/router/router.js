@@ -41,7 +41,7 @@ const checkUser = () => {
 
 const routes = [
     {
-        path: "/RFQv4_dev/",
+        path: "/RFQv4/",
         component: AdminLayout,
         beforeEnter: isLoggedIn,
         children: [
@@ -101,7 +101,7 @@ const routes = [
         ],
     },
     {
-        path: "/RFQv4_dev/",
+        path: "/RFQv4/",
         children: [
             {
                 path: '403',
@@ -111,7 +111,7 @@ const routes = [
         ]
     },
     {
-        path: '/RFQv4_dev/mailer/mail',
+        path: '/RFQv4/mailer/mail',
         name: 'mail',
         component: Mailer,
     },
