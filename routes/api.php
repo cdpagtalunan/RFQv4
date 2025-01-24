@@ -97,7 +97,7 @@ Route::middleware('checkSessionExist')->group(function(){
     });
 
     Route::controller(ExportController::class)->group(function(){
-        Route::get('export', 'export');
+        Route::get('export/{month}', 'export');
     });
     
 });

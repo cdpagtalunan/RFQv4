@@ -55,7 +55,7 @@ const api = {... axios}
 // api.defaults.baseURL = import.meta.env.VITE_APP_LARAVEL_SERVER
 // api.defaults.baseURL = 'http://rapidx/ARRS_rev/';
 // api.defaults.withCredentials = true;
-api.defaults.baseURL = 'http://rapidx/RFQv4/';
+api.defaults.baseURL = 'http://rapidx/RFQv4_dev/';
 // api.get('/csrf-cookie')
 
 export default api

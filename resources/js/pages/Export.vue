@@ -42,10 +42,6 @@
     });
 
     const exportItem = () => {
-        api.get('api/export', {params:formData}).then((result)=>{
-            // Script Here
-        }).catch((err) => {
-            console.log(err);
-        });
+        window.open(`api/export/${formData.date}`, '_blank');
     }
 </script>

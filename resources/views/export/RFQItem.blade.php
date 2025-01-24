@@ -7,19 +7,43 @@
 <body>
     <table>
         <tr>
-            <th>part_code</th>
-            <th>part_name</th>
-            <th>supplier</th>
-            <th>box_no</th>
-            <th>for_iqc? (0-No, 1-yes)</th>
+            <td>List of Request for Quotation</td>
         </tr>
         <tr>
-            <td>part_code</td>
-            <td>part_name</td>
-            <td>supplier</td>
-            <td>box_no</td>
-            <td>for_iqc? (0-No, 1-yes)</td>
+            <td>Control Number</td>
+            <td>Items</td>
+            <td>Quantity</td>
+            <td>UOM</td>
+            <td>Requestor</td>
+            <td>PIC</td>
+            <td>Status</td>
         </tr>
+
+        @foreach ($rfqs as $rfq)
+            <tr>
+                <td>{{ $rfq['request_details']['ctrl_no'] }}</td>
+                <td>{{ $rfq['item_name'] }}</td>
+                <td>{{ $rfq['qty'] }}</td>
+                <td>{{ $rfq['uom'] }}</td>
+                <td>{{ $rfq['request_details']['created_by_details']['name'] }}</td>
+                <td>{{ $rfq['request_details']['assigned_to_details']['name'] }}</td>
+                @switch($rfq['request_details']['status'])
+                    @case(1)
+                        <td><strong>For logistics assignment</strong></td>
+                        @break
+                    @case(2)
+                        <td><strong>Waiting for purchasing quotation</strong></td>
+                        @break
+                    @case(3)
+                        <td><strong>For logistics head approval</strong></td>
+                        @break
+                    @case(4)
+                        <td><strong>Served</strong></td>
+                        @break
+                    @default
+                @endswitch
+            </tr>
+        @endforeach
     </table>
 </body>
 </html>

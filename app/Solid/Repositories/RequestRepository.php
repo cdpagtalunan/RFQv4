@@ -68,12 +68,17 @@ class RequestRepository implements RequestRepositoryInterface
                 // Handle nested relations for condition
                 if (str_contains($key, 'like:')) {
                     $key = str_replace('like:', '', $key); // Remove "like:" prefix
-                    $query->where($key, 'LIKE', "$value%");
+                    $query->where($key, 'LIKE', "%$value%");
                 }
                 else if (str_contains($key, '.')) {
                     [$relation, $field] = explode('.', $key, 2);
                     $query->whereHas($relation, function ($query) use ($field, $value) {
-                        $query->where($field, $value);
+                        if(is_array($value)){
+                            $query->where($field,$value[0], $value[1]);
+                        }
+                        else{
+                            $query->where($field, $value);
+                        }
                     });
                 } else {
                     $query->where($key, $value);
