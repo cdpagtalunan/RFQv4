@@ -27,6 +27,7 @@ class ExportController extends Controller
       'request_details.assigned_to_details',
       'request_details.created_by_details'
     );
+    
     $rfqs;
     if($_SESSION['rfq_access'] == 1){ // Logistics
       $conditions['request_details.status'] = ['>', 0];
