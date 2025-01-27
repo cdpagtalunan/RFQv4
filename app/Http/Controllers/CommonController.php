@@ -153,7 +153,7 @@ class CommonController extends Controller
     }
 
     public function download_attachments(Request $request, $file){
-        $link = "public/quotation_attachments/$file";
+        $link = "public/file_attachments/$file";
         return Storage::download($link);
 
     }
