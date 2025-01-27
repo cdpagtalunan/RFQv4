@@ -57,68 +57,64 @@ class RequestController extends Controller
         $data = $request->validated();
         $attachment = array();
         
-        // if($request->checkedReupload == 'true' && $request->attachement != ''){
-        //     $original_filename = $request->file('attachment')->getClientOriginalName();
-        //     Storage::putFileAs('public/file_attachments', $request->attachment, $original_filename);
-
-        //     // $data['attachment'] = $original_filename;
-        //     // array_push($data['attachment'], $original_filename);
-        // }
-        /**
-            * For multiple upload file 
-        */
-        if ($request->hasFile('attachment')) {
-            foreach ($request->file('attachment') as $file) {
-
-                $original_filename =  $file->getClientOriginalName();
-                Storage::putFileAs('public/file_attachments', $file, $original_filename);
-                array_push($attachment, $original_filename);
+        try{
+            if ($request->hasFile('attachment')) {
+                foreach ($request->file('attachment') as $file) {
+    
+                    $original_filename =  $file->getClientOriginalName();
+                    Storage::putFileAs('public/file_attachments', $file, $original_filename);
+                    array_push($attachment, $original_filename);
+                }
             }
-        }
-        $data['cc'] = $request->cc;
-
-        if(isset($request->id)){ // Update
-            if($request->checkedReupload == 'true'){
-                $data['attachment'] = implode(',', $attachment);
+            $data['cc'] = $request->cc;
+    
+            if(isset($request->id)){ // Update
+                if($request->checkedReupload == 'true'){
+                    $data['attachment'] = implode(',', $attachment);
+                }
+                $data['updated_by'] = $_SESSION['rapidx_user_id'];
+                return $this->RequestRepository->update($request->id, $data);
             }
-            $data['updated_by'] = $_SESSION['rapidx_user_id'];
-            return $this->RequestRepository->update($request->id, $data);
-        }
-        else{ // Create
-            /**
-             * Generate Control number
-             */
-            $relations = [];
-            $conditions = array();
-            $request_repository_data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
+            else{ // Create
+                /**
+                 * Generate Control number
+                 */
+                $relations = [];
+                $conditions = array();
+                $request_repository_data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
+        
+        
+                $currentMonth = Carbon::now()->format('m');
+                $currentYear = Carbon::now()->format('y');
+        
+                $collection = collect($request_repository_data)->filter(function ($request) use ($currentMonth) {
+                    $month = Carbon::parse($request['created_at'])->format('m');
+                    return $month === $currentMonth; // Filter by month
+                })->sortBy([['id', 'DESC']]);
+                
+                $new_count = count($collection) + 1;
+                if($new_count < 999){
+                    $new_count = str_pad($new_count, 3, '0', STR_PAD_LEFT);
+                }
+                $new_ctrl_no = "RFQ-{$currentYear}{$currentMonth}-{$new_count}";
     
     
-            $currentMonth = Carbon::now()->format('m');
-            $currentYear = Carbon::now()->format('y');
+                // Data
+                if(count($attachment) > 0){
+                    $data['attachment'] = implode(',', $attachment);
+                }
+                $data['ctrl_no'] = $new_ctrl_no;
+                $data['created_by'] = $_SESSION['rapidx_user_id'];
+                $data['created_at'] = NOW();
     
-            $collection = collect($request_repository_data)->filter(function ($request) use ($currentMonth) {
-                $month = Carbon::parse($request['created_at'])->format('m');
-                return $month === $currentMonth; // Filter by month
-            })->sortBy([['id', 'DESC']]);
-            
-            $new_count = count($collection) + 1;
-            if($new_count < 999){
-                $new_count = str_pad($new_count, 3, '0', STR_PAD_LEFT);
+                return $this->RequestRepository->insertGetId($data);
+    
             }
-            $new_ctrl_no = "RFQ-{$currentYear}{$currentMonth}-{$new_count}";
-
-
-            // Data
-            if(count($attachment) > 0){
-                $data['attachment'] = implode(',', $attachment);
-            }
-            $data['ctrl_no'] = $new_ctrl_no;
-            $data['created_by'] = $_SESSION['rapidx_user_id'];
-            $data['created_at'] = NOW();
-
-            return $this->RequestRepository->insertGetId($data);
-
+        }catch(Exemption $e){
+            DB::rollback();
+            return $e;
         }
+       
     }
 
     public function save_item(ItemRequest $request){

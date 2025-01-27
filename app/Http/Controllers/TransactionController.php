@@ -222,61 +222,40 @@ class TransactionController extends Controller
         */
         $original_filename = null;
         $attachment = array();
-        // if(isset($request->id)){
-        //     $original_filename = $request->attachment;
-        // }
-        // if($request->file('attachment')){
-        //     $original_filename = $request->file('attachment')->getClientOriginalName();
+        try{
+             /**
+                * For multiple upload file 
+            */
+            if ($request->hasFile('attachment')) {
+                foreach ($request->file('attachment') as $file) {
+
+                    $original_filename =  $file->getClientOriginalName();
+                    Storage::putFileAs('public/quotation_attachments', $file, $original_filename);
+                    array_push($attachment, $original_filename);
+                }
+            }
+
+            // * Save Item Quotation
+            if(isset($request->id)){
+                // return gettype($request->checkReupload);
+                if($request->checkReupload == 'true'){
+                    $data['attachment'] = implode(',', $attachment);
+                }
+                $data['updated_by'] = $_SESSION['rapidx_user_id'];
+                $data['updated_at'] = NOW();
+                return $this->RequestRepository->updateItemQuotation($request->id, $data);
             
-        //     Storage::putFileAs('public/quotation_attachments', $request->attachment, $original_filename);
-        // }
-        /**
-            * For multiple upload file 
-        */
-        if ($request->hasFile('attachment')) {
-            foreach ($request->file('attachment') as $file) {
-
-                $original_filename =  $file->getClientOriginalName();
-                Storage::putFileAs('public/quotation_attachments', $file, $original_filename);
-                array_push($attachment, $original_filename);
             }
-        }
-
-        /*
-            * Manage the supplier
-        */
-        // $supplier_condition = array(
-        //     'supplier_name' => trim($request->supplier_name),
-        //     'deleted_at' => null
-        // );
-        // $existing_supplier = $this->SupplierRepository->getSupplierWithCondition($supplier_condition);
-        // $existing_supplier = collect($existing_supplier)->first();
-
-        // if(!$existing_supplier){
-        //     $supplier_data = array(
-        //         'supplier_name' => trim($request->supplier_name),
-        //         'created_by'    => $_SESSION['rapidx_user_id']
-        //     );
-        //     $this->SupplierRepository->insert($supplier_data);
-        // }
-        // * Save Item Quotation
-        if(isset($request->id)){
-            // return gettype($request->checkReupload);
-            if($request->checkReupload == 'true'){
+            else{
                 $data['attachment'] = implode(',', $attachment);
+                $data['created_by'] = $_SESSION['rapidx_user_id'];
+                $data['created_at'] = NOW();
+                return $this->RequestRepository->insertItemQuotation($data);
             }
-            $data['updated_by'] = $_SESSION['rapidx_user_id'];
-            $data['updated_at'] = NOW();
-            return $this->RequestRepository->updateItemQuotation($request->id, $data);
-          
+        }catch(Exemption $e){
+            DB::rollback();
+            return $e;
         }
-        else{
-            $data['attachment'] = implode(',', $attachment);
-            $data['created_by'] = $_SESSION['rapidx_user_id'];
-            $data['created_at'] = NOW();
-            return $this->RequestRepository->insertItemQuotation($data);
-        }
-        
     }
 
     public function dt_get_supplier_quotation(Request $request){
