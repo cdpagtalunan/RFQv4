@@ -32,6 +32,7 @@
     const getClock = () => {
         timer.value = moment().format('LTS');
         if(timer.value == '7:00:00 AM'){
+            // console.log('qwe');
             api.get('/get_pending_requests').then((result)=>{
                 // Script Here
             }).catch((err) => {

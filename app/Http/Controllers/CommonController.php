@@ -147,7 +147,8 @@ class CommonController extends Controller
                     default:
                         break;
                 }
-                $this->EmailRepository->sendEmail($emailArray);
+                $this->EmailRepository->sendEmailFollowup($emailArray);
+                // $this->EmailRepository->sendEmail($emailArray);
             }
         }
     }
