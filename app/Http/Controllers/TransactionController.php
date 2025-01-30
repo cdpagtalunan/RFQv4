@@ -354,7 +354,7 @@ class TransactionController extends Controller
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = "Please be informed that RFQ is now for logistics head approval.";
 
-            // return $emailArray;
+            // return $quote_data;
             $this->EmailRepository->sendEmail($emailArray);
         }
         return $update_result;
@@ -521,17 +521,14 @@ class TransactionController extends Controller
             );
             $to_user = $this->UserAccessRepository->getUserWithRelationAndCondition($to_conditions, $to_relations);
             $logistics_email = collect($to_user)->pluck('rapidx_details.email')->toArray();
-            array_push($emailArray['cc'],$logistics_email);
-
+            
+            $emailArray['cc'] = array_merge($emailArray['cc'],$logistics_email);
+            // return $emailArray['cc'];
 
             $emailArray['bcc'] = ['cpagtalunan@pricon.ph'];
             $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} Served Quotation";
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = "Please be informed that RFQ has been served and ready for EPRPO upload.";
-
-            
-            // return $uniqueAttachments;
-
             $this->EmailRepository->sendEmail($emailArray);
         }
 
@@ -581,7 +578,7 @@ class TransactionController extends Controller
         ->flatten(1) // Flatten the nested array
         ->pluck('item_quotation_details') // Get the item_quotation_details for each item
         ->flatten(1) // Flatten the nested array
-        ->whereNotNull('price')
+        // ->whereNotNull('price')
         ->groupBy('supplier_name')
         ->toArray();
 
