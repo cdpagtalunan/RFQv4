@@ -25,7 +25,6 @@ class EmailRepository implements EmailRepositoryInterface
         if(isset($emailArray['quote_data'])){
             $data['quote_data'] = $emailArray['quote_data'];
         }
-
         Mail::send("mail.{$emailArray['emailFilePath']}", $data , function($message) use ($emailArray) {
             $message->bcc('cpagtalunan@pricon.ph');
             $message->to($emailArray['to']);
@@ -52,6 +51,7 @@ class EmailRepository implements EmailRepositoryInterface
                     $message->attach(storage_path("app/public/quotation_attachments/{$attachment}"));
                 }
             }
+
         });
     }
 

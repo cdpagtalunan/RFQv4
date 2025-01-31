@@ -78,7 +78,7 @@
                 </tbody>
             </table>
             <br>
-            @if ($data['status'] < 3)
+            @if ($data['status'] > 2)
                 <table style="border: 1px solid black; width: 50%;" id="tableItems">
                     <thead>
                         <tr>

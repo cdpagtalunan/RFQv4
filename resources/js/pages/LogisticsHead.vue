@@ -575,6 +575,7 @@
     });
 
     const onAssignRequest = () => {
+        document.getElementById('btnAssign').disabled = true;
         api.post('api/assign_request', assignedRequestDetails).then((result)=>{
             if(result.data.result){
                 Toast.fire({
@@ -590,11 +591,13 @@
                     title: 'Something went wrong. <br> Please contact ISS.'
                 });
             }
+            document.getElementById('btnAssign').disabled = false;
         }).catch((err) => {
             Toast.fire({
             icon: 'error',
                 title: 'Something went wrong. Please call ISS'
             });
+            document.getElementById('btnAssign').disabled = false;
             console.log(err);
         });
     }
