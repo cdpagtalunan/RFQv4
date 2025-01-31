@@ -78,7 +78,7 @@
                 </tbody>
             </table>
             <br>
-            @if ($data['status'] > 2)
+            @if ($data['status'] < 2)
                 <table style="border: 1px solid black; width: 50%;" id="tableItems">
                     <thead>
                         <tr>
@@ -126,37 +126,44 @@
                                         @else
                                             <td >
                                         @endif
-                                            <span class="d-flex justify-content-center">
-                                                @if ($element['selected_quotation'] == 1)
-                                                    <table style="border: 0px !important; color: white">
-                                                @else
-                                                    <table style="border: 0px !important;">
-                                                @endif        
-                                                    <tbody>
-                                                        <tr>
-                                                            <td class='w-50'>{{ $element['currency'] }} :</td>
-                                                            <td>{{ $element['price'] }} </td>
-                                                        </tr>
-                                                        @if($element['currency'] != 'PHP')
+                                            @if ($element['status'] == 1)
+                                                <strong>Decline to Quote</strong>
+                                            @elseif ($element['status'] == 2)
+                                                <strong>Still no quote as of this time</strong>
+                                            @else
+                                                <span class="d-flex justify-content-center">
+                                                    @if ($element['selected_quotation'] == 1)
+                                                        <table style="border: 0px !important; color: white">
+                                                    @else
+                                                        <table style="border: 0px !important;">
+                                                    @endif        
+                                                        <tbody>
                                                             <tr>
-                                                                <td> Rate/{{ $element['currency'] }}: </td>
-                                                                <td>{{ $element['rate'] }}</td>
+                                                                <td class='w-50'>{{ $element['currency'] }} :</td>
+                                                                <td>{{ $element['price'] }} </td>
                                                             </tr>
-                                                            <tr >
-                                                                <td> PHP:</td>
-                                                                <td>{{ $element['price'] * $element['rate'] }}</td>
+                                                            @if($element['currency'] != 'PHP')
+                                                                <tr>
+                                                                    <td> Rate/{{ $element['currency'] }}: </td>
+                                                                    <td>{{ $element['rate'] }}</td>
+                                                                </tr>
+                                                                <tr >
+                                                                    <td> PHP:</td>
+                                                                    <td>{{ $element['price'] * $element['rate'] }}</td>
+                                                                </tr>
+                                                            @endif
+                                                            <tr>
+                                                                <td class='w-50'>Remarks: </td>
+                                                                <td>{{ $element['remarks'] == null ? 'N/A' : $element['remarks'] }}</td>
                                                             </tr>
-                                                        @endif
-                                                        <tr>
-                                                            <td class='w-50'>Remarks: </td>
-                                                            <td>{{ $element['remarks'] == null ? 'N/A' : $element['remarks'] }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan='2'></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </span>
+                                                            <tr>
+                                                                <td colspan='2'></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </span>
+                                            @endif
+                                            
                                         </td>
                                     @endif
                                 @endforeach

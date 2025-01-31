@@ -294,16 +294,21 @@
                             <input class="form-check-input" type="checkbox" id="switchNoQuotation" v-model="formSupplierDetails.no_quote">
                             <label class="form-check-label" for="switchNoQuotation">Decline to Quote</label>
                         </div>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="switchNoQuotationThisTime" v-model="formSupplierDetails.no_quote_this_time">
+                            <label class="form-check-label" for="switchNoQuotationThisTime">Still no quote as of this time</label>
+                        </div>
                     </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Price:</span>
-                            <select class="form-control w-25"  v-model="formSupplierDetails.currency" @change="checkCurrency" :disabled="formSupplierDetails.no_quote">
+                            <select class="form-control w-25"  v-model="formSupplierDetails.currency" @change="checkCurrency" :disabled="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                                 <option v-for="currency in currencies" :key="currency.id" :value="currency.currency" :data-rate="currency.rate">{{ currency.currency }}</option>
                             </select>
-                            <input type="number" name="price" class="form-control w-25" v-model="formSupplierDetails.price" @keyup="convertCurrencyToPhp" :readonly="formSupplierDetails.no_quote">
+                            <input type="number" name="price" class="form-control w-25" v-model="formSupplierDetails.price" @keyup="convertCurrencyToPhp" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
                 </div>
@@ -311,7 +316,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">{{ formSupplierDetails.currency }} Rate to PHP:</span>
-                            <input type="text"  id="" class="form-control" name="rate" v-model="formSupplierDetails.rate" readonly :readonly="formSupplierDetails.no_quote">
+                            <input type="text"  id="" class="form-control" name="rate" v-model="formSupplierDetails.rate" readonly :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
                 </div>
@@ -319,7 +324,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Price Convertion: <icons icon="fas fa-circle-info" data-bs-toggle="tooltip" data-bs-placement="right" title="Product of price and rate"></icons></span>
-                            <input type="text"  id="" class="form-control" name="convertion" v-model="formSupplierDetails.convertion" readonly :readonly="formSupplierDetails.no_quote">
+                            <input type="text"  id="" class="form-control" name="convertion" v-model="formSupplierDetails.convertion" readonly :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
                 </div>
@@ -327,7 +332,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">MOQ:</span>
-                            <input type="text"  id="" class="form-control" name="moq" v-model="formSupplierDetails.moq" :readonly="formSupplierDetails.no_quote">
+                            <input type="text"  id="" class="form-control" name="moq" v-model="formSupplierDetails.moq" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
                 </div>
@@ -335,7 +340,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Warranty/Guarantee:</span>
-                            <input type="text"  id="" class="form-control" name="warranty" v-model="formSupplierDetails.warranty" :readonly="formSupplierDetails.no_quote">
+                            <input type="text"  id="" class="form-control" name="warranty" v-model="formSupplierDetails.warranty" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
                 </div>
@@ -343,7 +348,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Lead Time:</span>
-                            <input type="text"  id="" class="form-control" name="lead_time" v-model="formSupplierDetails.lead_time" :readonly="formSupplierDetails.no_quote">
+                            <input type="text"  id="" class="form-control" name="lead_time" v-model="formSupplierDetails.lead_time" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
                 </div>
@@ -351,7 +356,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Date Served:</span>
-                            <input type="text"  id="" class="form-control" name="date_served"v-model="formSupplierDetails.date_served" :readonly="formSupplierDetails.no_quote">
+                            <input type="text"  id="" class="form-control" name="date_served"v-model="formSupplierDetails.date_served" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
                 </div>
@@ -359,7 +364,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Quotation Validity:</span>
-                            <input type="text"  id="" class="form-control" name="quotation_validity" v-model="formSupplierDetails.quotation_validity" :readonly="formSupplierDetails.no_quote">
+                            <input type="text"  id="" class="form-control" name="quotation_validity" v-model="formSupplierDetails.quotation_validity" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
                 </div>
@@ -367,7 +372,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Terms of Payment:</span>
-                            <input type="text"  id="" class="form-control" name="terms_of_payment" v-model="formSupplierDetails.terms_of_payment" :readonly="formSupplierDetails.no_quote">
+                            <input type="text"  id="" class="form-control" name="terms_of_payment" v-model="formSupplierDetails.terms_of_payment" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
                     
@@ -376,7 +381,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Attachment:</span>
-                            <input type="file"  id="fileId" class="form-control" @change="onFileChange" multiple v-if="!formSupplierDetails.id || formSupplierDetails.checkReupload == true" :disabled="formSupplierDetails.no_quote">
+                            <input type="file"  id="fileId" class="form-control" @change="onFileChange" multiple v-if="!formSupplierDetails.id || formSupplierDetails.checkReupload == true" :disabled="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                             <input type="input"  class="form-control" v-model="formSupplierDetails.attachment" readonly v-else>
                         </div>
                         <div class="form-check" v-if="formSupplierDetails.id">
@@ -391,7 +396,7 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-25">Remarks:</span>
-                             <textarea class="form-control" name="remarks" v-model="formSupplierDetails.remarks" :readonly="formSupplierDetails.no_quote"></textarea>
+                             <textarea class="form-control" name="remarks" v-model="formSupplierDetails.remarks" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time"></textarea>
                         </div>
                     </div>
                 </div>
@@ -456,6 +461,7 @@
         rate              : '',
         convertion        : '',
         no_quote          : false,
+        no_quote_this_time: false,
         checkReupload     : false
     }
 
@@ -926,6 +932,12 @@
             let forAppendAttachment = '';
             let forSelected = '';
             if(supplier == element['supplier_name']){
+                if(element['status'] == 1){
+                    return `<strong>Decline to Quote</strong>`;
+                }
+                else if(element['status'] == 2){
+                    return `<strong>Still no quote as of this time</strong>`;
+                }
                 if(element['currency'] != 'PHP'){
                     forAppend = `<tr>
                             <td> Rate/${ element['currency'] }: </td>

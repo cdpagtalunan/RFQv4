@@ -739,9 +739,13 @@
             let forAppendAttachment = '';
             let forSelected = '';
             if(supplier == element['supplier_name']){
-                if(element['currency'] === null){
+                if(element['status'] == 1){
                     return `<strong>Decline to Quote</strong>`;
                 }
+                else if(element['status'] == 2){
+                    return `<strong>Still no quote as of this time</strong>`;
+                }
+                
                 if(element['currency'] != 'PHP'){
                     forAppend = `<tr>
                             <td> Rate/${ element['currency'] }: </td>

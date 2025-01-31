@@ -235,8 +235,15 @@ class TransactionController extends Controller
                 }
             }
 
+            if($request->no_quote == "true"){
+                $data['status'] = '1';
+            }
+            else if($request->no_quote_this_time == "true"){
+                $data['status'] = '2';
+            }
             // * Save Item Quotation
             if(isset($request->id)){
+              
                 // return gettype($request->checkReupload);
                 if($request->checkReupload == 'true'){
                     $data['attachment'] = implode(',', $attachment);
@@ -247,6 +254,7 @@ class TransactionController extends Controller
             
             }
             else{
+                
                 $data['attachment'] = implode(',', $attachment);
                 $data['created_by'] = $_SESSION['rapidx_user_id'];
                 $data['created_at'] = NOW();

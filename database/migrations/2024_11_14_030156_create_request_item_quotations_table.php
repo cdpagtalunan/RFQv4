@@ -15,6 +15,7 @@ class CreateRequestItemQuotationsTable extends Migration
     {
         Schema::create('request_item_quotations', function (Blueprint $table) {
             $table->id();
+            $table->smallInteger('status')->default(0)->comment = "0-with quote, 1-decline to quote, 2-no quote";
             $table->unsignedInteger('request_item_id')->comment = "from table request item";
             $table->string('supplier_name');
             $table->string('currency')->nullable();

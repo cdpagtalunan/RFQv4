@@ -28,7 +28,7 @@ class QuotationRequest extends FormRequest
      */
     public function rules()
     {
-        if($this->no_quote === 'false'){
+        if($this->no_quote === 'false' && $this->no_quote_this_times === 'false'){
             return [
                 'attachment'         => '',
                 'currency'           => 'required',
@@ -47,6 +47,7 @@ class QuotationRequest extends FormRequest
         }
         else{
             return [
+                
                 'supplier_name'      => 'required',
                 'request_item_id'    => 'required',
             ];
