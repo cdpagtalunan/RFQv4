@@ -566,6 +566,53 @@
                         
                     });
                 }
+
+                if(cell.querySelector('.btnCancelRFQ')){
+                    cell.querySelector('.btnCancelRFQ').addEventListener('click',async function(){
+                        let requestId = this.getAttribute('data-id');
+                        console.log(requestId);
+                        const {value: text}  = await Swal.fire({
+                            input: "textarea",
+                            inputLabel: "Remarks",
+                            inputPlaceholder: "Type your remarks here...",
+                            inputAttributes: {
+                                "aria-label": "Type your remarks here"
+                            },
+                            showCancelButton: true
+                        });
+
+                        if (text) {
+                            api.post('api/log_cancel_request', {id: requestId, remarks: text}).then((result)=>{
+                                if(result.data.result == true){
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: result.data.msg
+                                    });
+                                    dtLogRequest.ajax.reload();
+                                }
+                                else{
+                                    Toast.fire({
+                                        icon: 'error',
+                                        title: 'Something went wrong!'
+                                    });
+                                }
+                            }).catch((err) => {
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: 'Something went wrong!'
+                                });
+                                console.log(err);
+                            });
+                        }
+                        else{
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cancelled',
+                                text: 'You need to input a remarks to proceed'
+                            });
+                        }
+                    });
+                }
             },
         },
         { data: 'ctrl_no', title: 'Control No.' },

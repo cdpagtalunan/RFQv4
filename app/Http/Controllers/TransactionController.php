@@ -64,6 +64,8 @@ class TransactionController extends Controller
                 case 2:
                     if($quotation->assigned_to == $_SESSION['rapidx_user_id']){
                         $result .= "<button class='btn btn-sm btn-info btnAddSupplier ml-1' title='Add Supplier' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' data-request='".json_encode($quotation, JSON_HEX_APOS)."' data-status='{$quotation->status}'><i class='fas fa-address-book'></i></button>";
+                        $result .= "<button class='btn btn-sm btn-danger btnCancelRFQ ml-1' title='Cancel RFQ' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' ><i class='fas fa-ban'></i></button>";
+                    
                     }
                     break;
                 case 3:
@@ -215,6 +217,8 @@ class TransactionController extends Controller
     }
 
     public function save_quotation(QuotationRequest $request){
+        date_default_timezone_set('Asia/Manila');
+
         $data = $request->validated();
         // return $data;
         /*
@@ -303,6 +307,8 @@ class TransactionController extends Controller
     }
 
     public function proceed_approval(Request $request){
+        date_default_timezone_set('Asia/Manila');
+
         $data = array(
             'status' => 3,
             'updated_by' => $_SESSION['rapidx_user_id']
@@ -451,6 +457,7 @@ class TransactionController extends Controller
     }
 
     public function serve_quotation(ServeRequest $request){
+        date_default_timezone_set('Asia/Manila');
 
         $request->validated();
 
@@ -597,5 +604,64 @@ class TransactionController extends Controller
             'itemDetails'   => $item_details,
             'uniqueOtherDetailsPerSupplier' => $unique_other_details_per_supplier
         ]);
+    }
+
+    public function log_cancel_request(Request $request){
+        date_default_timezone_set('Asia/Manila');
+        // return $request->all();
+        $edit_array = array(
+            'status'             => 5,
+            'log_cancel_remarks' => $request->remarks,
+            'updated_by'         => $_SESSION['rapidx_user_id'],
+            'updated_at'         => NOW()
+
+        );
+
+        $quotationRequest =  $this->RequestRepository->update($request->id, $edit_array);
+        if(isset($quotationRequest)){
+            /**
+             *
+             * @param array $emailArray
+            */
+            $emailArray = array(
+                'to'            => [],
+                'cc'            => [],
+                'bcc'           => [],
+                'subject'       => '',
+                'data'          => [],
+                'emailFilePath' => '',
+                'body'          => '',
+            );
+
+            $request_conditions = array(
+                'id' => $request->id,
+            );
+            $request_relations = array(
+                'item_details',
+                'item_details.item_quotation_details',
+                'created_by_details',
+                'assigned_to_details',
+                'category_details'
+            );
+
+            $request_details = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($request_conditions, $request_relations);
+            $request_details = collect($request_details)->first();
+
+            $emailArray['to'] = $request_details->created_by_details->email;
+            if(isset($request_details->cc)){
+                $emailArray['cc'] = explode(',',$request_details->cc);
+            }
+            array_push($emailArray['cc'],$request_details->assigned_to_details->email);
+
+            $emailArray['bcc'] = ['cpagtalunan@pricon.ph'];
+            $emailArray['emailFilePath'] = 'cancel_rfq_transaction';
+            $emailArray['subject'] = "RFQv4 - {$request_details->ctrl_no} Cancelled <Do Not Reply>";
+            $emailArray['body'] = "Please be informed that {$request_details->ctrl_no} has been cancelled.";
+            $emailArray['data'] = $request_details;
+
+            $this->EmailRepository->sendEmailCancel($emailArray);
+        }
+
+        return $quotationRequest;
     }
 }

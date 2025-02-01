@@ -75,4 +75,22 @@ class EmailRepository implements EmailRepositoryInterface
             $message->subject($emailArray['subject']);
         });
     }
+
+    public function sendEmailCancel(array $emailArray){
+        $data = array(
+            'data' => $emailArray['data'],
+            'body' => $emailArray['body']
+        );
+
+        Mail::send("mail.{$emailArray['emailFilePath']}", $data , function($message) use ($emailArray) {
+            $message->bcc('cpagtalunan@pricon.ph');
+            $message->to($emailArray['to']);
+            $message->cc($emailArray['cc']);
+            if($emailArray['bcc']){
+                $message->bcc($emailArray['bcc']);
+            }
+            $message->subject($emailArray['subject']);
+        });
+    }
+
 }

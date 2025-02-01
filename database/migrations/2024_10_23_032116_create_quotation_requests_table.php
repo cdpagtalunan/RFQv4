@@ -16,7 +16,7 @@ class CreateQuotationRequestsTable extends Migration
         Schema::create('quotation_requests', function (Blueprint $table) {
             $table->id();
             $table->string('ctrl_no');
-            $table->smallInteger('status')->default(0)->comment = "0-For Edit, 1-For Log Manager assignment, 2-For purchasing quotation, 3-For Logistics head approval, 4-Served";
+            $table->smallInteger('status')->default(0)->comment = "0-For Edit, 1-For Log Manager assignment, 2-For purchasing quotation, 3-For Logistics head approval, 4-Served, 5-log cancelled";
             $table->unsignedBigInteger('category_id');
             $table->string('date_needed');
             $table->string('attachment')->nullable();
@@ -27,6 +27,7 @@ class CreateQuotationRequestsTable extends Migration
             $table->string('assigned_to')->nullable();
             $table->longText('approver_remarks')->nullable();
             $table->string('approved_at')->nullable();
+            $table->longText('log_cancel_remarks')->nullable();
             $table->string('created_by');
             $table->string('updated_by')->nullable();
             $table->softDeletes();

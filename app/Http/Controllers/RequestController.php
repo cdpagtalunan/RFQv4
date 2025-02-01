@@ -228,19 +228,22 @@ class RequestController extends Controller
                     $result .= "<label class='badge badge-secondary'>For Edit</label>";
                     break;
                 case 1:
-                    $result .= "<labe class='badge badge-warning text-dark'>For Purchasing Assignment</labe>";
+                    $result .= "<label class='badge badge-warning text-dark'>For Purchasing Assignment</label>";
                     break;
                 case 2:
-                    $result .= "<labe class='badge badge-info'>For Purchasing Quotation</labe>";
+                    $result .= "<label class='badge badge-info'>For Purchasing Quotation</label>";
                     break;
                 case 3:
-                    $result .= "<labe class='badge badge-primary'>For Head Approval</labe>";
+                    $result .= "<label class='badge badge-primary'>For Head Approval</label>";
                     break;
                 case 4:
-                    $result .= "<labe class='badge badge-success'>Served</labe>";
+                    $result .= "<label class='badge badge-success'>Served</label>";
+                    break;
+                case 5:
+                    $result .= "<label class='badge badge-danger'>Cancelled</label><br><p style='font-size: 0.875em'>{$quotation_request->log_cancel_remarks}</p>";
                     break;
                 default:
-                    $result .= "<labe class='badge badge-warning'>For Purchasing Quotation</labe>";
+                    $result .= "<label class='badge badge-warning'>For Purchasing Quotation</label>";
                     break;
             }
             $result .= "</center>";

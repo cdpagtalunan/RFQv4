@@ -77,6 +77,7 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::post('disapprove_quotation', 'disapprove_quotation');
         Route::post('serve_quotation', 'serve_quotation');
         Route::get('get_quotations', 'get_quotations');
+        Route::post('log_cancel_request', 'log_cancel_request');
         // Route::get('get_request_details', 'get_request_details')->name('api.get_request_details');
     });
 

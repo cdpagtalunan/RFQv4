@@ -5,4 +5,5 @@ interface EmailRepositoryInterface
 {
     public function sendEmail(array $emailArray);
     public function sendEmailFollowup(array $emailArray);
+    public function sendEmailCancel(array $emailArray);
 }
