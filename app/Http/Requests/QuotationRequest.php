@@ -28,7 +28,14 @@ class QuotationRequest extends FormRequest
      */
     public function rules()
     {
-        if($this->no_quote === 'false' && $this->no_quote_this_times === 'false'){
+        if($this->no_quote === 'true' || $this->no_quote_this_times === 'true'){
+            return [
+                
+                'supplier_name'      => 'required',
+                'request_item_id'    => 'required',
+            ];
+        }
+        else{
             return [
                 'attachment'         => '',
                 'currency'           => 'required',
@@ -43,13 +50,6 @@ class QuotationRequest extends FormRequest
                 'supplier_name'      => 'required',
                 'terms_of_payment'   => '',
                 'warranty'           => '',
-            ];
-        }
-        else{
-            return [
-                
-                'supplier_name'      => 'required',
-                'request_item_id'    => 'required',
             ];
         }
         
