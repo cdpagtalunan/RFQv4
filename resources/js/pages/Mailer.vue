@@ -25,11 +25,12 @@
     import api from '../axios';
 
     const timer = ref();
-    onMounted(() => {
-        setInterval(getClock, 1000);
-    });
+    // onMounted(() => {
+        // setInterval(getClock, 1000);
+    // });
 
-    const getClock = () => {
+    // const getClock = () => {
+    setInterval(() => {
         timer.value = moment().format('LTS');
         if(timer.value == '7:00:00 AM'){
             // console.log('qwe');
@@ -39,5 +40,7 @@
                 console.log(err);
             });
         }
-    }
+    }, 1000);
+
+    // }
 </script>
