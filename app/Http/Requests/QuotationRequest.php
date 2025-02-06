@@ -28,9 +28,8 @@ class QuotationRequest extends FormRequest
      */
     public function rules()
     {
-        if($this->no_quote === 'true' || $this->no_quote_this_times === 'true'){
+        if($this->no_quote === 'true' || $this->no_quote_this_time === 'true'){
             return [
-                
                 'supplier_name'      => 'required',
                 'request_item_id'    => 'required',
             ];
