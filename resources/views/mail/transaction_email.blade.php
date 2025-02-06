@@ -43,7 +43,6 @@
             <br>
             {{-- Please be informed that RFQ is for purchasing assignment. --}}
             {{ $body }}
-            {{-- {{ $quote_data }} --}}
             <br>
             <hr>
             <strong><i>Request for Quotation Details:</i></strong>
@@ -78,7 +77,7 @@
                 </tbody>
             </table>
             <br>
-            @if ($data['status'] < 2)
+            @if ($data['status'] < 3)
                 <table style="border: 1px solid black; width: 50%;" id="tableItems">
                     <thead>
                         <tr>
