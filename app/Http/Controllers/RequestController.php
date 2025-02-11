@@ -70,7 +70,7 @@ class RequestController extends Controller
     
             if(isset($request->id)){ // Update
                 if($request->checkedReupload == 'true'){
-                    $data['attachment'] = implode(',', $attachment);
+                    $data['attachment'] = implode('||', $attachment);
                 }
                 $data['updated_by'] = $_SESSION['rapidx_user_id'];
                 return $this->RequestRepository->update($request->id, $data);
@@ -101,7 +101,7 @@ class RequestController extends Controller
     
                 // Data
                 if(count($attachment) > 0){
-                    $data['attachment'] = implode(',', $attachment);
+                    $data['attachment'] = implode('||', $attachment);
                 }
                 $data['ctrl_no'] = $new_ctrl_no;
                 $data['created_by'] = $_SESSION['rapidx_user_id'];

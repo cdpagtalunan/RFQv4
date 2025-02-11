@@ -34,7 +34,7 @@ class EmailRepository implements EmailRepositoryInterface
             }
             $message->subject($emailArray['subject']);
             if( (!is_null($emailArray['data']['attachment']) || $emailArray['data']['attachment'] != '') && $emailArray['data']['status'] <= 3 ){
-                $exploded_attachment = explode(',',$emailArray['data']['attachment']);
+                $exploded_attachment = explode('||',$emailArray['data']['attachment']);
                 foreach ($exploded_attachment as $key => $attachment) {
                     $message->attach(storage_path("app/public/file_attachments/{$attachment}"));
                 }

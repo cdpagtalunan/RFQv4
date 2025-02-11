@@ -519,7 +519,7 @@
                     viewRequest.status = 0;
 
                     if(viewRequest.request.attachment != null){
-                        attachments.value = viewRequest.request.attachment.split(",");
+                        attachments.value = viewRequest.request.attachment.split("||");
                     }
 
                     dtSupplierQuotation.column(0).visible(false); // Remove action button for viewing purposes
@@ -553,7 +553,7 @@
 
                         viewRequest.request = JSON.parse(requestDetails);
                         if(viewRequest.request.attachment != null){
-                            attachments.value = viewRequest.request.attachment.split(",");
+                            attachments.value = viewRequest.request.attachment.split("||");
                         }
                         viewRequest.modalFooter = true;
                         viewRequest.status = 1;
@@ -1003,7 +1003,7 @@
                 /**
                     * For attachments 
                 */
-                let attachments = element['attachment'].split(',')
+                let attachments = element['attachment'].split('||')
                 attachments.forEach(attachment => {
                     forAppendAttachment += `<a href='download/${encodeURIComponent(attachment)}'>${attachment}</a><br>`
                 })

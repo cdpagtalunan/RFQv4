@@ -250,7 +250,7 @@ class TransactionController extends Controller
               
                 // return gettype($request->checkReupload);
                 if($request->checkReupload == 'true'){
-                    $data['attachment'] = implode(',', $attachment);
+                    $data['attachment'] = implode('||', $attachment);
                 }
                 $data['updated_by'] = $_SESSION['rapidx_user_id'];
                 $data['updated_at'] = NOW();
@@ -259,7 +259,7 @@ class TransactionController extends Controller
             }
             else{
                 
-                $data['attachment'] = implode(',', $attachment);
+                $data['attachment'] = implode('||', $attachment);
                 $data['created_by'] = $_SESSION['rapidx_user_id'];
                 $data['created_at'] = NOW();
                 return $this->RequestRepository->insertItemQuotation($data);
@@ -288,7 +288,7 @@ class TransactionController extends Controller
         })
         ->addColumn('attachment_link', function($supplier_quotation){
             $result = "";
-            $exploded_attachment = explode(',', $supplier_quotation->attachment);
+            $exploded_attachment = explode('||', $supplier_quotation->attachment);
             foreach ($exploded_attachment as $key => $attachment) {
                 $result .= "<a href='download/{$attachment}' target='_blank'>{$attachment}</a> <br>";
                 if($key !== array_key_last($exploded_attachment)){

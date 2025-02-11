@@ -893,7 +893,7 @@
             formRequest.date_needed = data.date_needed;
             formRequest.justification = data.justification
             if(data.attachment != null){
-                formRequest.attachment = data.attachment.split(',')
+                formRequest.attachment = data.attachment.split('||')
             }
             // formRequest.attachment = data.attachment
 
@@ -914,7 +914,7 @@
 
             viewRequestData.value = result.data;
             if(viewRequestData.value.attachment != null){
-                attachments.value = viewRequestData.value.attachment.split(",");
+                attachments.value = viewRequestData.value.attachment.split("||");
             }
             statusForDatatable.value = false;
             if(result.data.status == 4 || result.data.status == 3){
@@ -955,7 +955,7 @@
 
         if(attachment != null){
             result = "";
-            let splittedAttachment = attachment.split(',');
+            let splittedAttachment = attachment.split('||');
             splittedAttachment.forEach(attchmnt => {
                 result += `<a href='download/${encodeURIComponent(attchmnt)}'>${attchmnt}</a><br>`;
             })

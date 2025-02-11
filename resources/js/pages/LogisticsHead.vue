@@ -368,7 +368,7 @@
                     approverRemarks.value = viewRequest.request.approver_remarks;
                     console.log('approverRemarks.value', approverRemarks.value);
                     if(viewRequest.request.attachment != null){
-                        attachments.value = viewRequest.request.attachment.split(",");
+                        attachments.value = viewRequest.request.attachment.split("||");
                     }
 
                     if(viewRequest.status == 3){
@@ -765,7 +765,7 @@
                     * For attachments 
                 */
                 if(element['attachment'] != null){
-                    let attachments = element['attachment'].split(',')
+                    let attachments = element['attachment'].split('||')
                     attachments.forEach(attachment => {
                         forAppendAttachment += `<a href='download/${encodeURIComponent(attachment)}'>${attachment}</a><br>`
                     })

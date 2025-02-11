@@ -83,7 +83,7 @@
                         <tr>
                             <th>Items</th>
                             <th>Quantity</th>
-                            <th>UOM</th>
+                            <th>UOMs</th>
                             <th>Remarks</th>
                         </tr>
                     </thead>
