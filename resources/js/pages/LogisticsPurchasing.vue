@@ -517,7 +517,6 @@
                     
                     viewRequest.request = JSON.parse(request);
                     viewRequest.status = 0;
-
                     if(viewRequest.request.attachment != null){
                         attachments.value = viewRequest.request.attachment.split("||");
                     }
@@ -1003,10 +1002,17 @@
                 /**
                     * For attachments 
                 */
-                let attachments = element['attachment'].split('||')
-                attachments.forEach(attachment => {
-                    forAppendAttachment += `<a href='download/${encodeURIComponent(attachment)}'>${attachment}</a><br>`
-                })
+               let attachments = "";
+                if(element['attachment'] != null){
+                    attachments = element['attachment'].split('||')
+                    attachments.forEach(attachment => {
+                        forAppendAttachment += `<a href='download/${encodeURIComponent(attachment)}'>${attachment}</a><br>`
+                    })
+                }
+                // let attachments = element['attachment'].split('||')
+                // attachments.forEach(attachment => {
+                //     forAppendAttachment += `<a href='download/${encodeURIComponent(attachment)}'>${attachment}</a><br>`
+                // })
                 return `
                 <table class="table table-borderless table-sm w-50">
                     <thead>
@@ -1026,7 +1032,7 @@
                         ${forAppend}
                         <tr>
                             <td class='w-50'>Remarks: </td>
-                            <td>${element['remarks'] == null ? 'N/A' : element['remarks']}</td>
+                            <td>${!element['remarks'] ? 'N/A' : element['remarks']}</td>
                         </tr>
                         <tr>
                             <td colspan='2'>${forAppendAttachment}</td>
