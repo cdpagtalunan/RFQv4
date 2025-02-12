@@ -41,7 +41,7 @@
                             <p>Purchasing</p>
                         </router-link>
                     </li>
-                    <li class="nav-item has-treeview" v-if="uAccess == 1 || uType != 0">
+                    <li class="nav-item has-treeview" v-if="(uAccess == 1 || uType != 0) && uApprove == 1">
                         <router-link :to="{ name: 'LogisticsHead' }" class="nav-link">
                             <icons icon="fas fa-clipboard-check" class="nav-icon"></icons>
                             <p>Logistics Head</p>
