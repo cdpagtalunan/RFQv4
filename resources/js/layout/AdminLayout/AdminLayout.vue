@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <Sidebar :uType="localStore.uType" :uAccess="localStore.uAccess" :uApprover="localStore.isApprover"></Sidebar>
+        <Sidebar :uType="localStore.uType" :uAccess="localStore.uAccess" :uApprove="localStore.isApprover"></Sidebar>
         <Header :username="localStore.name"></Header>
         <div class="content-wrapper" style="height: auto !important;">
             <router-view />
