@@ -13,7 +13,6 @@
                         <template #body>
                             <div class="row justify-content-center">
                                 <div class="col-sm-6">
-                                    {{ formData.date }}
                                     <form @submit.prevent="exportItem">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text w-50">Date</span>
