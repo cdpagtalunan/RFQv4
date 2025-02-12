@@ -84,7 +84,7 @@ Route::middleware('checkSessionExist')->group(function(){
     Route::controller(CurrencyController::class)->group(function(){
         Route::post('save_currency', 'save_currency');
         Route::get('dt_get_currency', 'dt_get_currency');
-        Route::post('update_status', 'update_status');
+        Route::post('update_status_currency', 'update_status_currency');
         Route::get('get_currency', 'get_currency');
     });
 

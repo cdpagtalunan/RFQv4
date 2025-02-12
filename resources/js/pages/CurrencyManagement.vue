@@ -165,7 +165,7 @@
     }
 
     const updateCurrencyStatus = (id, status) => {
-        api.post('api/update_status', {id: id, status: status}).then((result)=>{
+        api.post('api/update_status_currency', {id: id, status: status}).then((result)=>{
             if(result.data.result == true){
                 Toast.fire({
                     icon: 'success',
