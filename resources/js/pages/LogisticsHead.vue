@@ -22,7 +22,7 @@
                                             <!-- <option value="2">For Quotation</option> -->
                                             <option value="3">For Approval</option>
                                             <option value="4">Served</option>
-                                            <option >All</option>
+                                            <!-- <option >All</option> -->
                                         </select>
                                     </div>
                                 </div>
