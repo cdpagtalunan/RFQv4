@@ -64,7 +64,7 @@
                                     name="category_id"
                                 >
                                     <template #noResult>
-                                        No User Found. Register User on RapidX.
+                                        No users found. Register a user on RapidX.
                                     </template>
                                 </VueMultiselect>
                             </div>
