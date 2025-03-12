@@ -286,6 +286,7 @@
                     </table>
                 </div>
             </div>
+            <!-- <div class="row" v-show="statusForDatatable"> -->
             <div class="row" v-show="statusForDatatable">
                 <div class="col-md-12">
                     <DataTable
@@ -429,7 +430,9 @@
         ref,
         onBeforeMount,
         reactive,
-        inject
+        inject,
+        watch,
+        nextTick
     } from 'vue';
     import api from '../axios';
 
@@ -664,6 +667,7 @@
         info: false,
         paginate: false,
         autoWidth: false,
+        bDestroy  : true,
         columnDefs: [
             {"className": 'dt-head-left', "targets": "_all"},
             {"className": "dt-body-left", "targets": "_all"},
@@ -710,11 +714,11 @@
         });
     });
     onMounted(() => {
-        // console.log(viewRequestData.value);
         minDate.value = new Date().toISOString().split('T')[0];
         dtRequestItem = tableRequestItem.value.dt;
         dtQuotationRequest = tableQuotationRequest.value.dt;
-
+        // dtItemSupplier = tableItemSupplier.value.dt;
+        // console.log('onMounted', tableItemSupplier.value)
         // Initialize Modal
         modalRequest.value = new Modal(document.querySelector('#modalRequestId'), {})
         modalItem.value = new Modal(document.querySelector('#modalItemId'), {})
@@ -747,6 +751,9 @@
             validElements.forEach(element => {
                 element.classList.remove('is-valid');
             });
+        })
+        document.getElementById("modalViewRequest").addEventListener('hidden.bs.modal', event => {
+            statusForDatatable.value = false;
         })
     });
 
@@ -919,10 +926,12 @@
             statusForDatatable.value = false;
             if(result.data.status == 4 || result.data.status == 3){
                 statusForDatatable.value = true;
+                // console.log(tableItemSupplier.value);
                 // dtItemSupplier.ajax.reload();
                 // dtItemSupplier = tableItemSupplier.value.dt;
 
             }
+
             modalViewRequest.value.show();
 
         }).catch((err) => {
@@ -977,4 +986,13 @@
             console.log(err);
         });
     }
+    watch(statusForDatatable, async (newValue) => {
+        console.log('new', newValue);
+        if (newValue) {
+            // Wait until DOM updates
+            await nextTick();
+            dtItemSupplier = tableItemSupplier.value.dt;
+            dtItemSupplier.draw();
+        }
+    });
 </script>
