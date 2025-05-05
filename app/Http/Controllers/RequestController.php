@@ -177,7 +177,7 @@ class RequestController extends Controller
             }
             array_push($emailArray['cc'],$rfq_collection->created_by_details->email);
             $emailArray['to'] = collect($purchasing_user)->pluck('rapidx_details.email')->toArray();
-            $emailArray['subject'] = "RFQv4 - $rfq_collection->ctrl_no For Logisitics Assignment <Do Not Reply!>";
+            $emailArray['subject'] = "RFQv4 - $rfq_collection->ctrl_no For Logistics Assignment <Do Not Reply!>";
             $emailArray['emailFilePath'] = 'transaction_email';
             $emailArray['body'] = 'Please be informed that RFQ is for purchasing assignment.';
 

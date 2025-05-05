@@ -57,7 +57,7 @@ class RFQItem implements FromView, WithTitle, WithEvents, ShouldAutoSize
             AfterSheet::class => function(AfterSheet $event) {
                 $highestColumn = $event->sheet->getHighestColumn();
                 $highestRow = $event->sheet->getHighestRow();
-                $event->sheet->getDelegate()->mergeCells('A1:G1');
+                $event->sheet->getDelegate()->mergeCells('A1:H1');
 
                 $event->sheet->getDelegate()->getStyle('A1')->applyFromArray(
                     array(
