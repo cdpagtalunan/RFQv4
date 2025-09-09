@@ -19,8 +19,8 @@ class CreateQuotationRequestsTable extends Migration
             $table->smallInteger('status')->default(0)->comment = "0-For Edit, 1-For Log Manager assignment, 2-For purchasing quotation, 3-For Logistics head approval, 4-Served, 5-log cancelled";
             $table->unsignedBigInteger('category_id');
             $table->string('date_needed');
-            $table->string('attachment')->nullable();
-            $table->string('cc')->nullable();
+            $table->longText('attachment')->nullable();
+            $table->longText('cc')->nullable();
             $table->string('justification')->nullable();
             $table->string('assigned_by')->nullable();
             $table->string('assigned_at')->nullable();

@@ -102,58 +102,55 @@
                 <table border='1' style="width: 100%;" id="tableQuotation">
                     <tr>
                         <th style="width: 50% !important; padding: 2px;"></th>
-                        @foreach ($quote_data['supplierNames'] as $supplier)
-                            <th style='padding: 2px; background-color: #13ace8'>{{ $supplier }}</th>
+                        @foreach ($quote_data['supplierNames'] as $supplier_name)
+                            <th style='padding: 2px; background-color: #13ace8'>{{ $supplier_name }}</th>
                         @endforeach
                     </tr>
                     @foreach ($quote_data['itemDetails'] as $item)
                         <tr>
                             <td class="text-center"><strong>{{ $item['item_name'] }}</strong></td>
-                            @foreach ($item['item_quotation_details'] as $itemQuotation)
-                                @foreach ($quote_data['supplierNames'] as $supplier)
+                            @foreach ($quote_data['supplierNames'] as $supplier)
+                                @foreach ($item['item_quotation_details'] as $itemQuotation)
                                     @php
-                                        $element = $itemQuotation;
                                         $forAppend = '';
                                         $forAppendAttachment = '';
                                         $forSelected = '';
-                                        
                                     @endphp
-                                    @if ($supplier == $element['supplier_name'])
-                                       
-                                        @if ($element['selected_quotation'] == 1)
+                                    @if ($supplier == $itemQuotation['supplier_name'])
+                                        @if ($itemQuotation['selected_quotation'] == 1)
                                             <td style="background-color: rgb(39, 146, 39);">
                                         @else
                                             <td >
                                         @endif
-                                            @if ($element['status'] == 1)
+                                            @if ($itemQuotation['status'] == 1)
                                                 <strong>Decline to Quote</strong>
-                                            @elseif ($element['status'] == 2)
+                                            @elseif ($itemQuotation['status'] == 2)
                                                 <strong>Still no quote as of this time</strong>
                                             @else
                                                 <span class="d-flex justify-content-center">
-                                                    @if ($element['selected_quotation'] == 1)
+                                                    @if ($itemQuotation['selected_quotation'] == 1)
                                                         <table style="border: 0px !important; color: white">
                                                     @else
                                                         <table style="border: 0px !important;">
                                                     @endif        
                                                         <tbody>
                                                             <tr>
-                                                                <td class='w-50'>{{ $element['currency'] }} :</td>
-                                                                <td>{{ $element['price'] }} </td>
+                                                                <td class='w-50'>{{ $itemQuotation['currency'] }} :</td>
+                                                                <td>{{ $itemQuotation['price'] }} </td>
                                                             </tr>
-                                                            @if($element['currency'] != 'PHP')
+                                                            @if($itemQuotation['currency'] != 'PHP')
                                                                 <tr>
-                                                                    <td> Rate/{{ $element['currency'] }}: </td>
-                                                                    <td>{{ $element['rate'] }}</td>
+                                                                    <td> Rate/{{ $itemQuotation['currency'] }}: </td>
+                                                                    <td>{{ $itemQuotation['rate'] }}</td>
                                                                 </tr>
                                                                 <tr >
                                                                     <td> PHP:</td>
-                                                                    <td>{{ $element['price'] * $element['rate'] }}</td>
+                                                                    <td>{{ $itemQuotation['price'] * $itemQuotation['rate'] }}</td>
                                                                 </tr>
                                                             @endif
                                                             <tr>
                                                                 <td class='w-50'>Remarks: </td>
-                                                                <td>{{ $element['remarks'] == null ? 'N/A' : $element['remarks'] }}</td>
+                                                                <td>{{ $itemQuotation['remarks'] == null ? 'N/A' : $itemQuotation['remarks'] }}</td>
                                                             </tr>
                                                             <tr>
                                                                 <td colspan='2'></td>
@@ -162,7 +159,6 @@
                                                     </table>
                                                 </span>
                                             @endif
-                                            
                                         </td>
                                     @endif
                                 @endforeach

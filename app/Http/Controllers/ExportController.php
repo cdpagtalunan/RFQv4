@@ -37,7 +37,8 @@ class ExportController extends Controller
       $conditions['request_details.created_by'] = $_SESSION['rapidx_user_id'];
     }
     $rfqs = $this->requestRepository->getRequestItemWithConditionAndRelation($conditions, $relations);
-    // return $conditions;
-    return Excel::download(new RFQItem($rfqs), "List of Request Quotation-$month.xlsx");
+    $collection = collect($rfqs)->where('request_details.status', '<>', 5)->flatten(1);
+    // return $collection;
+    return Excel::download(new RFQItem($collection), "List of Request Quotation-$month.xlsx");
   }
 }

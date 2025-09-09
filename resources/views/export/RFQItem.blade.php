@@ -17,6 +17,7 @@
             <td>Requestor</td>
             <td>PIC</td>
             <td>Status</td>
+            <td>Served Date/Time</td>
         </tr>
 
         @foreach ($rfqs as $rfq)
@@ -39,6 +40,7 @@
                         @break
                     @case(4)
                         <td><strong>Served</strong></td>
+                        <td>{{ $rfq['request_details']['approved_at'] }}</td>
                         @break
                     @default
                 @endswitch
