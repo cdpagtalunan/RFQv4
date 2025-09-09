@@ -346,7 +346,7 @@ class TransactionController extends Controller
             $request_details = collect($request_details)->first();
 
             $to_conditions = array(
-                'approver' => 1,
+                'user_access' => 1,
                 'deleted_at' => null
             );
             $to_relations = array(
