@@ -791,6 +791,7 @@
                     // Check if user clicked cancel
                     if (dismiss === Swal.DismissReason.cancel) {
                         console.log('User cancelled')
+                        return;
                     } else {
                         if (!remarks) {
                             alert('You need to input a remarks to proceed')
