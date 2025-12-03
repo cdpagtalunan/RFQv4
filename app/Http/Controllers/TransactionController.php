@@ -303,7 +303,7 @@ class TransactionController extends Controller
     }
 
     public function delete_quotation(Request $request){
-        return $this->RequestRepository->deleteQuotation($request->id);
+        return $this->RequestRepository->deleteQuotation($request->id, $request->remarks);
     }
 
     public function proceed_approval(Request $request){
@@ -336,7 +336,9 @@ class TransactionController extends Controller
             );
             $request_relations = array(
                 'item_details',
-                'item_details.item_quotation_details',
+                'item_details.item_quotation_details' => function($query){
+                    $query->whereNull('deleted_at');
+                },
                 'created_by_details',
                 'assigned_to_details',
                 'category_details'
@@ -355,7 +357,9 @@ class TransactionController extends Controller
             $to_user = $this->UserAccessRepository->getUserWithRelationAndCondition($to_conditions, $to_relations);
 
             $quote_data = Http::get(route('api.get_request_details', ['id' => $request->id]));
+
             $emailArray['quote_data'] = $quote_data;
+            
 
             $emailArray['data'] = $request_details;
 
@@ -560,7 +564,9 @@ class TransactionController extends Controller
     public function get_request_details(Request $request){
         $relations = [
             'item_details',
-            'item_details.item_quotation_details',
+            'item_details.item_quotation_details' => function($query){
+                $query->whereNull('deleted_at');
+            },
             'category_details'
         ];
         $conditions = array(

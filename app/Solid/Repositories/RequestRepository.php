@@ -12,7 +12,7 @@ use App\Models\RequestItemQuotation;
 use Illuminate\Support\Facades\Auth;
 use App\Solid\Interfaces\RequestRepositoryInterface;
 
-
+date_default_timezone_set('Asia/Manila');
 class RequestRepository implements RequestRepositoryInterface
 {
     public function insertGetId(array $data){
@@ -142,6 +142,7 @@ class RequestRepository implements RequestRepositoryInterface
         foreach ($condition as $key => $value) {
             $query->where($key, $value);
         }
+        $query->whereNull('deleted_at');
         return $query->get();
     }
 
@@ -163,12 +164,16 @@ class RequestRepository implements RequestRepositoryInterface
         }
     }
 
-    public function deleteQuotation(int $id){
+    public function deleteQuotation(int $id, string $remarks){
         DB::beginTransaction();
         
         try{
+            $update_array = array(
+                'deleted_at' => NOW(),
+                'del_remarks' => $remarks
+            );
             RequestItemQuotation::where('id', $id)
-            ->delete();
+            ->update($update_array);
             
             DB::commit();
 

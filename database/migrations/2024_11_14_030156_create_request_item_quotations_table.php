@@ -30,6 +30,7 @@ class CreateRequestItemQuotationsTable extends Migration
             $table->string('attachment')->nullable();
             $table->string('remarks')->nullable();
             $table->smallInteger('selected_quotation')->default(0)->comment = '0 - not selected, 1 - selected';
+            $table->longText('del_remarks')->nullable();
             $table->softDeletes();
             $table->string('created_by');
             $table->string('updated_by')->nullable();

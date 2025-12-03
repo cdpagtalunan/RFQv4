@@ -409,7 +409,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, reactive, inject } from 'vue';
+    import { ref, onMounted, reactive, inject, nextTick } from 'vue';
     import api from '../axios';
     // Import DataTable
     import DataTable from 'datatables.net-vue3';
@@ -757,9 +757,39 @@
                     }
                 })
 
-                cell.querySelector('.btnDeleteQuotation').addEventListener('click', function(){
+                cell.querySelector('.btnDeleteQuotation').addEventListener('click', async function(){
                     let supplierQuotationId = this.getAttribute('data-id');
-                    deleteQuotation(supplierQuotationId);
+                  
+                    // ✅ Disable focus trap of ALL open modals
+                    document.querySelectorAll('.modal.show').forEach(modalEl => {
+                        const modal = Modal.getInstance(modalEl)
+                        if (modal?._focustrap) modal._focustrap.deactivate()
+                    })
+
+                    const { value: remarks } = await Swal.fire({
+                        title: 'Enter message',
+                        input: 'textarea',
+                        inputPlaceholder: 'Type here...',
+                        target: document.body,
+                        allowOutsideClick: false,
+
+                        didOpen: async () => {
+                            await nextTick()
+
+                            const container = document.querySelector('.swal2-container')
+                            if (container) container.style.zIndex = 99999
+
+                            const textarea = Swal.getInput()
+                            textarea?.focus()
+                        }
+                    })
+
+                    if (!remarks) {
+                        alert('You need to input a remarks to proceed')
+                        return
+                    }
+                    
+                    deleteQuotation(supplierQuotationId, remarks);
                 })
             }
         },
@@ -889,8 +919,8 @@
         });
     }
 
-    const deleteQuotation = (id) => {
-        api.post('api/delete_quotation', {id: id}).then((result)=>{
+    const deleteQuotation = (id, remarks) => {
+        api.post('api/delete_quotation', {id: id, remarks: remarks}).then((result)=>{
             if(result.data.result){
                 Toast.fire({
                     icon: 'success',
