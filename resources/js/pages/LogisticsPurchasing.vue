@@ -767,7 +767,7 @@
                     })
 
                     const { value: remarks } = await Swal.fire({
-                        title: 'Enter message',
+                        title: 'Enter Removal Remarks',
                         input: 'textarea',
                         inputPlaceholder: 'Type here...',
                         target: document.body,
