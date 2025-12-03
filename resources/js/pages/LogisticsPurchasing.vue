@@ -766,12 +766,16 @@
                         if (modal?._focustrap) modal._focustrap.deactivate()
                     })
 
-                    const { value: remarks } = await Swal.fire({
+                    const { value: remarks, dismiss } = await Swal.fire({
                         title: 'Enter Removal Remarks',
                         input: 'textarea',
                         inputPlaceholder: 'Type here...',
                         target: document.body,
                         allowOutsideClick: true,
+
+                        showCancelButton: true,
+                        confirmButtonText: 'Submit',
+                        cancelButtonText: 'Cancel',
 
                         didOpen: async () => {
                             await nextTick()
@@ -784,10 +788,17 @@
                         }
                     })
 
-                    if (!remarks) {
-                        alert('You need to input a remarks to proceed')
-                        return
+                    // Check if user clicked cancel
+                    if (dismiss === Swal.DismissReason.cancel) {
+                        console.log('User cancelled')
+                    } else {
+                        if (!remarks) {
+                            alert('You need to input a remarks to proceed')
+                            return
+                        }
                     }
+
+                 
                     
                     deleteQuotation(supplierQuotationId, remarks);
                 })
