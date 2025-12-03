@@ -771,7 +771,7 @@
                         input: 'textarea',
                         inputPlaceholder: 'Type here...',
                         target: document.body,
-                        allowOutsideClick: false,
+                        allowOutsideClick: true,
 
                         didOpen: async () => {
                             await nextTick()
