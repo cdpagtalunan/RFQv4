@@ -106,7 +106,7 @@
                             <th style='padding: 2px; background-color: #13ace8'>{{ $supplier_name }}</th>
                         @endforeach
                     </tr>
-                    @foreach ($quote_data['itemDetails'] as $item)
+                    {{-- @foreach ($quote_data['itemDetails'] as $item)
                         <tr>
                             <td class="text-center"><strong>{{ $item['item_name'] }}</strong></td>
                             @foreach ($quote_data['supplierNames'] as $supplier)
@@ -116,11 +116,13 @@
                                         $forAppendAttachment = '';
                                         $forSelected = '';
                                     @endphp
+                                    
                                     @if ($supplier == $itemQuotation['supplier_name'])
+                                        <td>{{ $itemQuotation['supplier_name'] }}</td>
                                         @if ($itemQuotation['selected_quotation'] == 1)
                                             <td style="background-color: rgb(39, 146, 39);">
                                         @else
-                                            <td >
+                                            <td>
                                         @endif
                                             @if ($itemQuotation['status'] == 1)
                                                 <strong>Decline to Quote</strong>
@@ -159,12 +161,67 @@
                                                     </table>
                                                 </span>
                                             @endif
-                                        </td>
+                                            </td>
+
                                     @endif
                                 @endforeach
                             @endforeach
                         </tr>
+                    @endforeach --}}
+                    @foreach ($quote_data['itemDetails'] as $item)
+                    <tr>
+                        {{-- ITEM NAME --}}
+                        <td class="text-center">
+                            <strong>{{ $item['item_name'] }}</strong>
+                        </td>
+
+                        @php
+                            $quotesBySupplier = collect($item['item_quotation_details'])
+                                ->keyBy('supplier_name');
+                        @endphp
+
+                        @foreach ($quote_data['supplierNames'] as $supplier)
+                            @php
+                                $q = $quotesBySupplier[$supplier] ?? null;
+                            @endphp
+
+                            <td class="align-top text-center"
+                                style="{{ $q && $q['selected_quotation'] ? 'background:#279227; color:white;' : '' }}">
+
+                                @if ($q)
+                                    {{-- STATUS --}}
+                                    @if ($q['status'] == 1)
+                                        <strong>Decline to Quote</strong>
+                                    @elseif ($q['status'] == 2)
+                                        <strong>Still no quote as of this time</strong>
+                                    @else
+                                        {{-- PRICE --}}
+                                        <div>
+                                            <strong>{{ $q['currency'] }}:</strong>
+                                            {{ number_format($q['price'], 2) }}
+                                        </div>
+
+                                        {{-- USD CONVERSION --}}
+                                        @if ($q['currency'] !== 'PHP')
+                                            <div>Rate/USD: {{ $q['rate'] }}</div>
+                                            <div>
+                                                <strong>PHP:</strong>
+                                                {{ number_format($q['price'] * $q['rate'], 3) }}
+                                            </div>
+                                        @endif
+
+                                        {{-- REMARKS --}}
+                                        <div class="mt-2">
+                                            <strong>Remarks:</strong><br>
+                                            {{ $q['remarks'] ?? 'N/A' }}
+                                        </div>
+                                    @endif
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
                     @endforeach
+
                     @foreach ($additionalRows as $additionalRow)
                         <tr>
                             <td><strong>{{ $additionalRow['title'] }}</strong></td>
