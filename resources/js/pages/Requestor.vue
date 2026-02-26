@@ -259,36 +259,38 @@
             <hr>
             <div class="row" v-show="!statusForDatatable">
                 <div class="col-md-12">
-                    <table class="table table-bordered table-sm">
-                        <thead>
-                            <tr>
-                                <th>Item/Description</th>
-                                <th>Quantity</th>
-                                <th>UOM</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Item/Description</th>
+                                    <th>Quantity</th>
+                                    <th>UOM</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                            <tr  v-for="itemDetails in viewRequestData.item_details" :key="itemDetails.id" v-if="viewRequestData.item_details.length > 0">
-                                <td>{{ itemDetails.item_name }}</td>
-                                <td>{{ itemDetails.qty }}</td>
-                                <td>{{ itemDetails.uom }}</td>
-                                <td>{{ itemDetails.remarks }}</td>
-                            </tr>
+                                <tr  v-for="itemDetails in viewRequestData.item_details" :key="itemDetails.id" v-if="viewRequestData.item_details.length > 0">
+                                    <td>{{ itemDetails.item_name }}</td>
+                                    <td>{{ itemDetails.qty }}</td>
+                                    <td>{{ itemDetails.uom }}</td>
+                                    <td>{{ itemDetails.remarks }}</td>
+                                </tr>
 
-                            <tr v-else>
-                                <td colspan="6" class="text-center font-weight-bold">
-                                    No Item Requested
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                <tr v-else>
+                                    <td colspan="6" class="text-center font-weight-bold">
+                                        No Item Requested
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <!-- <div class="row" v-show="statusForDatatable"> -->
             <div class="row" v-show="statusForDatatable">
-                <div class="col-md-12">
+                <div class="col-md-12 table-responsive">
                     <DataTable
                         class="table table-sm table-bordered table-hover wrap display"
                         :columns="columnsItemSupplier"

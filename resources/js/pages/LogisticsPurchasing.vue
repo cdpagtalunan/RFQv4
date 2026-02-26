@@ -96,7 +96,7 @@
                 <hr>
                 <h5>Requested Item(s)</h5>
                 <div class="row" v-show="status < 4">
-                    <div class="col-md-12">
+                    <div class="col-md-12 table-responsive">
                         <DataTable
                             class="table table-sm table-bordered table-hover wrap display"
                             :columns="columnsItemSupplier"
