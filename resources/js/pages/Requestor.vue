@@ -584,6 +584,7 @@
         },
         { data: 'status', title: 'Status', orderable: false, sortable: false },
         { data: 'ctrl_no', title: 'Control No.' },
+        { data: 'justification', title: 'Justification' },
         { data: 'category_details.category_name', title: 'Category' },
         { data: 'date_needed', title: 'Date Needed' },
         { data: 'created_at', title: 'Created At',

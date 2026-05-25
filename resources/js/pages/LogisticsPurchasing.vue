@@ -20,7 +20,7 @@
                                         <select id="selStatus" class="form-control" v-model="reqFilterStatus" @change="dtLogRequest.draw()">
                                             <!-- <option value="1">Open</option> -->
                                             <option value="2">For Quotation</option>
-                                            <!-- <option value="3">For Approval</option> -->
+                                            <option value="3">For Approval - Logistics Head</option>
                                             <option value="4">Served</option>
                                             <!-- <option >All</option> -->
                                         </select>
@@ -44,7 +44,7 @@
                                     :options="optionsLogRequest"
                                 />
                             </div>
-                           
+
                         </template>
                     </Card>
                 </div>
@@ -64,7 +64,7 @@
                     <div class="col-md-6">
                         <label>Category:</label>
                         <input type="text" class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.category_details.category_name " readonly>
-                        
+
                     </div>
                     <div class="col-md-6">
                         <label>Date Needed:</label>
@@ -88,7 +88,7 @@
                 <div class="row mt-2">
                     <div class="col-md-12">
                         <label> Justification:</label>
-                        
+
                         <textarea class="form-control" :value="viewRequest.request == undefined ? '' : viewRequest.request.justification " readonly></textarea>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </template>
             <template #footerButton>
                 <button class="btn btn-success" id="btnProceedApproval" @click="saveForApproval">Save</button>
@@ -193,7 +193,7 @@
                     </div>
                 </div>
                 <!-- For Served only -->
-                <div class="row" v-show="status >= 4"> 
+                <div class="row" v-show="status >= 4">
                     <div class="col-md-12">
                         <table class="table table-sm table-bordered wrap">
                             <thead>
@@ -206,7 +206,7 @@
                                 <tr>
                                     <td class="fw-bold">Select Quotation</td>
                                     <td v-for="details in quotationDetails" :key="details.id" class="text-center">
-                                        <input type='radio' name='radioSelect' 
+                                        <input type='radio' name='radioSelect'
                                         class="form-check-input"
                                         :value='details.id'
                                         v-model="winningQuotation"
@@ -215,7 +215,7 @@
                                 </tr>
                                 <tr>
                                     <td class="fw-bold">Supplier Name</td>
-                                    <td v-for="details in quotationDetails" :key="details.id" 
+                                    <td v-for="details in quotationDetails" :key="details.id"
                                     :class="[status == 4 && details.selected_quotation == 1 ? 'bg-success' : '']"
                                     >
                                         {{ details.supplier_name }}
@@ -375,7 +375,7 @@
                             <input type="text"  id="" class="form-control" name="terms_of_payment" v-model="formSupplierDetails.terms_of_payment" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                         </div>
                     </div>
-                    
+
                 </div>
                 <div class="row mt-2">
                     <div class="col-sm-12">
@@ -487,16 +487,16 @@
             {
                 title: 'Durations',
                 tblColName: 'lead_time'
-            }, 
+            },
             {
                 title: 'Terms',
                 tblColName: 'terms_of_payment'
 
-            }, 
+            },
             {
                 title: 'Warranty',
                 tblColName: 'warranty'
-            }, 
+            },
         ],
     })
 
@@ -504,7 +504,7 @@
     let dtLogRequest;
     const tableLotRequest = ref();
     const columnsLogRequest = [
-        { 
+        {
             data: 'action',
             title: 'Action',
             searchable: false,
@@ -514,7 +514,7 @@
                     let request = this.getAttribute('data-request');
                     status.value = this.getAttribute('data-status');
                     id.value = this.getAttribute('data-id');
-                    
+
                     viewRequest.request = JSON.parse(request);
                     viewRequest.status = 0;
                     if(viewRequest.request.attachment != null){
@@ -533,7 +533,7 @@
                             tableSpecialViewData.supplierNames = result.data.supplierNames;
                             tableSpecialViewData.itemDetails = result.data.itemDetails;
                             tableSpecialViewData.uniqueOtherDetailsPerSupplier = result.data.uniqueOtherDetailsPerSupplier;
-                            
+
                         }).catch((err) => {
                             console.log(err);
                         });
@@ -562,7 +562,7 @@
                         modalView.value.show();
                         shouldHaveDrawCallback.value = true;
 
-                        
+
                     });
                 }
 
@@ -623,7 +623,7 @@
             render: function(data) {
                 let toShow = "---";
                 if (data) {
-                    toShow = data; 
+                    toShow = data;
                 }
                 return toShow;
             }
@@ -651,8 +651,8 @@
     let dtItemSupplier;
     const tableItemSupplier = ref();
     const columnsItemSupplier = [
-        { 
-            data: 'action', 
+        {
+            data: 'action',
             title: 'Action',
             createdCell(cell){
                 cell.querySelector('.btnAddQuotation').addEventListener('click', function(){
@@ -701,7 +701,7 @@
         // drawCallback: function( data ) {
         //     /*
         //         * This script is to disable or enable the serve button.
-        //         * disabled = true => there is a item with no selected winning quotation 
+        //         * disabled = true => there is a item with no selected winning quotation
         //     */
         //     let dtDatas = data.json.data;
         //     console.log(dtDatas);
@@ -723,8 +723,8 @@
     let dtSupplierQuotation;
     const tableSupplierQuotation = ref();
     const columnsSupplierQuotation = [
-        { 
-            data: 'action', 
+        {
+            data: 'action',
             title: 'Action',
             searchable: false,
             sortable: false,
@@ -759,7 +759,7 @@
 
                 cell.querySelector('.btnDeleteQuotation').addEventListener('click', async function(){
                     let supplierQuotationId = this.getAttribute('data-id');
-                  
+
                     // ✅ Disable focus trap of ALL open modals
                     document.querySelectorAll('.modal.show').forEach(modalEl => {
                         const modal = Modal.getInstance(modalEl)
@@ -799,8 +799,8 @@
                         }
                     }
 
-                 
-                    
+
+
                     deleteQuotation(supplierQuotationId, remarks);
                 })
             }
@@ -834,7 +834,7 @@
         modalView.value = new Modal(document.querySelector('#viewModalRequest'), {});
         modalSupplier.value = new Modal(document.querySelector('#modalAddSupplier'), {});
         modalAddSupplierDetails.value = new Modal(document.querySelector('#modalAddSupplierDetails'), {});
-        
+
         document.getElementById("viewModalRequest").addEventListener('hidden.bs.modal', event => {
             assignedRequestDetails.assigned_to = '';
             viewRequest.modalFooter = false;
@@ -871,19 +871,19 @@
     const btnSaveQuotationDetails = () => {
         document.getElementById('btnSaveSupplier').setAttribute('disabled', 'true');
         let formData = new FormData();
-        
+
         Object.keys(formSupplierDetails).forEach(function(key) {
             formData.append(key, formSupplierDetails[key]);
         });
 
         formData.append('request_item_id', itemDetails.itemId);
-        
+
         if(Array.isArray(formSupplierDetails.attachment)){
             formSupplierDetails.attachment.forEach((file) => {
                 formData.append("attachment[]", file);
             });
         }
-        
+
 
         api.post('api/save_quotation', formData).then((result)=>{
             if(result.data.result == true){
@@ -1040,9 +1040,9 @@
                 if(element['selected_quotation'] == 1){
                     forSelected = `checked`
                 };
-                
+
                 /**
-                    * For attachments 
+                    * For attachments
                 */
                let attachments = "";
                 if(element['attachment'] != null){

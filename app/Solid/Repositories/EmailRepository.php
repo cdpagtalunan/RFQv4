@@ -1,8 +1,8 @@
 <?php
 namespace App\Solid\Repositories;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\Auth;
 use Mail;
 /**
  * Import Interfaces
@@ -36,7 +36,8 @@ class EmailRepository implements EmailRepositoryInterface
             if( (!is_null($emailArray['data']['attachment']) || $emailArray['data']['attachment'] != '') && $emailArray['data']['status'] <= 3 ){
                 $exploded_attachment = explode('||',$emailArray['data']['attachment']);
                 foreach ($exploded_attachment as $key => $attachment) {
-                    $message->attach(storage_path("app/public/file_attachments/{$attachment}"));
+                    // $message->attach(storage_path("app/public/file_attachments/{$attachment}"));
+                    $message->attach(public_path("storage/file_attachments/{$attachment}"));
                 }
             }
             else{
@@ -46,9 +47,13 @@ class EmailRepository implements EmailRepositoryInterface
                 })
                 ->unique()
                 ->values();
-
                 foreach ($uniqueAttachments as $key => $attachment) {
-                    $message->attach(storage_path("app/public/quotation_attachments/{$attachment}"));
+                    $exploded_attachment = explode('||',$attachment);
+
+                    foreach ($exploded_attachment as $key1 => $att) {
+                        // $message->attach(storage_path("app/public/quotation_attachments/{$att}"));
+                        $message->attach(public_path("storage/quotation_attachments/{$att}"));
+                    }
                 }
             }
 

@@ -20,8 +20,8 @@ class TransactionController extends Controller
     protected $UserAccessRepository;
     protected $EmailRepository;
     protected $SupplierRepository;
-    
-    public function __construct( 
+
+    public function __construct(
         RequestRepositoryInterface $RequestRepository,
         UserAccessRepositoryInterface $UserAccessRepository,
         EmailRepositoryInterface $EmailRepository,
@@ -65,7 +65,7 @@ class TransactionController extends Controller
                     if($quotation->assigned_to == $_SESSION['rapidx_user_id']){
                         $result .= "<button class='btn btn-sm btn-info btnAddSupplier ml-1' title='Add Supplier' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' data-request='".json_encode($quotation, JSON_HEX_APOS)."' data-status='{$quotation->status}'><i class='fas fa-address-book'></i></button>";
                         $result .= "<button class='btn btn-sm btn-danger btnCancelRFQ ml-1' title='Cancel RFQ' data-id='{$quotation->id}' data-ctrl='{$quotation->ctrl_no}' ><i class='fas fa-ban'></i></button>";
-                    
+
                     }
                     break;
                 case 3:
@@ -94,7 +94,7 @@ class TransactionController extends Controller
     public function assign_request(AssignRequest $request){
         date_default_timezone_set('Asia/Manila');
         $data = $request->validated();
-        
+
         $data['assigned_by'] = $_SESSION['rapidx_user_id'];
         $data['status']      = 2;
         $data['assigned_at'] = NOW();
@@ -167,10 +167,10 @@ class TransactionController extends Controller
             $result .= "<center>";
             $collection = collect($items->item_quotation_details)->where('selected_quotation', 1);
             // return $collection;
-            
-           
+
+
             if(count($collection) > 0 && $items->request_details->status == 3){
-                $result .= "<button class='btn btn-sm btn-success btnAddQuotation' title='View Suppliers' 
+                $result .= "<button class='btn btn-sm btn-success btnAddQuotation' title='View Suppliers'
                     data-item-id='{$items->id}'
                     data-item-name='{$items->item_name}'
                     data-item-qty='{$items->qty}'
@@ -179,7 +179,7 @@ class TransactionController extends Controller
                 <i class='fas fa-eye'></i></button>";
             }
             else{
-                $result .= "<button class='btn btn-sm btn-primary btnAddQuotation' title='View Suppliers' 
+                $result .= "<button class='btn btn-sm btn-primary btnAddQuotation' title='View Suppliers'
                     data-item-id='{$items->id}'
                     data-item-name='{$items->item_name}'
                     data-item-qty='{$items->qty}'
@@ -188,7 +188,7 @@ class TransactionController extends Controller
                 <i class='fas fa-eye'></i></button>";
             }
             $result .= "</center>";
-            return $result; 
+            return $result;
         })
         ->addColumn('no_of_quotation', function($items){
             $condition = array(
@@ -222,13 +222,13 @@ class TransactionController extends Controller
         $data = $request->validated();
         // return $data;
         /*
-            * Manage the attachment 
+            * Manage the attachment
         */
         $original_filename = null;
         $attachment = array();
         try{
              /**
-                * For multiple upload file 
+                * For multiple upload file
             */
             if ($request->hasFile('attachment')) {
                 foreach ($request->file('attachment') as $file) {
@@ -247,7 +247,7 @@ class TransactionController extends Controller
             }
             // * Save Item Quotation
             if(isset($request->id)){
-              
+
                 // return gettype($request->checkReupload);
                 if($request->checkReupload == 'true'){
                     $data['attachment'] = implode('||', $attachment);
@@ -255,10 +255,10 @@ class TransactionController extends Controller
                 $data['updated_by'] = $_SESSION['rapidx_user_id'];
                 $data['updated_at'] = NOW();
                 return $this->RequestRepository->updateItemQuotation($request->id, $data);
-            
+
             }
             else{
-                
+
                 $data['attachment'] = implode('||', $attachment);
                 $data['created_by'] = $_SESSION['rapidx_user_id'];
                 $data['created_at'] = NOW();
@@ -276,7 +276,7 @@ class TransactionController extends Controller
             'deleted_at' => null
         );
         $supplier_quotation = $this->RequestRepository->getSupplierQuotationWithCondition($condition);
-        
+
         return DataTables::of($supplier_quotation)
         ->addColumn('action', function($supplier_quotation){
             $result = "";
@@ -313,7 +313,7 @@ class TransactionController extends Controller
             'status' => 3,
             'updated_by' => $_SESSION['rapidx_user_id']
         );
-        
+
         $update_result = $this->RequestRepository->update($request->id, $data);
 
         if(isset($update_result)){
@@ -359,7 +359,7 @@ class TransactionController extends Controller
             $quote_data = Http::get(route('api.get_request_details', ['id' => $request->id]));
 
             $emailArray['quote_data'] = $quote_data;
-            
+
 
             $emailArray['data'] = $request_details;
 
@@ -540,7 +540,7 @@ class TransactionController extends Controller
             );
             $to_user = $this->UserAccessRepository->getUserWithRelationAndCondition($to_conditions, $to_relations);
             $logistics_email = collect($to_user)->pluck('rapidx_details.email')->toArray();
-            
+
             $emailArray['cc'] = array_merge($emailArray['cc'],$logistics_email);
             // return $emailArray['cc'];
 
@@ -558,7 +558,7 @@ class TransactionController extends Controller
             'request_item_id' => $request->id
         );
         return $this->RequestRepository->getSupplierQuotationWithCondition($condtion);
-        
+
     }
 
     public function get_request_details(Request $request){
@@ -576,7 +576,7 @@ class TransactionController extends Controller
         $data = $this->RequestRepository->getQuotationRequestWithConditionAndRelation($conditions, $relations);
 
         /**
-            * Collection to group the supplier names 
+            * Collection to group the supplier names
         */
         $supplierNames = collect($data)
         ->pluck('item_details') // Get the item details from the data

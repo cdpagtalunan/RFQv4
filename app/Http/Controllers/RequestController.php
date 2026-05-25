@@ -86,10 +86,11 @@ class RequestController extends Controller
         
                 $currentMonth = Carbon::now()->format('m');
                 $currentYear = Carbon::now()->format('y');
-        
-                $collection = collect($request_repository_data)->filter(function ($request) use ($currentMonth) {
+
+                $collection = collect($request_repository_data)->filter(function ($request) use ($currentMonth, $currentYear) {
                     $month = Carbon::parse($request['created_at'])->format('m');
-                    return $month === $currentMonth; // Filter by month
+                    $year = Carbon::parse($request['created_at'])->format('y');
+                    return $month === $currentMonth && $year === $currentYear; // Filter by month and year
                 })->sortBy([['id', 'DESC']]);
                 
                 $new_count = count($collection) + 1;
