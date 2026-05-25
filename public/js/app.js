@@ -26867,6 +26867,7 @@ __webpack_require__.r(__webpack_exports__);
                   title: 'Something went wrong.'
                 });
               }
+              document.getElementById('btnServeQuotation').disabled = false;
             })["catch"](function (err) {
               if (err.response.status == 422) {
                 Toast.fire({
@@ -26881,11 +26882,11 @@ __webpack_require__.r(__webpack_exports__);
                   title: 'This action is not allowed!'
                 });
               }
+              document.getElementById('btnServeQuotation').disabled = false;
             });
           }
         });
       }
-      document.getElementById('btnServeQuotation').disabled = false;
     };
     var getDetails = function getDetails(id) {
       _axios__WEBPACK_IMPORTED_MODULE_1__["default"].get('api/get_request_details', {

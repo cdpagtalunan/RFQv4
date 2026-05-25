@@ -692,6 +692,8 @@
                                 title: 'Something went wrong.'
                             });
                         }
+                        document.getElementById('btnServeQuotation').disabled = false;
+
                     }).catch((err) => {
                         if(err.response.status == 422){
                             Toast.fire({
@@ -706,13 +708,13 @@
                                 title: 'This action is not allowed!'
                             });
                         }
+                        document.getElementById('btnServeQuotation').disabled = false;
+
                     });
                 }
             })
-          
         }
 
-        document.getElementById('btnServeQuotation').disabled = false;
 
       
     }
