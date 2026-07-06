@@ -146,4 +146,14 @@ class UserController extends Controller
     return $this->UserAccessRepository->update($request->id, $to_update);
   }
 
+  public function get_list_of_purchaser(Request $request){
+    $condition = array(
+      // 'user_stat' => 1,
+      'user_access' => 1
+    );
+    $relation = array(
+      'rapidx_details'
+    );
+    return $this->UserAccessRepository->getUserWithRelationAndCondition($condition, $relation); 
+  }
 }

@@ -35,6 +35,7 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::get('get_rapidx_user_list', 'get_rapidx_user_list');
         Route::post('save_user', 'save_user');
         Route::post('update_status', 'update_status');
+        Route::get('get_list_of_purchaser', 'get_list_of_purchaser');
     });
 
     Route::controller(CategoryController::class)->group(function (){
@@ -78,6 +79,9 @@ Route::middleware('checkSessionExist')->group(function(){
         Route::post('serve_quotation', 'serve_quotation');
         Route::get('get_quotations', 'get_quotations');
         Route::post('log_cancel_request', 'log_cancel_request');
+
+        Route::get('get_list_of_for_quotations', 'get_list_of_for_quotations');
+        Route::post('update_purchaser', 'update_purchaser');
         // Route::get('get_request_details', 'get_request_details')->name('api.get_request_details');
     });
 

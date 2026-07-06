@@ -245,4 +245,46 @@ class RequestRepository implements RequestRepositoryInterface
             return $e;
         }
     }
+
+    public function updateQuotationRequestWithConditionAndRelation(array $condition, array $data){
+        DB::beginTransaction();
+        try{
+            $query = QuotationRequest::query();
+
+            if (!empty($condition)) {
+                foreach ($condition as $key => $value) {
+                    // Handle nested relations for condition
+                    if (str_contains($key, '.')) {
+                        [$relation, $field] = explode('.', $key, 2);
+                        $query->whereHas($relation, function ($query) use ($field, $value) {
+                            $query->where($field, $value);
+                        });
+                    } 
+                    else if(str_contains($key, 'like:')) {
+                        $key = str_replace('like:', '', $key); // Remove "like:" prefix
+                        $query->where($key, 'LIKE', "%$value%");
+                    }
+                    else if(is_array($value)){
+                        $query->whereIn($key,$value);
+                    }
+                    else {
+                        $query->where($key, $value);
+                    }
+                }
+            }
+
+            $query->update($data);
+            DB::commit();
+
+            return response()->json([
+                'result' => true,
+                'msg' => 'Transaction Success!',
+                'fn' => 'updateQuotationRequestWithConditionAndRelation',
+                'test' => $query
+            ]);
+        }catch(Exemption $e){
+            DB::rollback();
+            return $e;
+        }
+    }
 }

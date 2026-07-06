@@ -55,6 +55,12 @@
                             <p>User Management</p>
                         </router-link>
                     </li>
+                     <li class="nav-item has-treeview" v-if="uType != 0">
+                        <router-link :to="{ name: 'PurchaserManagement' }" class="nav-link">
+                            <icons icon="fas fa-user" class="nav-icon"></icons>
+                            <p>Purchaser Management</p>
+                        </router-link>
+                    </li>
                     <li class="nav-header font-weight-bold" v-if="uType != 0">Settings</li>
 
                     <li class="nav-item has-treeview" v-if="uType != 0">

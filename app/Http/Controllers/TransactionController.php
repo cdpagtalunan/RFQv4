@@ -77,7 +77,10 @@ class TransactionController extends Controller
             $result .= "</center>";
             return $result;
         })
-        // ->rawColumns(['action'])
+        ->addColumn('createdAt', function($quotation){
+            return date('Y-m-d H:i:s', strtotime($quotation->created_at));
+        })
+        // ->rawColumns(['createdAt'])
         ->make(true);
     }
 
@@ -669,5 +672,44 @@ class TransactionController extends Controller
         }
 
         return $quotationRequest;
+    }
+
+    public function get_list_of_for_quotations(Request $request){
+        $condition = array(
+            'assigned_to' => $request->oldPurchaser,
+            'status'      => 2,
+            'deleted_at'  => null
+        );
+        $relations = array();
+        return  $this->RequestRepository->getQuotationRequestWithConditionAndRelation($condition, $relations);
+    }
+
+    public function update_purchaser(Request $request){
+        date_default_timezone_set('Asia/Manila');
+        $data = array(
+            'assigned_to' => $request->newPurchaser,
+            'updated_by'  => $_SESSION['rapidx_user_id'],
+            'updated_at'  => NOW()
+        );
+
+        if(in_array("all", $request->quotation_ids)){
+            $conditions = array(
+                'assigned_to' => $request->oldPurchaser,
+                'status'      => 2,
+                'deleted_at'  => null
+            );
+        }
+        else{
+            $conditions = array(
+                'assigned_to' => $request->oldPurchaser,
+                'status'      => 2,
+                'deleted_at'  => null,
+                'id'          => $request->quotation_ids
+            );
+        }
+        
+       
+        // return $conditions;
+        return $this->RequestRepository->updateQuotationRequestWithConditionAndRelation($conditions, $data);
     }
 }
