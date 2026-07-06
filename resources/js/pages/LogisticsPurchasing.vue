@@ -629,6 +629,7 @@
             }
         },
         { data: 'assigned_by_details.name', title: 'Assigned By' },
+        { data: 'createdAt', title: 'Created At' },
     ];
     const optionsLogRequest = {
         responsive: true,

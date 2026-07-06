@@ -77,7 +77,10 @@ class TransactionController extends Controller
             $result .= "</center>";
             return $result;
         })
-        // ->rawColumns(['action'])
+        ->addColumn('createdAt', function($quotation){
+            return date('Y-m-d H:i:s', strtotime($quotation->created_at));
+        })
+        // ->rawColumns(['createdAt'])
         ->make(true);
     }
 

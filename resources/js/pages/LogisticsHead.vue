@@ -450,6 +450,7 @@
                 return toShow;
             }
         },
+        { data: 'createdAt', title: 'Requested At' }
     ];
     const optionsLogRequest = {
         responsive: true,

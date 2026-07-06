@@ -26613,6 +26613,9 @@ __webpack_require__.r(__webpack_exports__);
         }
         return toShow;
       }
+    }, {
+      data: 'createdAt',
+      title: 'Requested At'
     }];
     var optionsLogRequest = {
       responsive: true,
@@ -27272,6 +27275,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }, {
       data: 'assigned_by_details.name',
       title: 'Assigned By'
+    }, {
+      data: 'createdAt',
+      title: 'Created At'
     }];
     var optionsLogRequest = {
       responsive: true,
