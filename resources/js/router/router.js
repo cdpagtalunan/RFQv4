@@ -9,6 +9,7 @@ import CurrencyManagement from '../pages/CurrencyManagement.vue';
 import UomManagement from '../pages/UomManagement.vue';
 import Request from '../pages/Requestor.vue';
 import LogisticsPurchasing from '../pages/LogisticsPurchasing.vue';
+import PurchaserManagement from '../pages/PurchaserManagement.vue';
 import LogisticsHead from '../pages/LogisticsHead.vue';
 import Mailer from '../pages/Mailer.vue';
 import Export from '../pages/Export.vue';
@@ -97,6 +98,12 @@ const routes = [
                 name: 'Export',
                 // beforeEnter: checkUser,
                 component: Export
+            },
+            {
+                path: 'purchaser_management',
+                name: 'PurchaserManagement',
+                beforeEnter: checkUser,
+                component: PurchaserManagement
             },
         ],
     },
