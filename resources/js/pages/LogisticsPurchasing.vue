@@ -997,7 +997,7 @@
     const checkCurrency = (event) => {
         const selectedOption = event.target.selectedOptions[0];
         showRate.value = false;
-        formSupplierDetails.rate = null
+        formSupplierDetails.rate = null;
 
         if(selectedOption.value != 'PHP'){
             showRate.value = true;

@@ -28,7 +28,7 @@ class RequestDetailRequest extends FormRequest
             // 'ctrl_no' => 'required',
             'category_id' => 'required',
             'date_needed' => 'required',
-            'justification' => 'required'
+            'justification' => 'required|string|max:255'
         ];
     }
 }

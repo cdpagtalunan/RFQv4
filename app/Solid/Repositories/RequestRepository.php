@@ -17,7 +17,7 @@ class RequestRepository implements RequestRepositoryInterface
 {
     public function insertGetId(array $data){
         DB::beginTransaction();
-        
+
         try{
             $id = QuotationRequest::insertGetId($data);
 
@@ -37,11 +37,11 @@ class RequestRepository implements RequestRepositoryInterface
 
     public function update(int $id, array $data){
         DB::beginTransaction();
-        
+
         try{
             QuotationRequest::where('id', $id)
             ->update($data);
-            
+
             DB::commit();
 
             return response()->json([
@@ -64,7 +64,7 @@ class RequestRepository implements RequestRepositoryInterface
         // }
         if (!empty($condition)) {
             foreach ($condition as $key => $value) {
-                
+
                 // Handle nested relations for condition
                 if (str_contains($key, 'like:')) {
                     $key = str_replace('like:', '', $key); // Remove "like:" prefix
@@ -90,7 +90,7 @@ class RequestRepository implements RequestRepositoryInterface
 
     public function insertItem(array $data){
         DB::beginTransaction();
-        
+
         try{
             RequestItem::insert($data);
 
@@ -125,7 +125,7 @@ class RequestRepository implements RequestRepositoryInterface
         try{
             RequestItemQuotation::insert($data);
             DB::commit();
-            
+
             return response()->json([
                 'result' => true,
                 'msg'    => 'Transaction Success!',
@@ -166,7 +166,7 @@ class RequestRepository implements RequestRepositoryInterface
 
     public function deleteQuotation(int $id, string $remarks){
         DB::beginTransaction();
-        
+
         try{
             $update_array = array(
                 'deleted_at' => NOW(),
@@ -174,7 +174,7 @@ class RequestRepository implements RequestRepositoryInterface
             );
             RequestItemQuotation::where('id', $id)
             ->update($update_array);
-            
+
             DB::commit();
 
             return response()->json([
@@ -199,7 +199,7 @@ class RequestRepository implements RequestRepositoryInterface
             if (!empty($condition)) {
                 foreach ($condition as $key => $value) {
                     // Handle nested relations for condition
-                    
+
                     if (str_contains($key, '.')) {
                         [$relation, $field] = explode('.', $key, 2);
                         $query->whereHas($relation, function ($query) use ($field, $value) {
@@ -259,7 +259,7 @@ class RequestRepository implements RequestRepositoryInterface
                         $query->whereHas($relation, function ($query) use ($field, $value) {
                             $query->where($field, $value);
                         });
-                    } 
+                    }
                     else if(str_contains($key, 'like:')) {
                         $key = str_replace('like:', '', $key); // Remove "like:" prefix
                         $query->where($key, 'LIKE', "%$value%");

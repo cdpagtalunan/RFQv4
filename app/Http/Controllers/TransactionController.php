@@ -707,8 +707,8 @@ class TransactionController extends Controller
                 'id'          => $request->quotation_ids
             );
         }
-        
-       
+
+
         // return $conditions;
         return $this->RequestRepository->updateQuotationRequestWithConditionAndRelation($conditions, $data);
     }
