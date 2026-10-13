@@ -25,7 +25,8 @@ class ExportController extends Controller
     $relations = array(
       'request_details',
       'request_details.assigned_to_details',
-      'request_details.created_by_details'
+      'request_details.created_by_details',
+      'item_quotation_details'
     );
     
     $rfqs;
@@ -34,7 +35,7 @@ class ExportController extends Controller
     }
     else{
       $conditions['request_details.status'] = ['>', 0];
-      $conditions['request_details.created_by'] = $_SESSION['rapidx_user_id'];
+      // $conditions['request_details.created_by'] = $_SESSION['rapidx_user_id'];
     }
     $rfqs = $this->requestRepository->getRequestItemWithConditionAndRelation($conditions, $relations);
     $collection = collect($rfqs)->where('request_details.status', '<>', 5)->flatten(1);

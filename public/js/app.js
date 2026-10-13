@@ -27396,6 +27396,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       sortable: false,
       createdCell: function createdCell(cell) {
         cell.querySelector('.btnEditQuotation').addEventListener('click', function () {
+          var _parsedData$moq, _parsedData$warranty;
           var supplierQuotationId = this.getAttribute('data-id');
           var supplierQuotation = this.getAttribute('data-quotation');
           var parsedData = JSON.parse(supplierQuotation);
@@ -27407,8 +27408,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (parsedData.rate != null) {
             formSupplierDetails.rate = parsedData.rate;
           }
-          formSupplierDetails.moq = parsedData.moq;
-          formSupplierDetails.warranty = parsedData.warranty;
+          formSupplierDetails.moq = (_parsedData$moq = parsedData.moq) !== null && _parsedData$moq !== void 0 ? _parsedData$moq : '';
+          formSupplierDetails.warranty = (_parsedData$warranty = parsedData.warranty) !== null && _parsedData$warranty !== void 0 ? _parsedData$warranty : '';
           formSupplierDetails.lead_time = parsedData.lead_time;
           formSupplierDetails.date_served = parsedData.date_served;
           formSupplierDetails.quotation_validity = parsedData.quotation_validity;
@@ -27416,6 +27417,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           formSupplierDetails.remarks = parsedData.remarks;
           formSupplierDetails.attachment = parsedData.attachment;
           modalAddSupplierDetails.value.show();
+
+          // const selectEl = document.getElementById('selCurrency');
+          // if (selectEl) {
+          //     checkCurrency({ target: selectEl });
+          // }
+
           if (parsedData.currency != 'PHP') {
             showRate.value = true;
             convertCurrencyToPhp();
@@ -27697,11 +27704,31 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         formSupplierDetails.rate = selectedOption.getAttribute('data-rate');
       }
     };
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(function () {
+      return formSupplierDetails.currency;
+    }, function (newCurrency) {
+      console.log('watch', newCurrency);
+      if (newCurrency && newCurrency !== 'PHP') {
+        showRate.value = true;
+        // Find the matching currency object directly from your reactive array
+        var selectedCurrency = currencies.value.find(function (c) {
+          return c.currency === newCurrency;
+        });
+        if (selectedCurrency) {
+          formSupplierDetails.rate = selectedCurrency.rate;
+          convertCurrencyToPhp();
+        }
+      } else {
+        showRate.value = false;
+        formSupplierDetails.rate = '';
+      }
+    });
     var convertCurrencyToPhp = function convertCurrencyToPhp() {
       var convertedRate = 0;
-      if (showRate.value == true && formSupplierDetails.price != '') {
+      if (showRate.value == true && formSupplierDetails.price != '' && formSupplierDetails.rate != '') {
         convertedRate = parseFloat(formSupplierDetails.price) * parseFloat(formSupplierDetails.rate);
       }
+      console.log('convertedRate', convertedRate);
       formSupplierDetails.convertion = convertedRate;
     };
     var inputFunction = function inputFunction(supplier, itemQuotation) {
@@ -27820,6 +27847,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       reactive: vue__WEBPACK_IMPORTED_MODULE_0__.reactive,
       inject: vue__WEBPACK_IMPORTED_MODULE_0__.inject,
       nextTick: vue__WEBPACK_IMPORTED_MODULE_0__.nextTick,
+      watch: vue__WEBPACK_IMPORTED_MODULE_0__.watch,
       get api() {
         return _axios__WEBPACK_IMPORTED_MODULE_1__["default"];
       },
@@ -30988,12 +31016,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "for": "switchNoQuotationThisTime"
       }, "Still no quote as of this time", -1 /* HOISTED */))])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_59, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_60, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_61, [_cache[54] || (_cache[54] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
         "class": "input-group-text w-50"
-      }, "Price:", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+      }, "Price:", -1 /* HOISTED */)), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <select class=\"form-control w-25\" id=\"selCurrency\" v-model=\"formSupplierDetails.currency\" @change=\"checkCurrency\" :disabled=\"formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time\"> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
         "class": "form-control w-25",
+        id: "selCurrency",
         "onUpdate:modelValue": _cache[11] || (_cache[11] = function ($event) {
           return $setup.formSupplierDetails.currency = $event;
         }),
-        onChange: $setup.checkCurrency,
         disabled: $setup.formSupplierDetails.no_quote || $setup.formSupplierDetails.no_quote_this_time
       }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.currencies, function (currency) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
@@ -31001,7 +31029,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           value: currency.currency,
           "data-rate": currency.rate
         }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(currency.currency), 9 /* TEXT, PROPS */, _hoisted_63);
-      }), 128 /* KEYED_FRAGMENT */))], 40 /* PROPS, NEED_HYDRATION */, _hoisted_62), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $setup.formSupplierDetails.currency]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      }), 128 /* KEYED_FRAGMENT */))], 8 /* PROPS */, _hoisted_62), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $setup.formSupplierDetails.currency]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         type: "number",
         name: "price",
         "class": "form-control w-25",

@@ -305,7 +305,8 @@
                     <div class="col-sm-12">
                         <div class="input-group">
                             <span class="input-group-text w-50">Price:</span>
-                            <select class="form-control w-25"  v-model="formSupplierDetails.currency" @change="checkCurrency" :disabled="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
+                            <!-- <select class="form-control w-25" id="selCurrency" v-model="formSupplierDetails.currency" @change="checkCurrency" :disabled="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time"> -->
+                            <select class="form-control w-25" id="selCurrency" v-model="formSupplierDetails.currency" :disabled="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
                                 <option v-for="currency in currencies" :key="currency.id" :value="currency.currency" :data-rate="currency.rate">{{ currency.currency }}</option>
                             </select>
                             <input type="number" name="price" class="form-control w-25" v-model="formSupplierDetails.price" @keyup="convertCurrencyToPhp" :readonly="formSupplierDetails.no_quote || formSupplierDetails.no_quote_this_time">
@@ -409,7 +410,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, reactive, inject, nextTick } from 'vue';
+    import { ref, onMounted, reactive, inject, nextTick, watch } from 'vue';
     import api from '../axios';
     // Import DataTable
     import DataTable from 'datatables.net-vue3';
@@ -742,8 +743,8 @@
                     if(parsedData.rate != null){
                         formSupplierDetails.rate               = parsedData.rate
                     }
-                    formSupplierDetails.moq                = parsedData.moq
-                    formSupplierDetails.warranty           = parsedData.warranty
+                    formSupplierDetails.moq                = parsedData.moq ?? ''
+                    formSupplierDetails.warranty           = parsedData.warranty ?? ''
                     formSupplierDetails.lead_time          = parsedData.lead_time
                     formSupplierDetails.date_served        = parsedData.date_served
                     formSupplierDetails.quotation_validity = parsedData.quotation_validity
@@ -751,6 +752,11 @@
                     formSupplierDetails.remarks            = parsedData.remarks
                     formSupplierDetails.attachment         = parsedData.attachment
                     modalAddSupplierDetails.value.show();
+
+                    // const selectEl = document.getElementById('selCurrency');
+                    // if (selectEl) {
+                    //     checkCurrency({ target: selectEl });
+                    // }
 
                     if(parsedData.currency != 'PHP'){
                         showRate.value = true;
@@ -1004,12 +1010,28 @@
             formSupplierDetails.rate = selectedOption.getAttribute('data-rate')
         }
     }
+    watch(() => formSupplierDetails.currency, (newCurrency) => {
+        console.log('watch', newCurrency)
+        if (newCurrency && newCurrency !== 'PHP') {
+            showRate.value = true;
+            // Find the matching currency object directly from your reactive array
+            const selectedCurrency = currencies.value.find(c => c.currency === newCurrency);
+            if (selectedCurrency) {
+                formSupplierDetails.rate = selectedCurrency.rate;
+                convertCurrencyToPhp();
+            }
+        } else {
+            showRate.value = false;
+            formSupplierDetails.rate = '';
+        }
+    });
 
     const convertCurrencyToPhp = () => {
         let convertedRate = 0;
-        if(showRate.value == true && formSupplierDetails.price != ''){
+        if(showRate.value == true && formSupplierDetails.price != '' && formSupplierDetails.rate != ''){
             convertedRate = parseFloat(formSupplierDetails.price) * parseFloat(formSupplierDetails.rate);
         }
+        console.log('convertedRate', convertedRate);
         formSupplierDetails.convertion = convertedRate;
     }
 

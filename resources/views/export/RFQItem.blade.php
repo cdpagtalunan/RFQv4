@@ -18,6 +18,7 @@
             <td>PIC</td>
             <td>Status</td>
             <td>Served Date/Time</td>
+            <td>Supplier</td>
         </tr>
 
         @foreach ($rfqs as $rfq)
@@ -44,6 +45,21 @@
                         @break
                     @default
                 @endswitch
+                <td>
+                    @foreach ($rfq['item_quotation_details'] as $quotation)
+                        {{-- @if($quotation['selected_quotation'] === 1)
+                            <strong>{{ $quotation['supplier_name'] }}</strong><br>
+                        @else
+                            {{ $quotation['supplier_name'] }}<br>
+                        @endif --}}
+                        
+                        @if($quotation['selected_quotation'] == '1')
+                             {{ $quotation['selected_quotation'] == '1' ? '(Selected)' : '' }}{{ $quotation['supplier_name'] }}<br>
+                        @else
+                            {{ $quotation['supplier_name'] }}<br>
+                        @endif
+                    @endforeach
+                </td>
             </tr>
         @endforeach
     </table>
